@@ -2,7 +2,7 @@
 
 แคทตาล็อกบ้านขาย/คอนโด/พูลวิลล่า ในจังหวัดเชียงใหม่ ดึงข้อมูลสดจาก Google Sheets ผ่าน Apps Script Web App
 
-**ดูเว็บ:** `https://<your-username>.github.io/<repo-name>/`
+**ดูเว็บ:** `https://the9property-blip.github.io/SaelProperty/`
 
 ## โครงสร้างไฟล์
 
