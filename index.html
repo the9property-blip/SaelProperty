@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บ้านขาย เชียงใหม่ | The 9 Property</title>
+<!-- ─── SEO Meta Tags ─── -->
+<meta name="description" content="แคตตาล็อกบ้านขายในเชียงใหม่ บ้านเดี่ยว ทาวน์โฮม คอนโด พูลวิลล่า พร้อมรูปภาพและรายละเอียดครบ ติดต่อ The 9 Property โทร 080-994-5497">
+<meta name="keywords" content="บ้านขายเชียงใหม่, ขายบ้าน, ขายคอนโด, พูลวิลล่า, The 9 Property, ทาวน์โฮม, บ้านเดี่ยว, อสังหา">
+<meta name="author" content="The 9 Property">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#0f3460">
+<!-- ─── Open Graph ─── -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="The 9 Property">
+<meta property="og:title" content="บ้านขาย เชียงใหม่ | The 9 Property">
+<meta property="og:description" content="แคตตาล็อกบ้านขายในเชียงใหม่ พร้อมรูปและราคา ติดต่อ 080-994-5497">
+<meta property="og:locale" content="th_TH">
+<!-- ─── Favicon: บ้านสีน้ำเงิน + ดาวทอง ─── -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230f3460'/%3E%3Cpath d='M50 22 L20 48 L28 48 L28 78 L44 78 L44 60 L56 60 L56 78 L72 78 L72 48 L80 48 Z' fill='%23f6c244'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230f3460'/%3E%3Cpath d='M50 22 L20 48 L28 48 L28 78 L44 78 L44 60 L56 60 L56 78 L72 78 L72 48 L80 48 Z' fill='%23f6c244'/%3E%3C/svg%3E">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', 'Noto Sans Thai', sans-serif; background: #f5f6fa; color: #333; }
+
+/* ─── HEADER (ขาย: น้ำเงินเข้ม + ทอง) ─── */
+.header {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  color: white; padding: 10px 14px 10px;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  border-bottom: 3px solid #f6c244;
+}
+.header-row1 { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.header-logo { font-size: 1.05rem; font-weight: 800; white-space: nowrap; }
+.header-logo .badge-sale {
+  display: inline-block; background: #f6c244; color: #1a1a2e;
+  font-size: 0.6rem; font-weight: 900; padding: 1px 7px;
+  border-radius: 4px; margin-left: 6px; letter-spacing: 0.5px;
+  vertical-align: middle;
+}
+.header-logo span { font-size: 0.68rem; font-weight: 400; opacity: 0.7; display: block; }
+.search-wrap { flex: 1; position: relative; }
+.search-wrap input {
+  width: 100%; padding: 7px 36px 7px 13px;
+  border-radius: 50px; border: none; font-size: 0.82rem;
+  outline: none; font-family: inherit; background: rgba(255,255,255,0.96); color: #333;
+}
+.search-icon { position: absolute; right: 11px; top: 50%; transform: translateY(-50%); opacity: 0.4; font-size: 0.85rem; }
+.header-row2 {
+  display: flex; align-items: center; gap: 5px; overflow-x: auto;
+  scrollbar-width: none; -ms-overflow-style: none;
+}
+.header-row2::-webkit-scrollbar { display: none; }
+.filter-btn {
+  padding: 4px 11px; border-radius: 50px; flex-shrink: 0;
+  border: 1.5px solid rgba(255,255,255,0.35);
+  background: transparent; color: rgba(255,255,255,0.85);
+  font-size: 0.73rem; cursor: pointer; transition: all 0.2s; font-family: inherit;
+}
+.filter-btn:hover { background: rgba(255,255,255,0.14); }
+.filter-btn.active { background: #f6c244; color: #1a1a2e; border-color: #f6c244; font-weight: 800; }
+.filter-sep { width: 1px; height: 18px; background: rgba(255,255,255,0.25); flex-shrink: 0; }
+.filter-select {
+  padding: 4px 8px; border-radius: 50px; flex-shrink: 0;
+  border: 1.5px solid rgba(255,255,255,0.35);
+  background: rgba(255,255,255,0.08); color: white;
+  font-size: 0.71rem; cursor: pointer; font-family: inherit; outline: none;
+  max-width: 125px;
+}
+.filter-select option { color: #333; background: white; }
+.filter-clear-btn {
+  padding: 4px 11px; border-radius: 50px; flex-shrink: 0;
+  border: 1.5px solid rgba(255,180,0,0.7);
+  background: rgba(255,180,0,0.15); color: rgba(255,220,80,0.95);
+  font-size: 0.73rem; cursor: pointer; transition: all 0.2s; font-family: inherit;
+  display: none;
+}
+.filter-clear-btn:hover { background: rgba(255,180,0,0.35); }
+.filter-clear-btn.visible { display: inline-flex; align-items: center; gap: 3px; }
+
+/* ─── STATS BAR ─── */
+.stats-bar {
+  background: white; padding: 8px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid #eee; font-size: 0.82rem; color: #666;
+  flex-wrap: wrap; gap: 6px;
+}
+.stats-bar strong { color: #0f3460; }
+.stats-right { display: flex; align-items: center; gap: 8px; }
+.sort-select { padding: 5px 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.8rem; outline: none; cursor: pointer; font-family: inherit; }
+.btn-refresh {
+  padding: 5px 12px; border: 1.5px solid #0f3460; border-radius: 6px;
+  color: #0f3460; background: white; font-size: 0.77rem; cursor: pointer;
+  font-family: inherit; font-weight: 600; transition: all 0.2s;
+  display: flex; align-items: center; gap: 4px;
+}
+.btn-refresh:hover { background: #0f3460; color: white; }
+.btn-refresh.spinning .refresh-icon { display: inline-block; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── GRID ─── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 16px; padding: 16px;
+  max-width: 1380px; margin: 0 auto;
+}
+
+/* ─── CARD (ขาย: รูปใหญ่ + ราคาเด่น) ─── */
+.card {
+  background: white; border-radius: 18px; overflow: hidden;
+  box-shadow: 0 3px 14px rgba(0,0,0,0.08);
+  transition: transform 0.18s, box-shadow 0.18s;
+  border: 1px solid #efefef; cursor: pointer;
+  display: flex; flex-direction: column;
+}
+.card:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(0,0,0,0.14); }
+.card:active { transform: translateY(-1px); }
+
+/* ★ รูปบนการ์ด — ใหญ่ขึ้นเป็น 220px (ฝั่งเช่า 170px) */
+.card-photo {
+  width: 100%; height: 220px; overflow: hidden;
+  background: #e8ecf0; position: relative; flex-shrink: 0;
+}
+.card-photo img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  transition: transform 0.35s;
+}
+.card:hover .card-photo img { transform: scale(1.06); }
+.card-photo-placeholder {
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  color: #b0bec5; gap: 4px; font-size: 0.8rem;
+  background: linear-gradient(135deg, #ecf0f5, #d9e0ea);
+}
+.card-photo-placeholder .ph-icon { font-size: 2.4rem; opacity: 0.45; }
+
+/* ─── BADGES บนรูป ─── */
+.sale-badge {
+  position: absolute; top: 10px; left: 10px;
+  font-size: 0.68rem; padding: 4px 11px; border-radius: 50px;
+  font-weight: 800; letter-spacing: 0.3px;
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  color: white; border: 1px solid rgba(255,255,255,0.4);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+.sale-badge::before { content: "🏷️ "; }
+.negotiable-badge {
+  position: absolute; top: 10px; right: 10px;
+  font-size: 0.66rem; padding: 3px 9px; border-radius: 50px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #f6c244, #d4a017);
+  color: #4a2c00; border: 1px solid rgba(255,255,255,0.5);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+.co-badge-sale {
+  position: absolute; top: 10px; right: 10px;
+  font-size: 0.7rem; font-weight: 900; letter-spacing: 0.5px;
+  padding: 4px 11px; border-radius: 50px;
+  background: linear-gradient(135deg, #3498db, #2874a6);
+  color: white; border: 1px solid rgba(255,255,255,0.5);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+/* ─── CARD HEADER ─── */
+.card-header {
+  padding: 14px 14px 11px;
+  background: linear-gradient(135deg, #0f3460, #16213e); color: white;
+  position: relative; flex-shrink: 0;
+}
+.card-code { font-size: 0.65rem; opacity: 0.7; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 3px; }
+.card-project { font-size: 1rem; font-weight: 700; line-height: 1.3; padding-right: 68px; margin-bottom: 4px; }
+.card-location { font-size: 0.76rem; opacity: 0.85; }
+.card-location::before { content: "📍 "; }
+.card-type-badge {
+  position: absolute; top: 12px; right: 12px;
+  font-size: 0.66rem; padding: 3px 8px; border-radius: 50px;
+  font-weight: 700; border: 1px solid;
+}
+.badge-single { background: rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.35); color: white; }
+.badge-town   { background: rgba(46,204,113,0.3);   border-color: rgba(46,204,113,0.6);   color: #afffce; }
+.badge-condo  { background: rgba(52,152,219,0.3);   border-color: rgba(52,152,219,0.6);   color: #b3d9ff; }
+.badge-villa  { background: rgba(255,193,7,0.3);    border-color: rgba(255,193,7,0.6);    color: #ffecaa; }
+
+/* ─── CARD BODY ─── */
+.card-body { padding: 13px 14px 10px; flex: 1; }
+.price-main {
+  font-size: 1.55rem; font-weight: 900; color: #c0392b;
+  line-height: 1.1; margin-bottom: 2px;
+}
+.price-main .unit { font-size: 0.78rem; color: #888; font-weight: 600; margin-left: 4px; }
+.price-per {
+  font-size: 0.74rem; color: #7a8a99; margin-bottom: 10px;
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.price-per span {
+  background: #f4f6f9; padding: 2px 8px; border-radius: 4px;
+  color: #5a6a7a; font-weight: 600;
+}
+.card-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+.tag {
+  font-size: 0.74rem; padding: 3px 9px; border-radius: 50px;
+  background: #f4f5f8; color: #555; display: inline-flex; align-items: center; gap: 3px;
+}
+.tag-area { background: #fff8e6; color: #b8860b; font-weight: 700; }
+
+/* ─── CARD FOOTER: ปุ่มติดต่อ 3 ตัว ─── */
+.card-footer {
+  padding: 9px 14px 13px; border-top: 1px solid #f3f3f3;
+  display: flex; gap: 6px;
+}
+.btn-detail {
+  flex: 1;
+  background: linear-gradient(135deg, #0f3460, #16213e);
+  color: white; border: none; padding: 10px;
+  border-radius: 9px; font-size: 0.83rem; cursor: pointer;
+  font-family: inherit; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+}
+.btn-detail:hover { filter: brightness(1.15); }
+
+/* ─── STATE BOX ─── */
+.state-box { grid-column: 1 / -1; text-align: center; padding: 70px 20px; color: #aaa; }
+.state-box .icon { font-size: 2.8rem; margin-bottom: 14px; }
+.state-box h3 { font-size: 1.05rem; color: #555; margin-bottom: 8px; }
+.state-box p { font-size: 0.85rem; line-height: 1.7; }
+.spinner {
+  width: 42px; height: 42px; border: 4px solid #e0e0e0;
+  border-top-color: #0f3460; border-radius: 50%;
+  animation: spin 0.8s linear infinite; margin: 0 auto 16px;
+}
+
+/* ─── DETAIL MODAL ─── */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6); z-index: 1000;
+  align-items: center; justify-content: center; padding: 12px;
+  overflow-y: auto;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: white; border-radius: 20px;
+  max-width: 520px; width: 100%;
+  animation: slideUp 0.24s ease;
+  max-height: calc(100vh - 24px);
+  overflow-y: auto; position: relative;
+}
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+/* แกลเลอรีรูป — modal */
+.modal-gallery {
+  width: 100%; position: relative;
+  background: #1a1a2e;
+  border-radius: 20px 20px 0 0;
+  overflow: hidden;
+}
+.modal-photo-wrap {
+  width: 100%; aspect-ratio: 4 / 3;
+  background: #1a1a2e; position: relative;
+}
+.modal-photo-wrap img {
+  width: 100%; height: 100%; object-fit: contain; display: block;
+}
+.modal-photo-placeholder {
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  color: #b0bec5; gap: 8px; font-size: 0.85rem; background: #2a2a3e;
+}
+.modal-photo-placeholder .ph-icon { font-size: 3.2rem; opacity: 0.45; }
+.modal-photo-badge {
+  position: absolute; bottom: 10px; left: 12px;
+  font-size: 0.7rem; padding: 4px 10px; border-radius: 50px;
+  font-weight: 700; border: 1px solid;
+}
+.modal-close {
+  position: absolute; top: 12px; left: 12px; z-index: 10;
+  background: rgba(0,0,0,0.55); border: none; color: white;
+  width: 32px; height: 32px; border-radius: 50%; cursor: pointer;
+  font-size: 1rem; display: flex; align-items: center; justify-content: center;
+}
+.modal-info { padding: 16px 20px 6px; }
+.modal-title { font-size: 1.18rem; font-weight: 800; color: #1a1a2e; margin-bottom: 3px; }
+.modal-sub   { font-size: 0.78rem; color: #888; margin-bottom: 12px; }
+.modal-price {
+  font-size: 1.9rem; font-weight: 900; color: #c0392b;
+  margin-bottom: 4px; line-height: 1.1;
+}
+.modal-price small { font-size: 0.78rem; color: #aaa; font-weight: 500; }
+.modal-price-per {
+  display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px;
+  font-size: 0.78rem;
+}
+.modal-price-per span {
+  background: #f4f6f9; padding: 3px 10px; border-radius: 50px;
+  color: #5a6a7a; font-weight: 600;
+}
+.modal-price-per .negotiable {
+  background: linear-gradient(135deg, #f6c244, #d4a017); color: #4a2c00;
+}
+
+.modal-rows { border-top: 1px solid #f0f0f0; }
+.modal-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 9px 0; border-bottom: 1px solid #f5f5f5; font-size: 0.85rem;
+  gap: 12px;
+}
+.modal-row:last-child { border-bottom: none; }
+.modal-row .lbl { color: #999; flex-shrink: 0; }
+.modal-row .val { font-weight: 600; color: #222; text-align: right; }
+
+.modal-section-title {
+  font-size: 0.85rem; font-weight: 800; color: #0f3460;
+  margin: 14px 0 4px; padding-top: 10px;
+  border-top: 2px solid #0f3460;
+  display: flex; align-items: center; gap: 6px;
+}
+.modal-bonus-list {
+  background: linear-gradient(135deg, #fff8e6, #fff4d6);
+  border: 1px solid #f6c244; border-radius: 10px;
+  padding: 10px 14px; margin: 6px 0;
+  font-size: 0.85rem; color: #4a2c00; line-height: 1.6;
+  white-space: pre-line;
+}
+
+.modal-actions {
+  padding: 14px 20px 20px;
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+.btn-call, .btn-line, .btn-wa {
+  border: none; padding: 13px 6px; border-radius: 11px;
+  font-size: 0.84rem; cursor: pointer; font-family: inherit; font-weight: 800;
+  color: white; text-decoration: none;
+  display: flex; align-items: center; justify-content: center; gap: 4px;
+}
+.btn-call { background: #0f3460; }
+.btn-line { background: #06c755; }
+.btn-wa   { background: #25d366; }
+
+/* ─── CONTACT BAR (sticky bottom) ─── */
+.contact-bar {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 400;
+  background: rgba(15,52,96,0.97);
+  padding: 7px 14px;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.25);
+  backdrop-filter: blur(6px);
+}
+.contact-bar-text {
+  color: rgba(255,255,255,0.78); font-size: 0.73rem;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.contact-bar-text strong { color: white; font-weight: 700; }
+.contact-bar-btns { display: flex; gap: 6px; flex-shrink: 0; }
+.btn-bar {
+  border: none; padding: 6px 12px; border-radius: 50px;
+  font-size: 0.74rem; cursor: pointer; font-family: inherit; font-weight: 800;
+  text-decoration: none; display: inline-flex; align-items: center; gap: 3px;
+  color: white;
+}
+.btn-bar-call { background: white; color: #0f3460; }
+.btn-bar-line { background: #06c755; }
+.btn-bar-wa   { background: #25d366; }
+
+.grid-wrap { padding-bottom: 56px; }
+
+/* ─── TOAST ─── */
+.toast {
+  position: fixed; bottom: 82px; left: 50%; transform: translateX(-50%);
+  background: rgba(15,15,35,0.9); color: white;
+  padding: 10px 22px; border-radius: 50px; font-size: 0.82rem;
+  z-index: 9999; pointer-events: none; opacity: 0;
+  transition: opacity 0.3s; white-space: nowrap;
+}
+.toast.show { opacity: 1; }
+
+/* ─── STAFF LOGIN ─── */
+.staff-btn {
+  background: rgba(255,255,255,0.15); color: white; border: 1.5px solid rgba(255,255,255,0.3);
+  padding: 4px 11px; border-radius: 50px; font-size: 0.73rem;
+  cursor: pointer; font-family: inherit; flex-shrink: 0;
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.staff-btn:hover { background: rgba(255,255,255,0.25); }
+.staff-btn.logged-in { background: #f6c244; color: #1a1a2e; border-color: #f6c244; font-weight: 700; }
+.staff-controls { display: flex; flex-direction: column; gap: 6px; align-items: stretch; flex-shrink: 0; }
+
+.staff-modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.65); z-index: 1500;
+  align-items: center; justify-content: center; padding: 16px;
+}
+.staff-modal-overlay.open { display: flex; }
+.staff-modal {
+  background: white; border-radius: 18px; padding: 26px 24px 22px;
+  max-width: 360px; width: 100%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+.staff-modal h3 { font-size: 1.15rem; color: #0f3460; margin-bottom: 4px; }
+.staff-modal .sub { font-size: 0.82rem; color: #888; margin-bottom: 16px; }
+.staff-modal input[type=password] {
+  width: 100%; padding: 12px 14px; border-radius: 10px;
+  border: 1.5px solid #ddd; font-size: 1rem; outline: none; font-family: inherit;
+  margin-bottom: 12px;
+}
+.staff-modal input[type=password]:focus { border-color: #0f3460; }
+.staff-modal .err { color: #c0392b; font-size: 0.82rem; margin-bottom: 10px; min-height: 18px; }
+.staff-modal-buttons { display: flex; gap: 10px; }
+.staff-modal-buttons button {
+  flex: 1; padding: 11px; border-radius: 10px; font-size: 0.92rem; font-weight: 700;
+  cursor: pointer; font-family: inherit; border: none;
+}
+.btn-login-go { background: linear-gradient(135deg, #0f3460, #16213e); color: white; }
+.btn-login-cancel { background: #f0f0f0; color: #555; }
+
+/* Staff section in detail modal */
+.staff-section {
+  background: linear-gradient(135deg, #fff4d6, #fff8e6);
+  border: 1px solid #f6c244; border-radius: 12px;
+  padding: 12px 14px; margin: 12px 20px;
+}
+.staff-section .staff-title {
+  font-size: 0.78rem; color: #b8860b; font-weight: 800;
+  margin-bottom: 10px; display: flex; align-items: center; gap: 5px;
+}
+.staff-section .modal-row { padding: 6px 0; font-size: 0.85rem; }
+.staff-section .modal-row .lbl { color: #8a6d1a; }
+.staff-section .staff-actions { display: flex; gap: 8px; margin-top: 10px; }
+.staff-section .staff-actions a {
+  flex: 1; padding: 8px; border-radius: 8px;
+  text-align: center; text-decoration: none;
+  font-size: 0.8rem; font-weight: 700;
+  background: #0f3460; color: white;
+}
+.staff-section .staff-actions a.maps { background: #4285f4; }
+
+.card-code a.code-link {
+  color: #f6c244; text-decoration: none; font-weight: 700;
+  letter-spacing: 1px;
+}
+.card-code a.code-link:hover { text-decoration: underline; }
+
+@media (max-width: 580px) {
+  .header-logo { font-size: 0.92rem; }
+  .grid { padding: 10px; gap: 12px; grid-template-columns: 1fr; }
+  .stats-bar { font-size: 0.77rem; }
+  .card-photo { height: 240px; }
+  .price-main { font-size: 1.7rem; }
+  .modal-price { font-size: 1.7rem; }
+  .modal-actions { grid-template-columns: 1fr 1fr 1fr; }
+  .btn-call, .btn-line, .btn-wa { font-size: 0.78rem; padding: 12px 4px; }
+}
+</style>
+</head>
+<body>
+<!-- HEADER -->
+<div class="header">
+  <div class="header-row1">
+    <div class="header-logo">
+      🏠 The 9 Property<span class="badge-sale">ขาย</span>
+      <span>บ้านขาย เชียงใหม่</span>
+    </div>
+    <div class="search-wrap">
+      <input type="text" id="searchInput" placeholder="ค้นหาโครงการ, ทำเล, รหัส..." oninput="applyFilters()">
+      <span class="search-icon">🔍</span>
+    </div>
+    <div class="staff-controls">
+      <button class="staff-btn" id="staffBtn" onclick="staffBtnClick()">🔐 Staff</button>
+    </div>
+  </div>
+  <div class="header-row2">
+    <button class="filter-btn active" onclick="setType('all',this)">ทั้งหมด</button>
+    <button class="filter-btn" onclick="setType('บ้านเดี่ยว',this)">🏡 บ้านเดี่ยว</button>
+    <button class="filter-btn" onclick="setType('ทาวน์เฮ้าส์',this)">🏘 ทาวน์</button>
+    <button class="filter-btn" onclick="setType('คอนโด',this)">🏢 คอนโด</button>
+    <button class="filter-btn" onclick="setType('พูลวิลล่า',this)">🏊 พูลวิลล่า</button>
+    <div class="filter-sep"></div>
+    <button class="filter-btn" id="btnAgentDirect" onclick="setAgent('direct',this)">📌 ติดทรัพย์</button>
+    <button class="filter-btn" id="btnAgentCo" onclick="setAgent('co',this)">🤝 Co</button>
+    <div class="filter-sep"></div>
+    <select class="filter-select" id="selMin" onchange="applyFilters()">
+      <option value="0">ราคาต่ำสุด</option>
+      <option value="1000000">1 ล้าน+</option>
+      <option value="2000000">2 ล้าน+</option>
+      <option value="3000000">3 ล้าน+</option>
+      <option value="5000000">5 ล้าน+</option>
+      <option value="10000000">10 ล้าน+</option>
+      <option value="20000000">20 ล้าน+</option>
+    </select>
+    <select class="filter-select" id="selMax" onchange="applyFilters()">
+      <option value="999999999">ราคาสูงสุด</option>
+      <option value="2000000">≤ 2 ล้าน</option>
+      <option value="3000000">≤ 3 ล้าน</option>
+      <option value="5000000">≤ 5 ล้าน</option>
+      <option value="10000000">≤ 10 ล้าน</option>
+      <option value="20000000">≤ 20 ล้าน</option>
+      <option value="50000000">≤ 50 ล้าน</option>
+    </select>
+    <select class="filter-select" id="selBed" onchange="applyFilters()">
+      <option value="all">🛏 ทุกขนาด</option>
+      <option value="1">1 นอน</option>
+      <option value="2">2 นอน</option>
+      <option value="3">3 นอน</option>
+      <option value="4">4+ นอน</option>
+    </select>
+    <select class="filter-select" id="selNeg" onchange="applyFilters()">
+      <option value="all">💬 ต่อรอง</option>
+      <option value="yes">✅ ต่อรองได้</option>
+    </select>
+    <div class="filter-sep"></div>
+    <button class="filter-clear-btn" id="btnClearFilters" onclick="clearAllFilters()">✕ ล้างตัวกรอง</button>
+  </div>
+</div>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div>แสดง <strong id="countDisplay">–</strong> รายการ</div>
+  <div class="stats-right">
+    <select class="sort-select" id="selSort" onchange="applyFilters()">
+      <option value="price_asc">ราคา ถูก→แพง</option>
+      <option value="price_desc">ราคา แพง→ถูก</option>
+      <option value="name_asc">ชื่อโครงการ A-Z</option>
+      <option value="area_desc">พื้นที่ ใหญ่→เล็ก</option>
+      <option value="bed_asc">ห้องนอน น้อย→มาก</option>
+    </select>
+    <button class="btn-refresh" id="btnRefresh" onclick="loadData(true)">
+      <span class="refresh-icon">↻</span> โหลดใหม่
+    </button>
+  </div>
+</div>
+
+<!-- GRID -->
+<div class="grid-wrap">
+  <div class="grid" id="grid"></div>
+</div>
+
+<!-- CONTACT BAR -->
+<div class="contact-bar">
+  <div class="contact-bar-text">ติดต่อ <strong>The 9 Property</strong> · 080-994-5497</div>
+  <div class="contact-bar-btns">
+    <a class="btn-bar btn-bar-call" href="tel:0809945497">📞 โทร</a>
+    <a class="btn-bar btn-bar-line" href="#" onclick="openLine();return false;">💬 LINE</a>
+    <a class="btn-bar btn-bar-wa"   href="#" onclick="openWA();return false;">🟢 WA</a>
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="detailOverlay" onclick="if(event.target===this)closeDetail()">
+  <div class="modal">
+    <div class="modal-gallery">
+      <button class="modal-close" onclick="closeDetail()">✕</button>
+      <div class="modal-photo-wrap" id="dPhotoWrap">
+        <div class="modal-photo-placeholder"><span class="ph-icon">🏠</span><span>ไม่มีรูปภาพ</span></div>
+      </div>
+    </div>
+    <div class="modal-info">
+      <div class="modal-title" id="dProject"></div>
+      <div class="modal-sub"   id="dSub"></div>
+      <div class="modal-price">฿<span id="dPrice"></span><small id="dPriceUnit"></small></div>
+      <div class="modal-price-per" id="dPricePer"></div>
+
+      <div class="modal-section-title">📋 รายละเอียดทรัพย์</div>
+      <div class="modal-rows">
+        <div class="modal-row"><span class="lbl">ทำเล</span>          <span class="val" id="dLocation"></span></div>
+        <div class="modal-row"><span class="lbl">ประเภท</span>        <span class="val" id="dType"></span></div>
+        <div class="modal-row"><span class="lbl">ห้องนอน / ห้องน้ำ</span> <span class="val" id="dBedBath"></span></div>
+        <div class="modal-row" id="dRowParking" style="display:none;"><span class="lbl">จอดรถ</span>    <span class="val" id="dParking"></span></div>
+        <div class="modal-row" id="dRowLand" style="display:none;"><span class="lbl">ขนาดที่ดิน</span>  <span class="val" id="dLand"></span></div>
+        <div class="modal-row" id="dRowUsable" style="display:none;"><span class="lbl">พื้นที่ใช้สอย</span> <span class="val" id="dUsable"></span></div>
+        <div class="modal-row" id="dRowFloor" style="display:none;"><span class="lbl">ชั้น</span>        <span class="val" id="dFloor"></span></div>
+        <div class="modal-row" id="dRowBuilding" style="display:none;"><span class="lbl">ตึก</span>     <span class="val" id="dBuilding"></span></div>
+        <div class="modal-row" id="dRowDirection" style="display:none;"><span class="lbl">ทิศ</span>    <span class="val" id="dDirection"></span></div>
+        <div class="modal-row" id="dRowAge" style="display:none;"><span class="lbl">อายุบ้าน</span>     <span class="val" id="dAge"></span></div>
+        <div class="modal-row" id="dRowTransfer" style="display:none;"><span class="lbl">ค่าโอน</span>   <span class="val" id="dTransfer"></span></div>
+        <div class="modal-row" id="dRowCommon" style="display:none;"><span class="lbl">ค่าส่วนกลาง/ปี</span> <span class="val" id="dCommon"></span></div>
+        <div class="modal-row"><span class="lbl">รหัสทรัพย์</span>     <span class="val" id="dCode"></span></div>
+      </div>
+
+      <div id="dBonusBlock" style="display:none;">
+        <div class="modal-section-title">🎁 ของแถม / เฟอร์นิเจอร์</div>
+        <div class="modal-bonus-list" id="dBonus"></div>
+      </div>
+
+      <div id="dInfoBlock" style="display:none;">
+        <div class="modal-section-title">📝 รายละเอียดเพิ่มเติม</div>
+        <div class="modal-bonus-list" id="dInfo" style="background:#f5f7fa;border-color:#ddd;color:#333;"></div>
+      </div>
+    </div>
+
+    <!-- STAFF SECTION -->
+    <div class="staff-section" id="dStaffSection" style="display:none;">
+      <div class="staff-title">⭐ ข้อมูลทีมงาน (Staff Only)</div>
+      <div class="modal-row"><span class="lbl">เจ้าของ</span> <span class="val" id="dOwnerName">–</span></div>
+      <div class="modal-row"><span class="lbl">เบอร์โทร</span> <span class="val" id="dOwnerTel">–</span></div>
+      <div class="modal-row" id="dContactRow" style="display:none;"><span class="lbl">ติดต่ออื่น</span> <span class="val" id="dContact">–</span></div>
+      <div class="modal-row"><span class="lbl">พิกัด</span> <span class="val" id="dCoords">–</span></div>
+      <div class="staff-actions">
+        <a id="dCallOwner" href="#">📞 โทรเจ้าของ</a>
+        <a id="dMapsLink" class="maps" href="#" target="_blank" rel="noopener">🗺 ดูใน Maps</a>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <a class="btn-call" href="tel:0809945497">📞 โทร</a>
+      <a class="btn-line" href="#" onclick="openLine();return false;">💬 LINE</a>
+      <a class="btn-wa"   href="#" onclick="openWA();return false;">🟢 WhatsApp</a>
+    </div>
+  </div>
+</div>
+
+<!-- STAFF LOGIN MODAL -->
+<div class="staff-modal-overlay" id="staffLoginModal" onclick="if(event.target===this)closeStaffModal()">
+  <div class="staff-modal">
+    <h3>🔐 เข้าสู่ระบบทีมงาน</h3>
+    <div class="sub">เฉพาะทีมงาน The 9 Property — หลังเข้าสู่ระบบจะเห็นเบอร์เจ้าของและพิกัด</div>
+    <input type="password" id="staffPasswordInput" placeholder="รหัสผ่าน"
+           onkeydown="if(event.key==='Enter') doStaffLogin()" autocomplete="current-password">
+    <div class="err" id="staffLoginErr"></div>
+    <div class="staff-modal-buttons">
+      <button class="btn-login-cancel" onclick="closeStaffModal()">ยกเลิก</button>
+      <button class="btn-login-go" onclick="doStaffLogin()">เข้าสู่ระบบ</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+//  CONFIG — แก้ตรงนี้เมื่อ deploy
+// ═══════════════════════════════════════════════════════════
+const BROKER_PHONE = '0809945497';
+const LINE_ID      = '@the9property';                                // เปลี่ยนเป็น Line ID จริง
+const WA_PHONE     = '66809945497';                                  // WhatsApp ต้องใช้รหัสประเทศ (66 = ไทย ตัด 0 หน้า)
+
+// ★ API endpoint ฝั่งขาย — Boom เปลี่ยนเป็น URL จริงเมื่อ deploy Apps Script เสร็จ
+// ส่ง ?type=sale เพื่อให้ doGet อ่านชีต "รายชื่อบ้านขาย" แทน "รายชื่อบ้านเช่า"
+const SCRIPT_URL   = 'https://script.google.com/macros/s/AKfycbxToJv9BzTiEAoFuqCcWpAFFmfHzO468av1OCYnjwEwlRfw8IJI3XrFWtYS19N7Uy3JPA/exec';   // ตัวอย่าง: 'https://script.google.com/macros/s/AKfycb.../exec'
+const API_TYPE     = 'sale';
+
+// ★ ตอนยังไม่มี SCRIPT_URL → ใช้ mock-data เพื่อ preview UI
+const USE_MOCK_DATA = !SCRIPT_URL;
+
+// ═══════════════════════════════════════════════════════════
+//  MOCK DATA — ลบทิ้งเมื่อต่อ API จริง
+// ═══════════════════════════════════════════════════════════
+const MOCK_DATA = [
+  {
+    code: 'SXM0732', project: 'พูลวิลล่าสุดหรู สันทราย',
+    location: 'สันทราย > สันพระเนตร',
+    price: 10900000, type: 'พูลวิลล่า', bedroom: '4', bathroom: '4',
+    parking: '2', land: '116', usable: '350', floor: '2',
+    direction: 'ใต้', houseAge: 'ใหม่', transfer: 'แบ่งกัน 50/50',
+    negotiate: 'ได้', commonFee: '',
+    bonus: 'แอร์ 6 ตัว\nเตียง 4 ชุด\nโซฟา\nครัวบิลด์อิน\nสระว่ายน้ำ',
+    houseInfo: 'พูลวิลล่าใหม่ ใกล้ Promenada Resort Mall',
+    coAgent: false, thumb: null,
+    photos: [],
+  },
+  {
+    code: 'SDS0235', project: 'บ้านเดี่ยวอรสิริน 3',
+    location: 'ดอยสะเก็ด > สันปูเลย',
+    price: 4500000, type: 'บ้านเดี่ยว', bedroom: '3', bathroom: '2',
+    parking: '2', land: '52.5', usable: '160',
+    direction: 'ตก', houseAge: '5 ปี', transfer: 'ผู้ซื้อออก',
+    negotiate: 'ได้', commonFee: '6000',
+    bonus: 'แอร์ 3 ตัว\nม่านครบ\nครัวบิลด์อิน',
+    houseInfo: '',
+    coAgent: false, thumb: null, photos: [],
+  },
+  {
+    code: 'SMR0118', project: 'คอนโด D Condo สนามบิน',
+    location: 'เมืองเชียงใหม่ > สุเทพ',
+    price: 1850000, type: 'คอนโด', bedroom: '1', bathroom: '1',
+    parking: '1', usable: '32', floor: '8', building: 'A',
+    direction: 'เหนือ', houseAge: '3 ปี', transfer: 'ผู้ขายออก',
+    negotiate: 'ไม่ได้', commonFee: '12000',
+    bonus: 'เฟอร์ครบ',
+    houseInfo: 'ใกล้สนามบิน 5 นาที, ใกล้เซ็นทรัล แอร์พอร์ต',
+    coAgent: true, thumb: null, photos: [],
+  },
+  {
+    code: 'SST0089', project: 'ทาวน์โฮม Pleno สันทราย',
+    location: 'สันทราย > หนองหาร',
+    price: 2790000, type: 'ทาวน์เฮ้าส์', bedroom: '3', bathroom: '2',
+    parking: '1', land: '18.5', usable: '108',
+    direction: 'ออก', houseAge: '2 ปี', transfer: 'ผู้ซื้อออก',
+    negotiate: 'ได้',
+    bonus: 'แอร์ 2 ตัว\nครัวบิลด์อิน\nเครื่องทำน้ำอุ่น',
+    houseInfo: '', coAgent: false, thumb: null, photos: [],
+  },
+];
+
+// ═══════════════════════════════════════════════════════════
+//  PHOTO URL HELPERS
+// ═══════════════════════════════════════════════════════════
+function photoUrl(id, size) {
+  return 'https://lh3.googleusercontent.com/d/' + id + '=w' + (size || 800);
+}
+function photoUrlFallback(id) {
+  return 'https://drive.usercontent.google.com/download?id=' + id + '&export=view';
+}
+function onPhotoError(img, fallbackId) {
+  if (!img.dataset.fallbackTried && fallbackId) {
+    img.dataset.fallbackTried = '1';
+    img.src = photoUrlFallback(fallbackId);
+    return;
+  }
+  var parent = img.parentElement;
+  parent.innerHTML = '<div class="card-photo-placeholder"><span class="ph-icon">🏠</span><span>ไม่มีรูปภาพ</span></div>';
+}
+
+// ═══════════════════════════════════════════════════════════
+//  CONTACT HANDLERS
+// ═══════════════════════════════════════════════════════════
+function openLine() {
+  // ถ้า LINE_ID เริ่มด้วย @ → ใช้ official account link, ไม่งั้น add by id
+  var url = (LINE_ID.charAt(0) === '@')
+    ? 'https://line.me/R/ti/p/' + LINE_ID
+    : 'https://line.me/ti/p/~' + LINE_ID;
+  window.open(url, '_blank');
+}
+function openWA(propertyCode) {
+  var msg = 'สวัสดีครับ สอบถามรายละเอียดทรัพย์';
+  if (propertyCode) msg += ' รหัส ' + propertyCode;
+  var url = 'https://wa.me/' + WA_PHONE + '?text=' + encodeURIComponent(msg);
+  window.open(url, '_blank');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════════
+var allData     = [];
+var activeType  = 'all';
+var activeAgent = 'all';
+
+// ═══════════════════════════════════════════════════════════
+//  STAFF AUTH
+// ═══════════════════════════════════════════════════════════
+function getStaffToken() {
+  try { return sessionStorage.getItem('staff_token') || ''; } catch(e) { return ''; }
+}
+function isStaffLoggedIn() { return !!getStaffToken(); }
+function updateStaffBtn() {
+  var btn = document.getElementById('staffBtn');
+  if (!btn) return;
+  if (isStaffLoggedIn()) {
+    btn.textContent = '⭐ Staff (ออก)';
+    btn.classList.add('logged-in');
+  } else {
+    btn.textContent = '🔐 Staff';
+    btn.classList.remove('logged-in');
+  }
+}
+function staffBtnClick() {
+  if (isStaffLoggedIn()) {
+    if (confirm('ออกจากระบบทีมงาน?')) {
+      try { sessionStorage.removeItem('staff_token'); } catch(e) {}
+      updateStaffBtn();
+      loadData(false);
+      showToast('👋 ออกจากระบบแล้ว');
+    }
+  } else {
+    openStaffModal();
+  }
+}
+function openStaffModal() {
+  document.getElementById('staffLoginErr').textContent = '';
+  document.getElementById('staffPasswordInput').value = '';
+  document.getElementById('staffLoginModal').classList.add('open');
+  setTimeout(function() { document.getElementById('staffPasswordInput').focus(); }, 50);
+}
+function closeStaffModal() {
+  document.getElementById('staffLoginModal').classList.remove('open');
+}
+function doStaffLogin() {
+  var pw = document.getElementById('staffPasswordInput').value;
+  if (!pw) { document.getElementById('staffLoginErr').textContent = 'กรุณาใส่รหัสผ่าน'; return; }
+  if (USE_MOCK_DATA) {
+    // mock: รหัส 456258
+    if (pw === '456258') {
+      try { sessionStorage.setItem('staff_token', pw); } catch(e) {}
+      closeStaffModal();
+      updateStaffBtn();
+      // เติม mock owner ให้ดูภาพรวม
+      allData.forEach(function(p) {
+        p.ownerName = 'เจ้าของทรัพย์';
+        p.ownerTel  = '0812345678';
+        p.lat = 18.79; p.lng = 98.99;
+      });
+      applyFilters();
+      showToast('✅ เข้าสู่ระบบสำเร็จ (mock)');
+    } else {
+      document.getElementById('staffLoginErr').textContent = '❌ รหัสผ่านไม่ถูกต้อง (mock: 456258)';
+    }
+    return;
+  }
+  document.getElementById('staffLoginErr').textContent = '⏳ กำลังตรวจสอบ...';
+  try { sessionStorage.setItem('staff_token', pw); } catch(e) {}
+  var url = SCRIPT_URL + '?type=' + API_TYPE + '&token=' + encodeURIComponent(pw);
+  fetch(url)
+    .then(function(r) { return r.json(); })
+    .then(function(json) {
+      if (json.staff === true) {
+        closeStaffModal();
+        updateStaffBtn();
+        allData = json.data || [];
+        applyFilters();
+        showToast('✅ เข้าสู่ระบบสำเร็จ');
+      } else {
+        try { sessionStorage.removeItem('staff_token'); } catch(e) {}
+        document.getElementById('staffLoginErr').textContent = '❌ รหัสผ่านไม่ถูกต้อง';
+      }
+    })
+    .catch(function(err) {
+      try { sessionStorage.removeItem('staff_token'); } catch(e) {}
+      document.getElementById('staffLoginErr').textContent = '⚠️ เชื่อมต่อไม่ได้: ' + err.message;
+    });
+}
+
+// ═══════════════════════════════════════════════════════════
+//  LOAD DATA
+// ═══════════════════════════════════════════════════════════
+function loadData(manual) {
+  var btn = document.getElementById('btnRefresh');
+  btn.classList.add('spinning'); btn.disabled = true;
+  showLoading();
+
+  if (USE_MOCK_DATA) {
+    setTimeout(function() {
+      btn.classList.remove('spinning'); btn.disabled = false;
+      allData = MOCK_DATA.slice();
+      applyFilters();
+      if (manual) showToast('✅ โหลด mock-data สำเร็จ ' + allData.length + ' รายการ');
+    }, 400);
+    return;
+  }
+
+  var params = ['type=' + API_TYPE];
+  if (manual) params.push('refresh=1');
+  var token = getStaffToken();
+  if (token) params.push('token=' + encodeURIComponent(token));
+  var url = SCRIPT_URL + '?' + params.join('&');
+
+  fetch(url)
+    .then(function(r) { return r.json(); })
+    .then(function(json) {
+      btn.classList.remove('spinning'); btn.disabled = false;
+      if (json.error || !json.ok) { showError(json.error || json.msg || 'ไม่ทราบสาเหตุ'); return; }
+      allData = json.data || [];
+      applyFilters();
+      if (manual) showToast('✅ โหลดข้อมูลสำเร็จ ' + allData.length + ' รายการ');
+    })
+    .catch(function(err) {
+      btn.classList.remove('spinning'); btn.disabled = false;
+      showError('เชื่อมต่อไม่ได้: ' + err.message);
+    });
+}
+
+// ═══════════════════════════════════════════════════════════
+//  FILTER & SORT
+// ═══════════════════════════════════════════════════════════
+function clearAllFilters() {
+  activeType = 'all';
+  var row2 = document.querySelector('.header-row2');
+  row2.querySelectorAll('.filter-btn').forEach(function(b) {
+    if (!b.id) b.classList.remove('active');
+  });
+  var firstTypeBtn = Array.from(row2.querySelectorAll('.filter-btn')).find(function(b){ return !b.id; });
+  if (firstTypeBtn) firstTypeBtn.classList.add('active');
+
+  activeAgent = 'all';
+  var btnD = document.getElementById('btnAgentDirect');
+  var btnC = document.getElementById('btnAgentCo');
+  if (btnD) btnD.classList.remove('active');
+  if (btnC) btnC.classList.remove('active');
+
+  document.getElementById('selMin').value = '0';
+  document.getElementById('selMax').value = '999999999';
+  document.getElementById('selBed').value = 'all';
+  document.getElementById('selNeg').value = 'all';
+  document.getElementById('searchInput').value = '';
+  applyFilters();
+}
+
+function setType(val, btn) {
+  activeType = val;
+  var typeBtns = btn.parentElement.querySelectorAll('.filter-btn');
+  typeBtns.forEach(function(b) { if (!b.id) b.classList.remove('active'); });
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function setAgent(val, btn) {
+  if (activeAgent === val) {
+    activeAgent = 'all';
+    btn.classList.remove('active');
+  } else {
+    activeAgent = val;
+    document.getElementById('btnAgentDirect').classList.remove('active');
+    document.getElementById('btnAgentCo').classList.remove('active');
+    btn.classList.add('active');
+  }
+  applyFilters();
+}
+
+function applyFilters() {
+  var search   = document.getElementById('searchInput').value.toLowerCase().trim();
+  var priceMin = parseInt(document.getElementById('selMin').value);
+  var priceMax = parseInt(document.getElementById('selMax').value);
+  var bed      = document.getElementById('selBed').value;
+  var neg      = document.getElementById('selNeg').value;
+  var sort     = document.getElementById('selSort').value;
+
+  var filtered = allData.filter(function(p) {
+    if (activeType !== 'all' && p.type !== activeType) return false;
+    if (p.price > 0 && (p.price < priceMin || p.price > priceMax)) return false;
+    if (bed !== 'all') {
+      var br = parseInt(p.bedroom) || 0;
+      if (bed === '4' && br < 4) return false;
+      if (bed !== '4' && br !== parseInt(bed)) return false;
+    }
+    if (neg === 'yes' && p.negotiate !== 'ได้') return false;
+    if (activeAgent === 'co'     && !p.coAgent) return false;
+    if (activeAgent === 'direct' &&  p.coAgent) return false;
+    if (search) {
+      var hay = ((p.code||'') + ' ' + (p.project||'') + ' ' + (p.location||'') + ' ' + (p.type||'')).toLowerCase();
+      if (hay.indexOf(search) === -1) return false;
+    }
+    return true;
+  });
+
+  filtered.sort(function(a, b) {
+    if (sort === 'price_asc')  return (a.price||0) - (b.price||0);
+    if (sort === 'price_desc') return (b.price||0) - (a.price||0);
+    if (sort === 'name_asc')   return (a.project||'').localeCompare(b.project||'');
+    if (sort === 'area_desc')  return (parseFloat(b.land)||parseFloat(b.usable)||0) - (parseFloat(a.land)||parseFloat(a.usable)||0);
+    if (sort === 'bed_asc')    return (parseInt(a.bedroom)||0) - (parseInt(b.bedroom)||0);
+    return 0;
+  });
+
+  showGrid(filtered);
+  document.getElementById('countDisplay').textContent = filtered.length;
+
+  var hasFilter = activeType !== 'all'
+    || activeAgent !== 'all'
+    || document.getElementById('selMin').value !== '0'
+    || document.getElementById('selMax').value !== '999999999'
+    || document.getElementById('selBed').value !== 'all'
+    || document.getElementById('selNeg').value !== 'all'
+    || document.getElementById('searchInput').value.trim() !== '';
+  document.getElementById('btnClearFilters').classList.toggle('visible', hasFilter);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════════════
+function badgeClass(t) {
+  if (t === 'พูลวิลล่า')   return 'badge-villa';
+  if (t === 'คอนโด')       return 'badge-condo';
+  if (t === 'ทาวน์เฮ้าส์') return 'badge-town';
+  return 'badge-single';
+}
+function typeEmoji(t) {
+  var m = {'บ้านเดี่ยว':'🏡','ทาวน์เฮ้าส์':'🏘','คอนโด':'🏢','พูลวิลล่า':'🏊','บ้าน':'🏠'};
+  return (m[t]||'🏠') + ' ' + (t||'–');
+}
+function fmtPrice(p) {
+  if (!p) return '–';
+  return Number(p).toLocaleString('th-TH');
+}
+// แสดงราคาเป็นล้าน เช่น 4500000 → "4.5 ล้าน"
+function fmtPriceShort(p) {
+  if (!p) return '–';
+  if (p >= 1000000) {
+    var m = p / 1000000;
+    return (m % 1 === 0 ? m.toFixed(0) : m.toFixed(2).replace(/\.?0+$/, '')) + ' ล้าน';
+  }
+  return Number(p).toLocaleString('th-TH');
+}
+// ราคาต่อตร.ว. / ตร.ม.
+function calcPricePerSqw(price, land) {
+  var l = parseFloat(land);
+  if (!price || !l || l <= 0) return null;
+  return Math.round(price / l);
+}
+function calcPricePerSqm(price, usable) {
+  var u = parseFloat(usable);
+  if (!price || !u || u <= 0) return null;
+  return Math.round(price / u);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  RENDER GRID
+// ═══════════════════════════════════════════════════════════
+function showGrid(data) {
+  var g = document.getElementById('grid');
+  if (data.length === 0 && allData.length > 0) {
+    g.innerHTML = '<div class="state-box"><div class="icon">🔍</div><h3>ไม่พบรายการที่ตรงกัน</h3><p>ลองเปลี่ยนตัวกรองหรือค้นหาใหม่</p></div>';
+    return;
+  }
+  if (data.length === 0) { g.innerHTML = ''; return; }
+
+  g.innerHTML = data.map(function(p, idx) {
+    // photo block
+    var saleBadge = '<span class="sale-badge">ขาย</span>';
+    var topRight  = p.coAgent
+      ? '<span class="co-badge-sale">Co</span>'
+      : (p.negotiate === 'ได้' ? '<span class="negotiable-badge">💬 ต่อรองได้</span>' : '');
+    var photoBlock = p.thumb
+      ? '<div class="card-photo"><img src="' + photoUrl(p.thumb, 500) + '" loading="lazy" alt="' + escapeHtml(p.project||'') + '" onerror="onPhotoError(this,\'' + p.thumb + '\')">' + saleBadge + topRight + '</div>'
+      : '<div class="card-photo"><div class="card-photo-placeholder"><span class="ph-icon">🏠</span><span>ยังไม่มีรูป</span></div>' + saleBadge + topRight + '</div>';
+
+    // staff: code link to folder
+    var codeContent = (isStaffLoggedIn() && p.folderUrl)
+      ? '<a class="code-link" href="' + p.folderUrl + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="เปิดโฟลเดอร์ใน Drive">' + (p.code||'') + ' 📁</a>'
+      : (p.code||'');
+
+    // ราคา/ตร.ว. หรือ /ตร.ม.
+    var perSqw = calcPricePerSqw(p.price, p.land);
+    var perSqm = calcPricePerSqm(p.price, p.usable);
+    var perBits = [];
+    if (perSqw) perBits.push('<span>' + fmtPrice(perSqw) + ' /ตร.ว.</span>');
+    if (perSqm) perBits.push('<span>' + fmtPrice(perSqm) + ' /ตร.ม.</span>');
+    var pricePer = perBits.length ? '<div class="price-per">' + perBits.join('') + '</div>' : '<div class="price-per"></div>';
+
+    // area tag
+    var areaTags = '';
+    if (p.land)   areaTags += '<span class="tag tag-area">📐 ' + escapeHtml(p.land) + ' ตรว.</span>';
+    if (p.usable) areaTags += '<span class="tag tag-area">📏 ' + escapeHtml(p.usable) + ' ตรม.</span>';
+
+    var pj = JSON.stringify(p).replace(/"/g, '&quot;');
+
+    return '<div class="card" onclick=\'openDetail(' + pj + ')\'>' +
+      photoBlock +
+      '<div class="card-header">' +
+        '<div class="card-code">' + codeContent + '</div>' +
+        '<div class="card-project">' + escapeHtml(p.project||'ไม่ระบุโครงการ') + '</div>' +
+        '<div class="card-location">' + escapeHtml(p.location||'ไม่ระบุทำเล') + '</div>' +
+        '<span class="card-type-badge ' + badgeClass(p.type) + '">' + escapeHtml(p.type||'') + '</span>' +
+      '</div>' +
+      '<div class="card-body">' +
+        '<div class="price-main">฿' + fmtPriceShort(p.price) + '<span class="unit">บาท</span></div>' +
+        pricePer +
+        '<div class="card-tags">' +
+          (p.bedroom  ? '<span class="tag">🛏 ' + escapeHtml(p.bedroom)  + ' นอน</span>' : '') +
+          (p.bathroom ? '<span class="tag">🚿 ' + escapeHtml(p.bathroom) + ' น้ำ</span>' : '') +
+          (p.parking  ? '<span class="tag">🚘 ' + escapeHtml(p.parking)  + ' คัน</span>' : '') +
+          areaTags +
+        '</div>' +
+      '</div>' +
+      '<div class="card-footer">' +
+        '<button class="btn-detail" onclick=\'event.stopPropagation();openDetail(' + pj + ')\'>📋 ดูรายละเอียด</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function showLoading() {
+  document.getElementById('grid').innerHTML =
+    '<div class="state-box"><div class="spinner"></div><h3>กำลังโหลดข้อมูล...</h3><p>ดึงข้อมูลจาก Google Sheet</p></div>';
+  document.getElementById('countDisplay').textContent = '…';
+}
+function showError(msg) {
+  document.getElementById('grid').innerHTML =
+    '<div class="state-box"><div class="icon">⚠️</div><h3>โหลดข้อมูลไม่สำเร็จ</h3><p>' + escapeHtml(msg) + '</p></div>';
+  document.getElementById('countDisplay').textContent = '!';
+}
+
+// ═══════════════════════════════════════════════════════════
+//  DETAIL MODAL + GALLERY
+// ═══════════════════════════════════════════════════════════
+function openDetail(p) {
+  // แสดงรูปแรก (thumb) เท่านั้น
+  var wrap = document.getElementById('dPhotoWrap');
+  if (p.thumb) {
+    wrap.innerHTML = '<img src="' + photoUrl(p.thumb, 1000) + '" alt="' + escapeHtml(p.project||'') + '" '
+                   + 'onerror="onModalPhotoError(this,\'' + p.thumb + '\')">'
+                   + '<span class="modal-photo-badge ' + badgeClass(p.type) + '">' + escapeHtml(p.type||'') + '</span>';
+  } else {
+    wrap.innerHTML = '<div class="modal-photo-placeholder"><span class="ph-icon">🏠</span><span>ยังไม่มีรูปภาพ</span></div>'
+                   + '<span class="modal-photo-badge ' + badgeClass(p.type) + '">' + escapeHtml(p.type||'') + '</span>';
+  }
+
+  document.getElementById('dProject').textContent  = p.project  || '–';
+  document.getElementById('dSub').textContent      = (p.code||'') + (p.location ? ' · 📍 ' + p.location : '');
+  document.getElementById('dPrice').textContent    = fmtPrice(p.price);
+  document.getElementById('dPriceUnit').textContent= ' บาท';
+
+  // price per & negotiable pill
+  var pp = [];
+  var psw = calcPricePerSqw(p.price, p.land);
+  var psm = calcPricePerSqm(p.price, p.usable);
+  if (psw) pp.push('<span>฿' + fmtPrice(psw) + ' /ตร.ว.</span>');
+  if (psm) pp.push('<span>฿' + fmtPrice(psm) + ' /ตร.ม.</span>');
+  if (p.negotiate === 'ได้') pp.push('<span class="negotiable">💬 ต่อรองได้</span>');
+  document.getElementById('dPricePer').innerHTML = pp.join('');
+
+  document.getElementById('dLocation').textContent = p.location || '–';
+  document.getElementById('dType').textContent     = typeEmoji(p.type);
+  document.getElementById('dBedBath').textContent  = (p.bedroom||'–') + ' นอน / ' + (p.bathroom||'–') + ' น้ำ';
+
+  setRow('dRowParking',   'dParking',   p.parking ? p.parking + ' คัน' : null);
+  setRow('dRowLand',      'dLand',      p.land    ? p.land + ' ตรว.'   : null);
+  setRow('dRowUsable',    'dUsable',    p.usable  ? p.usable + ' ตรม.' : null);
+  setRow('dRowFloor',     'dFloor',     p.floor   || null);
+  setRow('dRowBuilding',  'dBuilding',  p.building|| null);
+  setRow('dRowDirection', 'dDirection', p.direction|| null);
+  setRow('dRowAge',       'dAge',       p.houseAge|| null);
+  setRow('dRowTransfer',  'dTransfer',  p.transfer|| null);
+  setRow('dRowCommon',    'dCommon',    p.commonFee ? Number(p.commonFee).toLocaleString('th-TH') + ' บาท' : null);
+
+  // code (with optional staff folder link)
+  var dCodeEl = document.getElementById('dCode');
+  if (isStaffLoggedIn() && p.folderUrl) {
+    dCodeEl.innerHTML = '<a class="code-link" href="' + p.folderUrl + '" target="_blank" rel="noopener">' + (p.code || '–') + ' 📁</a>';
+  } else {
+    dCodeEl.textContent = p.code || '–';
+  }
+
+  // bonus / extra info
+  var bonusBlock = document.getElementById('dBonusBlock');
+  if (p.bonus && String(p.bonus).trim()) {
+    document.getElementById('dBonus').textContent = p.bonus;
+    bonusBlock.style.display = '';
+  } else {
+    bonusBlock.style.display = 'none';
+  }
+  var infoBlock = document.getElementById('dInfoBlock');
+  if (p.houseInfo && String(p.houseInfo).trim()) {
+    document.getElementById('dInfo').textContent = p.houseInfo;
+    infoBlock.style.display = '';
+  } else {
+    infoBlock.style.display = 'none';
+  }
+
+  // staff section
+  var staffSec = document.getElementById('dStaffSection');
+  if (isStaffLoggedIn() && (p.ownerName || p.ownerTel)) {
+    document.getElementById('dOwnerName').textContent = p.ownerName || '–';
+    var tel = (p.ownerTel || '').replace(/\s+/g, '');
+    document.getElementById('dOwnerTel').textContent = p.ownerTel || '–';
+    document.getElementById('dCallOwner').href = tel ? ('tel:' + tel) : '#';
+    document.getElementById('dCallOwner').style.opacity = tel ? '1' : '0.4';
+    var contactRow = document.getElementById('dContactRow');
+    if (p.contact) {
+      document.getElementById('dContact').textContent = p.contact;
+      contactRow.style.display = '';
+    } else {
+      contactRow.style.display = 'none';
+    }
+    var latNum = parseFloat(p.lat), lngNum = parseFloat(p.lng);
+    var mapsLink = document.getElementById('dMapsLink');
+    if (!isNaN(latNum) && !isNaN(lngNum)) {
+      document.getElementById('dCoords').textContent = latNum.toFixed(6) + ', ' + lngNum.toFixed(6);
+      mapsLink.href = 'https://www.google.com/maps?q=' + latNum + ',' + lngNum;
+      mapsLink.style.opacity = '1'; mapsLink.style.pointerEvents = '';
+    } else {
+      document.getElementById('dCoords').textContent = '— ไม่ระบุพิกัด';
+      mapsLink.href = '#'; mapsLink.style.opacity = '0.4'; mapsLink.style.pointerEvents = 'none';
+    }
+    staffSec.style.display = '';
+  } else {
+    staffSec.style.display = 'none';
+  }
+
+  document.getElementById('detailOverlay').classList.add('open');
+  var modal = document.querySelector('.modal');
+  if (modal) modal.scrollTop = 0;
+}
+
+function setRow(rowId, valId, value) {
+  var row = document.getElementById(rowId);
+  if (value == null || value === '' || value === '0') {
+    row.style.display = 'none';
+  } else {
+    document.getElementById(valId).textContent = value;
+    row.style.display = '';
+  }
+}
+
+function onModalPhotoError(img, fallbackId) {
+  if (!img.dataset.fallbackTried && fallbackId) {
+    img.dataset.fallbackTried = '1';
+    img.src = photoUrlFallback(fallbackId);
+    return;
+  }
+  img.parentElement.innerHTML = '<div class="modal-photo-placeholder"><span class="ph-icon">🏠</span><span>ไม่มีรูปภาพ</span></div>';
+}
+function closeDetail() {
+  document.getElementById('detailOverlay').classList.remove('open');
+}
+
+// keyboard
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    if (document.getElementById('detailOverlay').classList.contains('open')) closeDetail();
+    if (document.getElementById('staffLoginModal').classList.contains('open')) closeStaffModal();
+  }
+});
+
+// ═══════════════════════════════════════════════════════════
+//  UTIL
+// ═══════════════════════════════════════════════════════════
+function escapeHtml(s) {
+  if (s == null) return '';
+  return String(s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(function() { t.classList.remove('show'); }, 2800);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════
+window.onload = function() {
+  updateStaffBtn();
+  loadData(false);
+};
+</script>
+</body>
+</html>
