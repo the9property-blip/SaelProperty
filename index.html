@@ -69,6 +69,10 @@ body { font-family: 'Segoe UI', 'Noto Sans Thai', sans-serif; background: #f5f6f
   max-width: 125px;
 }
 .filter-select option { color: #333; background: white; }
+.filter-num { width: 108px; cursor: text; -moz-appearance: textfield; }
+.filter-num::-webkit-outer-spin-button,
+.filter-num::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.filter-num::placeholder { color: rgba(255,255,255,0.6); }
 .filter-clear-btn {
   padding: 4px 11px; border-radius: 50px; flex-shrink: 0;
   border: 1.5px solid rgba(255,180,0,0.7);
@@ -480,39 +484,40 @@ body { font-family: 'Segoe UI', 'Noto Sans Thai', sans-serif; background: #f5f6f
     </div>
   </div>
   <div class="header-row2">
-    <button class="filter-btn active" onclick="setType('all',this)">ทั้งหมด</button>
-    <button class="filter-btn" onclick="setType('บ้านเดี่ยว',this)">🏡 บ้านเดี่ยว</button>
-    <button class="filter-btn" onclick="setType('ทาวน์เฮ้าส์',this)">🏘 ทาวน์</button>
-    <button class="filter-btn" onclick="setType('คอนโด',this)">🏢 คอนโด</button>
-    <button class="filter-btn" onclick="setType('พูลวิลล่า',this)">🏊 พูลวิลล่า</button>
+    <button class="filter-btn type-btn active" data-type="all" onclick="setType('all')">ทั้งหมด</button>
+    <button class="filter-btn type-btn" data-type="บ้านเดี่ยว" onclick="setType('บ้านเดี่ยว')">🏡 บ้านเดี่ยว</button>
+    <button class="filter-btn type-btn" data-type="ทาวน์เฮ้าส์" onclick="setType('ทาวน์เฮ้าส์')">🏘 ทาวน์</button>
+    <button class="filter-btn type-btn" data-type="คอนโด" onclick="setType('คอนโด')">🏢 คอนโด</button>
+    <button class="filter-btn type-btn" data-type="พูลวิลล่า" onclick="setType('พูลวิลล่า')">🏊 พูลวิลล่า</button>
     <div class="filter-sep"></div>
     <button class="filter-btn" id="btnAgentDirect" onclick="setAgent('direct',this)">📌 ติดทรัพย์</button>
     <button class="filter-btn" id="btnAgentCo" onclick="setAgent('co',this)">🤝 Co</button>
     <div class="filter-sep"></div>
-    <select class="filter-select" id="selMin" onchange="applyFilters()">
-      <option value="0">ราคาต่ำสุด</option>
-      <option value="1000000">1 ล้าน+</option>
-      <option value="2000000">2 ล้าน+</option>
-      <option value="3000000">3 ล้าน+</option>
-      <option value="5000000">5 ล้าน+</option>
-      <option value="10000000">10 ล้าน+</option>
-      <option value="20000000">20 ล้าน+</option>
-    </select>
-    <select class="filter-select" id="selMax" onchange="applyFilters()">
-      <option value="999999999">ราคาสูงสุด</option>
-      <option value="2000000">≤ 2 ล้าน</option>
-      <option value="3000000">≤ 3 ล้าน</option>
-      <option value="5000000">≤ 5 ล้าน</option>
-      <option value="10000000">≤ 10 ล้าน</option>
-      <option value="20000000">≤ 20 ล้าน</option>
-      <option value="50000000">≤ 50 ล้าน</option>
-    </select>
+    <input type="number" class="filter-select filter-num" id="selMin" placeholder="ราคาต่ำสุด" min="0" step="100000" inputmode="numeric" oninput="applyFilters()">
+    <input type="number" class="filter-select filter-num" id="selMax" placeholder="ราคาสูงสุด" min="0" step="100000" inputmode="numeric" oninput="applyFilters()">
     <select class="filter-select" id="selBed" onchange="applyFilters()">
       <option value="all">🛏 ทุกขนาด</option>
       <option value="1">1 นอน</option>
       <option value="2">2 นอน</option>
       <option value="3">3 นอน</option>
-      <option value="4">4+ นอน</option>
+      <option value="4">4 นอน</option>
+      <option value="5">5 นอน</option>
+      <option value="6">6 นอน</option>
+      <option value="7">7 นอน</option>
+      <option value="8">8 นอน</option>
+      <option value="9">9+ นอน</option>
+    </select>
+    <select class="filter-select" id="selBath" onchange="applyFilters()">
+      <option value="all">🚿 ทุกห้องน้ำ</option>
+      <option value="1">1 น้ำ</option>
+      <option value="2">2 น้ำ</option>
+      <option value="3">3 น้ำ</option>
+      <option value="4">4 น้ำ</option>
+      <option value="5">5 น้ำ</option>
+      <option value="6">6 น้ำ</option>
+      <option value="7">7 น้ำ</option>
+      <option value="8">8 น้ำ</option>
+      <option value="9">9+ น้ำ</option>
     </select>
     <select class="filter-select" id="selNeg" onchange="applyFilters()">
       <option value="all">💬 ต่อรอง</option>
@@ -743,7 +748,7 @@ function openWA(propertyCode) {
 //  STATE
 // ═══════════════════════════════════════════════════════════
 var allData     = [];
-var activeType  = 'all';
+var activeTypes = [];      // ประเภทที่เลือก (ว่าง = ทั้งหมด) — เลือกได้หลายอันพร้อมกัน
 var activeAgent = 'all';
 
 // ═══════════════════════════════════════════════════════════
@@ -873,13 +878,8 @@ function loadData(manual) {
 //  FILTER & SORT
 // ═══════════════════════════════════════════════════════════
 function clearAllFilters() {
-  activeType = 'all';
-  var row2 = document.querySelector('.header-row2');
-  row2.querySelectorAll('.filter-btn').forEach(function(b) {
-    if (!b.id) b.classList.remove('active');
-  });
-  var firstTypeBtn = Array.from(row2.querySelectorAll('.filter-btn')).find(function(b){ return !b.id; });
-  if (firstTypeBtn) firstTypeBtn.classList.add('active');
+  activeTypes = [];
+  refreshTypeButtons();
 
   activeAgent = 'all';
   var btnD = document.getElementById('btnAgentDirect');
@@ -887,20 +887,34 @@ function clearAllFilters() {
   if (btnD) btnD.classList.remove('active');
   if (btnC) btnC.classList.remove('active');
 
-  document.getElementById('selMin').value = '0';
-  document.getElementById('selMax').value = '999999999';
+  document.getElementById('selMin').value = '';
+  document.getElementById('selMax').value = '';
   document.getElementById('selBed').value = 'all';
+  document.getElementById('selBath').value = 'all';
   document.getElementById('selNeg').value = 'all';
   document.getElementById('searchInput').value = '';
   applyFilters();
 }
 
-function setType(val, btn) {
-  activeType = val;
-  var typeBtns = btn.parentElement.querySelectorAll('.filter-btn');
-  typeBtns.forEach(function(b) { if (!b.id) b.classList.remove('active'); });
-  btn.classList.add('active');
+// ปุ่มประเภท — เลือกพร้อมกันได้หลายอัน; "ทั้งหมด" = ล้างการเลือก
+function setType(val) {
+  if (val === 'all') {
+    activeTypes = [];
+  } else {
+    var i = activeTypes.indexOf(val);
+    if (i === -1) activeTypes.push(val);   // ยังไม่เลือก → เพิ่ม
+    else           activeTypes.splice(i, 1); // เลือกอยู่แล้ว → เอาออก
+  }
+  refreshTypeButtons();
   applyFilters();
+}
+// อัปเดตไฮไลต์ปุ่มประเภทให้ตรงกับ activeTypes
+function refreshTypeButtons() {
+  document.querySelectorAll('.type-btn').forEach(function(b) {
+    var t = b.getAttribute('data-type');
+    var on = (t === 'all') ? (activeTypes.length === 0) : (activeTypes.indexOf(t) !== -1);
+    b.classList.toggle('active', on);
+  });
 }
 
 function setAgent(val, btn) {
@@ -918,19 +932,26 @@ function setAgent(val, btn) {
 
 function applyFilters() {
   var search   = document.getElementById('searchInput').value.toLowerCase().trim();
-  var priceMin = parseInt(document.getElementById('selMin').value);
-  var priceMax = parseInt(document.getElementById('selMax').value);
+  var priceMin = parseFloat(document.getElementById('selMin').value) || 0;
+  var priceMax = parseFloat(document.getElementById('selMax').value);
+  if (isNaN(priceMax)) priceMax = Infinity;
   var bed      = document.getElementById('selBed').value;
+  var bath     = document.getElementById('selBath').value;
   var neg      = document.getElementById('selNeg').value;
   var sort     = document.getElementById('selSort').value;
 
   var filtered = allData.filter(function(p) {
-    if (activeType !== 'all' && p.type !== activeType) return false;
+    if (activeTypes.length && activeTypes.indexOf(p.type) === -1) return false;
     if (p.price > 0 && (p.price < priceMin || p.price > priceMax)) return false;
     if (bed !== 'all') {
       var br = parseInt(p.bedroom) || 0;
-      if (bed === '4' && br < 4) return false;
-      if (bed !== '4' && br !== parseInt(bed)) return false;
+      if (bed === '9' && br < 9) return false;
+      if (bed !== '9' && br !== parseInt(bed)) return false;
+    }
+    if (bath !== 'all') {
+      var ba = parseInt(p.bathroom) || 0;
+      if (bath === '9' && ba < 9) return false;
+      if (bath !== '9' && ba !== parseInt(bath)) return false;
     }
     if (neg === 'yes' && p.negotiate !== 'ได้') return false;
     if (activeAgent === 'co'     && !p.coAgent) return false;
@@ -954,11 +975,12 @@ function applyFilters() {
   showGrid(filtered);
   document.getElementById('countDisplay').textContent = filtered.length;
 
-  var hasFilter = activeType !== 'all'
+  var hasFilter = activeTypes.length > 0
     || activeAgent !== 'all'
-    || document.getElementById('selMin').value !== '0'
-    || document.getElementById('selMax').value !== '999999999'
+    || document.getElementById('selMin').value.trim() !== ''
+    || document.getElementById('selMax').value.trim() !== ''
     || document.getElementById('selBed').value !== 'all'
+    || document.getElementById('selBath').value !== 'all'
     || document.getElementById('selNeg').value !== 'all'
     || document.getElementById('searchInput').value.trim() !== '';
   document.getElementById('btnClearFilters').classList.toggle('visible', hasFilter);
