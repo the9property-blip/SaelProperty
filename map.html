@@ -499,7 +499,6 @@ body {
 }
 .staff-section .staff-actions a.maps { background: #4285f4; color: white; }
 .staff-section .staff-actions a.drive { background: #1aa260; color: white; }
-.staff-section .staff-actions a.fb { background: #1877f2; color: white; }
 .modal-row .val a.code-link {
   color: #1aa260; text-decoration: none; font-weight: 700;
 }
@@ -670,12 +669,11 @@ body {
         <span class="val-copy"><span class="val" id="dOwnerName">–</span><button type="button" class="btn-copy" title="คัดลอกชื่อเจ้าของ" onclick="copyText(document.getElementById('dOwnerName').textContent)">📋</button></span></div>
       <div class="modal-row"><span class="lbl">เบอร์โทร</span>
         <span class="val-copy"><span class="val" id="dOwnerTel">–</span><button type="button" class="btn-copy" title="คัดลอกเบอร์โทร" onclick="copyText(document.getElementById('dOwnerTel').textContent)">📋</button></span></div>
-      <div class="modal-row" id="dFacebookRow" style="display:none;"><span class="lbl">Facebook</span> <span class="val" id="dFacebookVal">–</span></div>
+      <div class="modal-row" id="dFacebookRow" style="display:none;"><span class="lbl">โพส FB</span> <span class="val" id="dFacebookVal">–</span></div>
       <div class="modal-row"><span class="lbl">พิกัด</span>
         <span class="val-copy"><span class="val" id="dCoords">–</span><button type="button" class="btn-copy" id="dCoordsCopy" title="คัดลอกลิงก์ Google Maps" onclick="copyCoords()">📋</button></span></div>
       <div class="staff-actions">
         <a id="dCallOwner" href="#">📞 โทรเจ้าของ</a>
-        <a id="dFacebook" class="fb" href="#" target="_blank" rel="noopener" style="display:none;">📘 Facebook</a>
         <a id="dStaffMaps" class="maps" href="#" target="_blank" rel="noopener">🗺 Maps</a>
         <a id="dDriveLink" class="drive" href="#" target="_blank" rel="noopener" style="display:none;">📁 Drive</a>
       </div>
@@ -1402,23 +1400,19 @@ function openDetail(p) {
     var callOwner = document.getElementById('dCallOwner');
     callOwner.href = tel ? ('tel:' + tel) : '#';
     callOwner.style.opacity = tel ? '1' : '0.4';
-    // Facebook (row + action button)
+    // โพส FB (staff) — URL → ลิงก์, ข้อความ → แสดงข้อความ
     var fbRow = document.getElementById('dFacebookRow');
     var fbVal = document.getElementById('dFacebookVal');
-    var fbBtn = document.getElementById('dFacebook');
     var fb = (p.facebook || '').trim();
     if (fb) {
       if (isUrl(fb)) {
         fbVal.innerHTML = '<a href="' + escapeHtml(fb) + '" target="_blank" rel="noopener">เปิดโพสต์ ↗</a>';
-        fbBtn.href = fb; fbBtn.style.display = '';
       } else {
         fbVal.textContent = fb;
-        fbBtn.style.display = 'none';
       }
       fbRow.style.display = '';
     } else {
       fbRow.style.display = 'none';
-      fbBtn.style.display = 'none';
     }
     // พิกัด → ลิงก์ Google Maps + ปุ่ม copy
     var coordsEl = document.getElementById('dCoords');
