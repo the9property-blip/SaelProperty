@@ -166,6 +166,16 @@ body { font-family: 'Segoe UI', 'Noto Sans Thai', sans-serif; background: #f5f6f
   color: white; border: 1px solid rgba(255,255,255,0.5);
   box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
+/* ─── SURVEY BADGE (มุมขวาบน เหมือน Co) ─── */
+.survey-badge {
+  position: absolute; top: 10px; right: 10px;
+  font-size: 0.7rem; font-weight: 900; letter-spacing: 0.5px;
+  padding: 4px 11px; border-radius: 50px;
+  background: linear-gradient(135deg, #a78bfa, #7c3aed);
+  color: #fff; border: 1px solid rgba(255,255,255,0.5);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+.survey-badge.below { top: 46px; }  /* ถ้ามี Co/ต่อรองได้อยู่แล้ว ให้ Survey ลงมาด้านล่าง */
 
 /* ─── CARD HEADER ─── */
 .card-header {
@@ -464,6 +474,18 @@ body { font-family: 'Segoe UI', 'Noto Sans Thai', sans-serif; background: #f5f6f
   .modal-actions { grid-template-columns: 1fr 1fr 1fr; }
   .btn-call, .btn-line, .btn-wa { font-size: 0.78rem; padding: 12px 4px; }
 }
+/* ปุ่ม copy เล็กท้ายแต่ละหัวข้อในข้อมูลทีมงาน */
+.btn-copy{font-size:11px;line-height:1;padding:3px 7px;margin-left:6px;border:1px solid #d9c98f;border-radius:6px;background:#fffdf5;color:#8a6d1a;cursor:pointer;font-family:inherit;flex:none}
+.btn-copy:active{transform:scale(0.94)}
+.val-copy{display:flex;align-items:center;gap:2px;min-width:0}
+.val-copy .val{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* กล่อง caption {รหัส}-1.txt */
+.staff-section .caption-block{margin-top:10px;border-top:1px dashed #e3c97a;padding-top:8px}
+.caption-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.caption-head .lbl{color:#8a6d1a;font-size:0.8rem;font-weight:600}
+.btn-caption-copy{font-size:0.72rem;font-weight:700;padding:4px 10px;border:none;border-radius:7px;background:#0f3460;color:#fff;cursor:pointer;font-family:inherit;flex:none}
+.btn-caption-copy:active{transform:scale(0.96)}
+.caption-text{max-height:120px;overflow:auto;font-size:11px;line-height:1.5;white-space:pre-wrap;word-break:break-word;background:#fffdf5;border:1px solid #eadba0;border-radius:8px;padding:8px;margin:0;color:#333;font-family:inherit}
 </style>
 </head>
 <body>
@@ -492,6 +514,7 @@ body { font-family: 'Segoe UI', 'Noto Sans Thai', sans-serif; background: #f5f6f
     <div class="filter-sep"></div>
     <button class="filter-btn" id="btnAgentDirect" onclick="setAgent('direct',this)">📌 ติดทรัพย์</button>
     <button class="filter-btn" id="btnAgentCo" onclick="setAgent('co',this)">🤝 Co</button>
+    <button class="filter-btn" id="btnAgentSurvey" onclick="setAgent('survey',this)">📋 Survey</button>
     <div class="filter-sep"></div>
     <input type="number" class="filter-select filter-num" id="selMin" placeholder="ราคาต่ำสุด" min="0" step="100000" inputmode="numeric" oninput="applyFilters()">
     <input type="number" class="filter-select filter-num" id="selMax" placeholder="ราคาสูงสุด" min="0" step="100000" inputmode="numeric" oninput="applyFilters()">
@@ -606,13 +629,21 @@ body { font-family: 'Segoe UI', 'Noto Sans Thai', sans-serif; background: #f5f6f
     <!-- STAFF SECTION -->
     <div class="staff-section" id="dStaffSection" style="display:none;">
       <div class="staff-title">⭐ ข้อมูลทีมงาน (Staff Only)</div>
-      <div class="modal-row"><span class="lbl">เจ้าของ</span> <span class="val" id="dOwnerName">–</span></div>
-      <div class="modal-row"><span class="lbl">เบอร์โทร</span> <span class="val" id="dOwnerTel">–</span></div>
-      <div class="modal-row" id="dContactRow" style="display:none;"><span class="lbl">ติดต่ออื่น</span> <span class="val" id="dContact">–</span></div>
-      <div class="modal-row"><span class="lbl">พิกัด</span> <span class="val" id="dCoords">–</span></div>
+      <div class="modal-row"><span class="lbl">เจ้าของ</span>
+        <span class="val-copy"><span class="val" id="dOwnerName">–</span><button type="button" class="btn-copy" title="คัดลอกชื่อเจ้าของ" onclick="copyText(document.getElementById('dOwnerName').textContent)">📋</button></span></div>
+      <div class="modal-row"><span class="lbl">เบอร์โทร</span>
+        <span class="val-copy"><span class="val" id="dOwnerTel">–</span><button type="button" class="btn-copy" title="คัดลอกเบอร์โทร" onclick="copyText(document.getElementById('dOwnerTel').textContent)">📋</button></span></div>
+      <div class="modal-row" id="dFacebookRow" style="display:none;"><span class="lbl">โพส FB</span> <span class="val" id="dFacebookVal">–</span></div>
+      <div class="modal-row"><span class="lbl">พิกัด</span>
+        <span class="val-copy"><span class="val" id="dCoords">–</span><button type="button" class="btn-copy" id="dCoordsCopy" title="คัดลอกลิงก์ Google Maps" onclick="copyCoords()">📋</button></span></div>
       <div class="staff-actions">
         <a id="dCallOwner" href="#">📞 โทรเจ้าของ</a>
         <a id="dMapsLink" class="maps" href="#" target="_blank" rel="noopener">🗺 ดูใน Maps</a>
+      </div>
+      <div class="caption-block" id="dCaptionBlock" style="display:none;">
+        <div class="caption-head"><span class="lbl">ข้อความประกาศ</span>
+          <button type="button" class="btn-caption-copy" onclick="copyCaption()">📋 คัดลอกทั้งหมด</button></div>
+        <pre class="caption-text" id="dCaptionText"></pre>
       </div>
     </div>
 
@@ -716,6 +747,88 @@ function photoUrl(id, size) {
 }
 function photoUrlFallback(id) {
   return 'https://drive.usercontent.google.com/download?id=' + id + '&export=view';
+}
+// ★ SURVEY: ทรัพย์สำรวจ — เขียนคำว่า "survey" ในคอลัมน์ A ของชีต (ที่เดียวกับ "co") → backend ส่ง p.survey
+function isSurvey(p) {
+  return !!(p && p.survey);
+}
+// ═══ SMART SEARCH — ค้นแบบใกล้เคียง: พิมพ์ผิดเล็กน้อยได้ + ข้ามไทย/อังกฤษ ═══
+// กลุ่มคำที่ถือว่า "ใกล้เคียงกัน" ข้ามภาษา/สะกดต่าง — ★ เพิ่มได้ตามชื่อโครงการที่มี
+var SEARCH_ALIASES = [
+  ['ปาล์ม','palm'],
+  ['วิลล์','วิลล่า','วิลลา','villa','ville'],
+  ['วิว','view'],
+  ['พาร์ค','พาร์ก','park'],
+  ['การ์เด้น','การ์เดน','garden'],
+  ['โฮม','home'],
+  ['เพลส','place'],
+  ['ทาวน์','town'],
+  ['ซิตี้','ซิตี','city'],
+  ['ฮิลล์','ฮิล','hill'],
+  ['เลค','lake'],
+  ['ริเวอร์','river'],
+  ['กรีน','green'],
+  ['แกรนด์','grand'],
+  ['เรสซิเดนซ์','เรสซิเดนท์','residence']
+];
+// ปรับข้อความให้เทียบกันง่าย: ตัดคำกว้างๆ + เครื่องหมาย + ช่องว่างซ้ำ + ตัวพิมพ์เล็ก
+function normSearch(s) {
+  return String(s || '').toLowerCase()
+    .replace(/หมู่บ้าน|โครงการ|เดอะ|\bthe\b/g, ' ')
+    .replace(/[()\[\]{}.,\/\\\-_"'“”‘’|]+/g, ' ')
+    .replace(/\s+/g, ' ').trim();
+}
+// edit distance ของ pattern ในฐานะ "substring" ของ text (เริ่มตำแหน่งใดก็ได้) → จำนวน error น้อยสุด
+function fuzzySubErr(text, pattern) {
+  var n = text.length, m = pattern.length;
+  if (m === 0) return 0;
+  if (n === 0) return m;
+  var prev = new Array(n + 1), cur = new Array(n + 1), j;
+  for (j = 0; j <= n; j++) prev[j] = 0;   // แถวแรก = 0 → เริ่มแมตช์ตำแหน่งใดก็ได้
+  for (var i = 1; i <= m; i++) {
+    cur[0] = i;
+    var pc = pattern.charAt(i - 1);
+    for (j = 1; j <= n; j++) {
+      var cost = (pc === text.charAt(j - 1)) ? 0 : 1;
+      var v = prev[j - 1] + cost;
+      if (prev[j] + 1 < v) v = prev[j] + 1;
+      if (cur[j - 1] + 1 < v) v = cur[j - 1] + 1;
+      cur[j] = v;
+    }
+    var tmp = prev; prev = cur; cur = tmp;
+  }
+  var best = Infinity;
+  for (j = 0; j <= n; j++) if (prev[j] < best) best = prev[j];
+  return best;
+}
+// ขยาย token ด้วยกลุ่มคำใกล้เคียง (ถ้ามี)
+function expandAliases(tok) {
+  for (var i = 0; i < SEARCH_ALIASES.length; i++) {
+    if (SEARCH_ALIASES[i].indexOf(tok) !== -1) return SEARCH_ALIASES[i];
+  }
+  return [tok];
+}
+function tokenMatches(hay, tok) {
+  if (!tok) return true;
+  var forms = expandAliases(tok);
+  for (var i = 0; i < forms.length; i++) {
+    var f = forms[i];
+    if (!f) continue;
+    if (hay.indexOf(f) !== -1) return true;                          // ตรง/บางส่วน
+    if (/\d/.test(f)) continue;                                      // ★ มีตัวเลข (เช่น รหัส RSK0940) → ต้องตรง/บางส่วน ไม่ fuzzy
+    var maxErr = f.length <= 3 ? 0 : (f.length <= 5 ? 1 : Math.floor(f.length * 0.34));
+    if (maxErr > 0 && fuzzySubErr(hay, f) <= maxErr) return true;    // ใกล้เคียง (พิมพ์ผิด)
+  }
+  return false;
+}
+// true ถ้าทุก token ของคำค้น แมตช์ haystack (อย่างใดอย่างหนึ่งในกลุ่มคำใกล้เคียง)
+function searchMatch(hay, query) {
+  var h = normSearch(hay);
+  var toks = normSearch(query).split(' ').filter(Boolean);
+  for (var i = 0; i < toks.length; i++) {
+    if (!tokenMatches(h, toks[i])) return false;
+  }
+  return true;
 }
 function onPhotoError(img, fallbackId) {
   if (!img.dataset.fallbackTried && fallbackId) {
@@ -886,6 +999,8 @@ function clearAllFilters() {
   var btnC = document.getElementById('btnAgentCo');
   if (btnD) btnD.classList.remove('active');
   if (btnC) btnC.classList.remove('active');
+  var btnS = document.getElementById('btnAgentSurvey');
+  if (btnS) btnS.classList.remove('active');
 
   document.getElementById('selMin').value = '';
   document.getElementById('selMax').value = '';
@@ -925,6 +1040,7 @@ function setAgent(val, btn) {
     activeAgent = val;
     document.getElementById('btnAgentDirect').classList.remove('active');
     document.getElementById('btnAgentCo').classList.remove('active');
+    var bSurv = document.getElementById('btnAgentSurvey'); if (bSurv) bSurv.classList.remove('active');
     btn.classList.add('active');
   }
   applyFilters();
@@ -956,9 +1072,10 @@ function applyFilters() {
     if (neg === 'yes' && p.negotiate !== 'ได้') return false;
     if (activeAgent === 'co'     && !p.coAgent) return false;
     if (activeAgent === 'direct' &&  p.coAgent) return false;
+    if (activeAgent === 'survey' && !isSurvey(p)) return false;
     if (search) {
-      var hay = ((p.code||'') + ' ' + (p.project||'') + ' ' + (p.location||'') + ' ' + (p.type||'')).toLowerCase();
-      if (hay.indexOf(search) === -1) return false;
+      var hay = (p.code||'') + ' ' + (p.project||'') + ' ' + (p.location||'') + ' ' + (p.type||'');
+      if (!searchMatch(hay, search)) return false;
     }
     return true;
   });
@@ -1041,9 +1158,10 @@ function showGrid(data) {
     var topRight  = p.coAgent
       ? '<span class="co-badge-sale">Co</span>'
       : (p.negotiate === 'ได้' ? '<span class="negotiable-badge">💬 ต่อรองได้</span>' : '');
+    var surveyBadge = isSurvey(p) ? '<span class="survey-badge' + (topRight ? ' below' : '') + '">Survey</span>' : '';
     var photoBlock = p.thumb
-      ? '<div class="card-photo"><img src="' + photoUrl(p.thumb, 500) + '" loading="lazy" alt="' + escapeHtml(p.project||'') + '" onerror="onPhotoError(this,\'' + p.thumb + '\')">' + saleBadge + topRight + '</div>'
-      : '<div class="card-photo"><div class="card-photo-placeholder"><span class="ph-icon">🏠</span><span>ยังไม่มีรูป</span></div>' + saleBadge + topRight + '</div>';
+      ? '<div class="card-photo"><img src="' + photoUrl(p.thumb, 500) + '" loading="lazy" alt="' + escapeHtml(p.project||'') + '" onerror="onPhotoError(this,\'' + p.thumb + '\')">' + saleBadge + topRight + surveyBadge + '</div>'
+      : '<div class="card-photo"><div class="card-photo-placeholder"><span class="ph-icon">🏠</span><span>ยังไม่มีรูป</span></div>' + saleBadge + topRight + surveyBadge + '</div>';
 
     // staff: code link to folder
     var codeContent = (isStaffLoggedIn() && p.folderUrl)
@@ -1170,29 +1288,48 @@ function openDetail(p) {
 
   // staff section
   var staffSec = document.getElementById('dStaffSection');
-  if (isStaffLoggedIn() && (p.ownerName || p.ownerTel)) {
+  if (isStaffLoggedIn() && (p.ownerName || p.ownerTel || p.facebook)) {
     document.getElementById('dOwnerName').textContent = p.ownerName || '–';
     var tel = (p.ownerTel || '').replace(/\s+/g, '');
     document.getElementById('dOwnerTel').textContent = p.ownerTel || '–';
     document.getElementById('dCallOwner').href = tel ? ('tel:' + tel) : '#';
     document.getElementById('dCallOwner').style.opacity = tel ? '1' : '0.4';
-    var contactRow = document.getElementById('dContactRow');
-    if (p.contact) {
-      document.getElementById('dContact').textContent = p.contact;
-      contactRow.style.display = '';
+    // โพส Facebook (staff) — ถ้าเป็น URL ทำเป็นลิงก์, ถ้าเป็นข้อความ (เช่น "Survey") แสดงเป็นข้อความ
+    var fbRow = document.getElementById('dFacebookRow');
+    var fbVal = document.getElementById('dFacebookVal');
+    var fb = (p.facebook || '').trim();
+    if (fb) {
+      if (/^https?:\/\//i.test(fb)) {
+        var fa = document.createElement('a');
+        fa.href = fb; fa.target = '_blank'; fa.rel = 'noopener'; fa.textContent = 'เปิดโพสต์ ↗';
+        fbVal.textContent = ''; fbVal.appendChild(fa);
+      } else {
+        fbVal.textContent = fb;
+      }
+      fbRow.style.display = '';
     } else {
-      contactRow.style.display = 'none';
+      fbRow.style.display = 'none';
     }
     var latNum = parseFloat(p.lat), lngNum = parseFloat(p.lng);
     var mapsLink = document.getElementById('dMapsLink');
+    var coordsEl = document.getElementById('dCoords');
+    var coordsCopy = document.getElementById('dCoordsCopy');
     if (!isNaN(latNum) && !isNaN(lngNum)) {
-      document.getElementById('dCoords').textContent = latNum.toFixed(6) + ', ' + lngNum.toFixed(6);
-      mapsLink.href = 'https://www.google.com/maps?q=' + latNum + ',' + lngNum;
+      var mapsHref = 'https://www.google.com/maps?q=' + latNum + ',' + lngNum;
+      _coordsHref = mapsHref;
+      coordsEl.innerHTML = '<a href="' + mapsHref + '" target="_blank" rel="noopener">' +
+        latNum.toFixed(6) + ', ' + lngNum.toFixed(6) + ' 🗺</a>';
+      mapsLink.href = mapsHref;
       mapsLink.style.opacity = '1'; mapsLink.style.pointerEvents = '';
+      if (coordsCopy) coordsCopy.style.display = '';
     } else {
-      document.getElementById('dCoords').textContent = '— ไม่ระบุพิกัด';
+      _coordsHref = '';
+      coordsEl.textContent = '— ไม่ระบุพิกัด';
       mapsLink.href = '#'; mapsLink.style.opacity = '0.4'; mapsLink.style.pointerEvents = 'none';
+      if (coordsCopy) coordsCopy.style.display = 'none';
     }
+    // ดึง caption {รหัส}-1.txt (ฝั่งขาย → type=sale)
+    loadCaption(p.code, true);
     staffSec.style.display = '';
   } else {
     staffSec.style.display = 'none';
@@ -1242,6 +1379,36 @@ function escapeHtml(s) {
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
+// ─── STAFF: copy helpers + caption loader ───────────────────
+var _coordsHref = '';
+function copyText(t) {
+  t = (t == null) ? '' : String(t).trim();
+  if (!t) { showToast('⚠️ ไม่มีข้อมูลให้คัดลอก'); return; }
+  navigator.clipboard.writeText(t)
+    .then(function(){ showToast('✅ คัดลอกแล้ว'); })
+    .catch(function(){ showToast('⚠️ คัดลอกไม่สำเร็จ'); });
+}
+function copyCoords() { copyText(_coordsHref); }
+var _captionCache = {}, _captionText = '';
+function loadCaption(code, isSale) {
+  var block = document.getElementById('dCaptionBlock');
+  var pre   = document.getElementById('dCaptionText');
+  if (!block || !pre) return;
+  _captionText = ''; block.style.display = 'none';
+  var token = getStaffToken();
+  if (!code || !token) return;
+  function show(t){ _captionText = t; pre.textContent = t; block.style.display = ''; }
+  if (_captionCache[code] != null) { show(_captionCache[code]); return; }
+  pre.textContent = 'กำลังโหลด…'; block.style.display = '';
+  var url = SCRIPT_URL + '?action=caption&code=' + encodeURIComponent(code) +
+            '&token=' + encodeURIComponent(token) + (isSale ? '&type=sale' : '');
+  fetch(url).then(function(r){ return r.json(); }).then(function(j){
+    if (j && j.ok && j.caption) { _captionCache[code] = j.caption; show(j.caption); }
+    else { pre.textContent = '— ยังไม่มีไฟล์ประกาศ (รหัส-1)'; }
+  }).catch(function(){ pre.textContent = '— โหลดไม่สำเร็จ'; });
+}
+function copyCaption() { copyText(_captionText); }
+
 function showToast(msg) {
   var t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
