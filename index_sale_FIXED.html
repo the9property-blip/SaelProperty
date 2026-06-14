@@ -69,6 +69,10 @@ body { font-family: 'Segoe UI', 'Noto Sans Thai', sans-serif; background: #f5f6f
   max-width: 125px;
 }
 .filter-select option { color: #333; background: white; }
+.filter-num { width: 108px; cursor: text; -moz-appearance: textfield; }
+.filter-num::-webkit-outer-spin-button,
+.filter-num::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.filter-num::placeholder { color: rgba(255,255,255,0.6); }
 .filter-clear-btn {
   padding: 4px 11px; border-radius: 50px; flex-shrink: 0;
   border: 1.5px solid rgba(255,180,0,0.7);
@@ -98,6 +102,112 @@ body { font-family: 'Segoe UI', 'Noto Sans Thai', sans-serif; background: #f5f6f
 .btn-refresh:hover { background: #0f3460; color: white; }
 .btn-refresh.spinning .refresh-icon { display: inline-block; animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── GEO ROW: ค้นหาตำแหน่งใกล้เคียง + ปุ่มแผนที่ ─── */
+.geo-row {
+  display: flex; align-items: center; gap: 6px; margin-top: 7px;
+  overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none;
+}
+.geo-row::-webkit-scrollbar { display: none; }
+.geo-search-container { position: relative; flex: 0 0 auto; }
+.geo-input-wrap {
+  flex: 0 0 auto; display: flex; align-items: center; gap: 4px;
+  background: rgba(255,255,255,0.95); border-radius: 50px;
+  padding: 3px 4px 3px 12px; min-width: 220px;
+}
+.geo-input-wrap input {
+  flex: 1; border: none; outline: none; padding: 4px 0;
+  font-size: 0.78rem; font-family: inherit; background: transparent;
+  color: #333; min-width: 130px;
+}
+.geo-btn-search {
+  background: #0f3460; color: white; border: none;
+  width: 26px; height: 26px; border-radius: 50%;
+  cursor: pointer; font-size: 0.78rem; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.geo-btn-search:disabled { opacity: 0.5; cursor: wait; }
+.geo-chip {
+  flex-shrink: 0; padding: 4px 11px; border-radius: 50px;
+  border: 1.5px solid rgba(255,255,255,0.35);
+  background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.9);
+  font-size: 0.72rem; cursor: pointer; transition: all 0.2s;
+  font-family: inherit; white-space: nowrap;
+}
+.geo-chip:hover { background: rgba(255,255,255,0.18); }
+.geo-map-btn {
+  flex-shrink: 0; padding: 6px 14px; border-radius: 50px;
+  background: linear-gradient(135deg, #2563eb, #0f3460);
+  color: white; border: 1.5px solid rgba(255,255,255,0.35);
+  font-size: 0.76rem; font-weight: 700; cursor: pointer; font-family: inherit;
+  text-decoration: none; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap;
+  box-shadow: 0 2px 9px rgba(37,99,235,0.45);
+}
+.geo-map-btn:hover { filter: brightness(1.13); }
+.geo-chip-label {
+  flex-shrink: 0; font-size: 0.7rem; color: rgba(255,255,255,0.55);
+  white-space: nowrap; padding-right: 2px;
+}
+.geo-dropdown {
+  position: absolute; top: 100%; left: 0; min-width: 280px;
+  background: white; border-radius: 12px;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.22);
+  max-height: 320px; overflow-y: auto; z-index: 200;
+  display: none; margin-top: 6px;
+}
+.geo-dropdown.open { display: block; }
+.geo-dropdown-item {
+  padding: 11px 14px; cursor: pointer; border-bottom: 1px solid #f3f3f3;
+  font-size: 0.85rem; color: #222; line-height: 1.4;
+}
+.geo-dropdown-item:last-child { border-bottom: none; }
+.geo-dropdown-item:hover, .geo-dropdown-item:active { background: #f5f7fb; }
+.geo-dropdown-item .gd-name { font-weight: 600; color: #0f3460; }
+.geo-dropdown-item .gd-sub  { font-size: 0.75rem; color: #888; margin-top: 2px; }
+.geo-dropdown-empty {
+  padding: 22px 14px; text-align: center; color: #999; font-size: 0.85rem;
+}
+.geo-dropdown-loading {
+  padding: 20px 14px; text-align: center; color: #0f3460; font-size: 0.82rem;
+}
+.geo-dropdown-loading::before {
+  content: ""; display: inline-block;
+  width: 14px; height: 14px;
+  border: 2px solid #e0e0e0; border-top-color: #0f3460;
+  border-radius: 50%; animation: spin 0.7s linear infinite;
+  vertical-align: middle; margin-right: 8px;
+}
+.geo-active-pill {
+  display: none; align-items: center; gap: 8px;
+  background: linear-gradient(135deg, #0f3460, #16213e);
+  color: white; padding: 6px 6px 6px 14px; border-radius: 50px;
+  font-size: 0.78rem;
+}
+.geo-active-pill.visible { display: inline-flex; }
+.geo-active-pill .pill-text { white-space: nowrap; max-width: 220px; overflow: hidden; text-overflow: ellipsis; }
+.geo-active-pill button {
+  background: rgba(255,255,255,0.22); border: none; color: white;
+  width: 22px; height: 22px; border-radius: 50%; cursor: pointer;
+  font-size: 0.78rem; flex-shrink: 0;
+}
+.geo-active-pill button:hover { background: rgba(255,255,255,0.4); }
+.dist-badge {
+  display: inline-flex; align-items: center; gap: 3px;
+  background: #0f3460; color: white;
+  font-size: 0.7rem; padding: 3px 8px; border-radius: 50px;
+  font-weight: 700;
+}
+.dist-badge.far { background: #888; }
+.dist-badge.unknown { background: #ccc; color: #666; }
+.card-distance-row {
+  display: flex; align-items: center; gap: 6px;
+  margin-bottom: 8px;
+}
+.sort-select:disabled { opacity: 0.5; cursor: not-allowed; }
+@media (max-width: 580px) {
+  .geo-input-wrap { min-width: 180px; }
+  .geo-input-wrap input { min-width: 90px; }
+}
 
 /* ─── GRID ─── */
 .grid {
@@ -162,6 +272,16 @@ body { font-family: 'Segoe UI', 'Noto Sans Thai', sans-serif; background: #f5f6f
   color: white; border: 1px solid rgba(255,255,255,0.5);
   box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
+/* ─── SURVEY BADGE (มุมขวาบน เหมือน Co) ─── */
+.survey-badge {
+  position: absolute; top: 10px; right: 10px;
+  font-size: 0.7rem; font-weight: 900; letter-spacing: 0.5px;
+  padding: 4px 11px; border-radius: 50px;
+  background: linear-gradient(135deg, #a78bfa, #7c3aed);
+  color: #fff; border: 1px solid rgba(255,255,255,0.5);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+.survey-badge.below { top: 46px; }  /* ถ้ามี Co/ต่อรองได้อยู่แล้ว ให้ Survey ลงมาด้านล่าง */
 
 /* ─── CARD HEADER ─── */
 .card-header {
@@ -460,6 +580,18 @@ body { font-family: 'Segoe UI', 'Noto Sans Thai', sans-serif; background: #f5f6f
   .modal-actions { grid-template-columns: 1fr 1fr 1fr; }
   .btn-call, .btn-line, .btn-wa { font-size: 0.78rem; padding: 12px 4px; }
 }
+/* ปุ่ม copy เล็กท้ายแต่ละหัวข้อในข้อมูลทีมงาน */
+.btn-copy{font-size:11px;line-height:1;padding:3px 7px;margin-left:6px;border:1px solid #d9c98f;border-radius:6px;background:#fffdf5;color:#8a6d1a;cursor:pointer;font-family:inherit;flex:none}
+.btn-copy:active{transform:scale(0.94)}
+.val-copy{display:flex;align-items:center;gap:2px;min-width:0}
+.val-copy .val{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* กล่อง caption {รหัส}-1.txt */
+.staff-section .caption-block{margin-top:10px;border-top:1px dashed #e3c97a;padding-top:8px}
+.caption-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.caption-head .lbl{color:#8a6d1a;font-size:0.8rem;font-weight:600}
+.btn-caption-copy{font-size:0.72rem;font-weight:700;padding:4px 10px;border:none;border-radius:7px;background:#0f3460;color:#fff;cursor:pointer;font-family:inherit;flex:none}
+.btn-caption-copy:active{transform:scale(0.96)}
+.caption-text{max-height:120px;overflow:auto;font-size:11px;line-height:1.5;white-space:pre-wrap;word-break:break-word;background:#fffdf5;border:1px solid #eadba0;border-radius:8px;padding:8px;margin:0;color:#333;font-family:inherit}
 </style>
 </head>
 <body>
@@ -480,39 +612,41 @@ body { font-family: 'Segoe UI', 'Noto Sans Thai', sans-serif; background: #f5f6f
     </div>
   </div>
   <div class="header-row2">
-    <button class="filter-btn active" onclick="setType('all',this)">ทั้งหมด</button>
-    <button class="filter-btn" onclick="setType('บ้านเดี่ยว',this)">🏡 บ้านเดี่ยว</button>
-    <button class="filter-btn" onclick="setType('ทาวน์เฮ้าส์',this)">🏘 ทาวน์</button>
-    <button class="filter-btn" onclick="setType('คอนโด',this)">🏢 คอนโด</button>
-    <button class="filter-btn" onclick="setType('พูลวิลล่า',this)">🏊 พูลวิลล่า</button>
+    <button class="filter-btn type-btn active" data-type="all" onclick="setType('all')">ทั้งหมด</button>
+    <button class="filter-btn type-btn" data-type="บ้านเดี่ยว" onclick="setType('บ้านเดี่ยว')">🏡 บ้านเดี่ยว</button>
+    <button class="filter-btn type-btn" data-type="ทาวน์เฮ้าส์" onclick="setType('ทาวน์เฮ้าส์')">🏘 ทาวน์</button>
+    <button class="filter-btn type-btn" data-type="คอนโด" onclick="setType('คอนโด')">🏢 คอนโด</button>
+    <button class="filter-btn type-btn" data-type="พูลวิลล่า" onclick="setType('พูลวิลล่า')">🏊 พูลวิลล่า</button>
     <div class="filter-sep"></div>
     <button class="filter-btn" id="btnAgentDirect" onclick="setAgent('direct',this)">📌 ติดทรัพย์</button>
     <button class="filter-btn" id="btnAgentCo" onclick="setAgent('co',this)">🤝 Co</button>
+    <button class="filter-btn" id="btnAgentSurvey" onclick="setAgent('survey',this)">📋 Survey</button>
     <div class="filter-sep"></div>
-    <select class="filter-select" id="selMin" onchange="applyFilters()">
-      <option value="0">ราคาต่ำสุด</option>
-      <option value="1000000">1 ล้าน+</option>
-      <option value="2000000">2 ล้าน+</option>
-      <option value="3000000">3 ล้าน+</option>
-      <option value="5000000">5 ล้าน+</option>
-      <option value="10000000">10 ล้าน+</option>
-      <option value="20000000">20 ล้าน+</option>
-    </select>
-    <select class="filter-select" id="selMax" onchange="applyFilters()">
-      <option value="999999999">ราคาสูงสุด</option>
-      <option value="2000000">≤ 2 ล้าน</option>
-      <option value="3000000">≤ 3 ล้าน</option>
-      <option value="5000000">≤ 5 ล้าน</option>
-      <option value="10000000">≤ 10 ล้าน</option>
-      <option value="20000000">≤ 20 ล้าน</option>
-      <option value="50000000">≤ 50 ล้าน</option>
-    </select>
+    <input type="number" class="filter-select filter-num" id="selMin" placeholder="ราคาต่ำสุด" min="0" step="100000" inputmode="numeric" oninput="applyFilters()">
+    <input type="number" class="filter-select filter-num" id="selMax" placeholder="ราคาสูงสุด" min="0" step="100000" inputmode="numeric" oninput="applyFilters()">
     <select class="filter-select" id="selBed" onchange="applyFilters()">
       <option value="all">🛏 ทุกขนาด</option>
       <option value="1">1 นอน</option>
       <option value="2">2 นอน</option>
       <option value="3">3 นอน</option>
-      <option value="4">4+ นอน</option>
+      <option value="4">4 นอน</option>
+      <option value="5">5 นอน</option>
+      <option value="6">6 นอน</option>
+      <option value="7">7 นอน</option>
+      <option value="8">8 นอน</option>
+      <option value="9">9+ นอน</option>
+    </select>
+    <select class="filter-select" id="selBath" onchange="applyFilters()">
+      <option value="all">🚿 ทุกห้องน้ำ</option>
+      <option value="1">1 น้ำ</option>
+      <option value="2">2 น้ำ</option>
+      <option value="3">3 น้ำ</option>
+      <option value="4">4 น้ำ</option>
+      <option value="5">5 น้ำ</option>
+      <option value="6">6 น้ำ</option>
+      <option value="7">7 น้ำ</option>
+      <option value="8">8 น้ำ</option>
+      <option value="9">9+ น้ำ</option>
     </select>
     <select class="filter-select" id="selNeg" onchange="applyFilters()">
       <option value="all">💬 ต่อรอง</option>
@@ -521,11 +655,38 @@ body { font-family: 'Segoe UI', 'Noto Sans Thai', sans-serif; background: #f5f6f
     <div class="filter-sep"></div>
     <button class="filter-clear-btn" id="btnClearFilters" onclick="clearAllFilters()">✕ ล้างตัวกรอง</button>
   </div>
+  <!-- GEO ROW: ค้นหาตำแหน่งใกล้เคียง -->
+  <div class="geo-row">
+    <a class="geo-map-btn" href="map.html" title="ดูบ้านขายทั้งหมดบนแผนที่">🗺️ ดูแผนที่</a>
+    <div class="geo-search-container">
+      <div class="geo-input-wrap">
+        <input type="text" id="geoInput" placeholder="📍 ค้นหาใกล้... เช่น วารีเชียงใหม่, มช., เซ็นทรัล"
+               onkeydown="if(event.key==='Enter') searchByLocation()">
+        <button class="geo-btn-search" id="geoBtnSearch" onclick="searchByLocation()" title="ค้นหา">🔍</button>
+      </div>
+      <div class="geo-dropdown" id="geoDropdown"></div>
+    </div>
+    <span class="geo-chip-label">ลัด:</span>
+    <button class="geo-chip" onclick="quickGeo('มหาวิทยาลัยเชียงใหม่')">มช.</button>
+    <button class="geo-chip" onclick="quickGeo('เซ็นทรัล เฟสติวัล เชียงใหม่')">เซ็นทรัลเฟสติวัล</button>
+    <button class="geo-chip" onclick="quickGeo('เซ็นทรัล แอร์พอร์ต เชียงใหม่')">เซ็นทรัลแอร์พอร์ต</button>
+    <button class="geo-chip" onclick="quickGeo('ท่าอากาศยานเชียงใหม่')">สนามบิน</button>
+    <button class="geo-chip" onclick="quickGeo('ถนนนิมมานเหมินท์ เชียงใหม่')">นิมมาน</button>
+    <button class="geo-chip" onclick="quickGeo('โรงพยาบาลมหาราชนครเชียงใหม่')">รพ.มหาราช</button>
+    <button class="geo-chip" onclick="quickGeo('โรงเรียนนานาชาติวารี เชียงใหม่')">วารีเชียงใหม่</button>
+    <button class="geo-chip" onclick="quickGeo('ถนนมหิดล เชียงใหม่')">ถ.มหิดล</button>
+  </div>
 </div>
 
 <!-- STATS BAR -->
 <div class="stats-bar">
-  <div>แสดง <strong id="countDisplay">–</strong> รายการ</div>
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+    <span>แสดง <strong id="countDisplay">–</strong> รายการ</span>
+    <span class="geo-active-pill" id="geoActivePill">
+      <span class="pill-text" id="geoActiveText"></span>
+      <button onclick="clearGeoSearch()" title="ล้างการค้นหาตำแหน่ง">✕</button>
+    </span>
+  </div>
   <div class="stats-right">
     <select class="sort-select" id="selSort" onchange="applyFilters()">
       <option value="price_asc">ราคา ถูก→แพง</option>
@@ -601,13 +762,21 @@ body { font-family: 'Segoe UI', 'Noto Sans Thai', sans-serif; background: #f5f6f
     <!-- STAFF SECTION -->
     <div class="staff-section" id="dStaffSection" style="display:none;">
       <div class="staff-title">⭐ ข้อมูลทีมงาน (Staff Only)</div>
-      <div class="modal-row"><span class="lbl">เจ้าของ</span> <span class="val" id="dOwnerName">–</span></div>
-      <div class="modal-row"><span class="lbl">เบอร์โทร</span> <span class="val" id="dOwnerTel">–</span></div>
-      <div class="modal-row" id="dContactRow" style="display:none;"><span class="lbl">ติดต่ออื่น</span> <span class="val" id="dContact">–</span></div>
-      <div class="modal-row"><span class="lbl">พิกัด</span> <span class="val" id="dCoords">–</span></div>
+      <div class="modal-row"><span class="lbl">เจ้าของ</span>
+        <span class="val-copy"><span class="val" id="dOwnerName">–</span><button type="button" class="btn-copy" title="คัดลอกชื่อเจ้าของ" onclick="copyText(document.getElementById('dOwnerName').textContent)">📋</button></span></div>
+      <div class="modal-row"><span class="lbl">เบอร์โทร</span>
+        <span class="val-copy"><span class="val" id="dOwnerTel">–</span><button type="button" class="btn-copy" title="คัดลอกเบอร์โทร" onclick="copyText(document.getElementById('dOwnerTel').textContent)">📋</button></span></div>
+      <div class="modal-row" id="dFacebookRow" style="display:none;"><span class="lbl">โพส FB</span> <span class="val" id="dFacebookVal">–</span></div>
+      <div class="modal-row"><span class="lbl">พิกัด</span>
+        <span class="val-copy"><span class="val" id="dCoords">–</span><button type="button" class="btn-copy" id="dCoordsCopy" title="คัดลอกลิงก์ Google Maps" onclick="copyCoords()">📋</button></span></div>
       <div class="staff-actions">
         <a id="dCallOwner" href="#">📞 โทรเจ้าของ</a>
         <a id="dMapsLink" class="maps" href="#" target="_blank" rel="noopener">🗺 ดูใน Maps</a>
+      </div>
+      <div class="caption-block" id="dCaptionBlock" style="display:none;">
+        <div class="caption-head"><span class="lbl">ข้อความประกาศ</span>
+          <button type="button" class="btn-caption-copy" onclick="copyCaption()">📋 คัดลอกทั้งหมด</button></div>
+        <pre class="caption-text" id="dCaptionText"></pre>
       </div>
     </div>
 
@@ -712,6 +881,88 @@ function photoUrl(id, size) {
 function photoUrlFallback(id) {
   return 'https://drive.usercontent.google.com/download?id=' + id + '&export=view';
 }
+// ★ SURVEY: ทรัพย์สำรวจ — เขียนคำว่า "survey" ในคอลัมน์ A ของชีต (ที่เดียวกับ "co") → backend ส่ง p.survey
+function isSurvey(p) {
+  return !!(p && p.survey);
+}
+// ═══ SMART SEARCH — ค้นแบบใกล้เคียง: พิมพ์ผิดเล็กน้อยได้ + ข้ามไทย/อังกฤษ ═══
+// กลุ่มคำที่ถือว่า "ใกล้เคียงกัน" ข้ามภาษา/สะกดต่าง — ★ เพิ่มได้ตามชื่อโครงการที่มี
+var SEARCH_ALIASES = [
+  ['ปาล์ม','palm'],
+  ['วิลล์','วิลล่า','วิลลา','villa','ville'],
+  ['วิว','view'],
+  ['พาร์ค','พาร์ก','park'],
+  ['การ์เด้น','การ์เดน','garden'],
+  ['โฮม','home'],
+  ['เพลส','place'],
+  ['ทาวน์','town'],
+  ['ซิตี้','ซิตี','city'],
+  ['ฮิลล์','ฮิล','hill'],
+  ['เลค','lake'],
+  ['ริเวอร์','river'],
+  ['กรีน','green'],
+  ['แกรนด์','grand'],
+  ['เรสซิเดนซ์','เรสซิเดนท์','residence']
+];
+// ปรับข้อความให้เทียบกันง่าย: ตัดคำกว้างๆ + เครื่องหมาย + ช่องว่างซ้ำ + ตัวพิมพ์เล็ก
+function normSearch(s) {
+  return String(s || '').toLowerCase()
+    .replace(/หมู่บ้าน|โครงการ|เดอะ|\bthe\b/g, ' ')
+    .replace(/[()\[\]{}.,\/\\\-_"'“”‘’|]+/g, ' ')
+    .replace(/\s+/g, ' ').trim();
+}
+// edit distance ของ pattern ในฐานะ "substring" ของ text (เริ่มตำแหน่งใดก็ได้) → จำนวน error น้อยสุด
+function fuzzySubErr(text, pattern) {
+  var n = text.length, m = pattern.length;
+  if (m === 0) return 0;
+  if (n === 0) return m;
+  var prev = new Array(n + 1), cur = new Array(n + 1), j;
+  for (j = 0; j <= n; j++) prev[j] = 0;   // แถวแรก = 0 → เริ่มแมตช์ตำแหน่งใดก็ได้
+  for (var i = 1; i <= m; i++) {
+    cur[0] = i;
+    var pc = pattern.charAt(i - 1);
+    for (j = 1; j <= n; j++) {
+      var cost = (pc === text.charAt(j - 1)) ? 0 : 1;
+      var v = prev[j - 1] + cost;
+      if (prev[j] + 1 < v) v = prev[j] + 1;
+      if (cur[j - 1] + 1 < v) v = cur[j - 1] + 1;
+      cur[j] = v;
+    }
+    var tmp = prev; prev = cur; cur = tmp;
+  }
+  var best = Infinity;
+  for (j = 0; j <= n; j++) if (prev[j] < best) best = prev[j];
+  return best;
+}
+// ขยาย token ด้วยกลุ่มคำใกล้เคียง (ถ้ามี)
+function expandAliases(tok) {
+  for (var i = 0; i < SEARCH_ALIASES.length; i++) {
+    if (SEARCH_ALIASES[i].indexOf(tok) !== -1) return SEARCH_ALIASES[i];
+  }
+  return [tok];
+}
+function tokenMatches(hay, tok) {
+  if (!tok) return true;
+  var forms = expandAliases(tok);
+  for (var i = 0; i < forms.length; i++) {
+    var f = forms[i];
+    if (!f) continue;
+    if (hay.indexOf(f) !== -1) return true;                          // ตรง/บางส่วน
+    if (/\d/.test(f)) continue;                                      // ★ มีตัวเลข (เช่น รหัส RSK0940) → ต้องตรง/บางส่วน ไม่ fuzzy
+    var maxErr = f.length <= 3 ? 0 : (f.length <= 5 ? 1 : Math.floor(f.length * 0.34));
+    if (maxErr > 0 && fuzzySubErr(hay, f) <= maxErr) return true;    // ใกล้เคียง (พิมพ์ผิด)
+  }
+  return false;
+}
+// true ถ้าทุก token ของคำค้น แมตช์ haystack (อย่างใดอย่างหนึ่งในกลุ่มคำใกล้เคียง)
+function searchMatch(hay, query) {
+  var h = normSearch(hay);
+  var toks = normSearch(query).split(' ').filter(Boolean);
+  for (var i = 0; i < toks.length; i++) {
+    if (!tokenMatches(h, toks[i])) return false;
+  }
+  return true;
+}
 function onPhotoError(img, fallbackId) {
   if (!img.dataset.fallbackTried && fallbackId) {
     img.dataset.fallbackTried = '1';
@@ -743,8 +994,9 @@ function openWA(propertyCode) {
 //  STATE
 // ═══════════════════════════════════════════════════════════
 var allData     = [];
-var activeType  = 'all';
+var activeTypes = [];      // ประเภทที่เลือก (ว่าง = ทั้งหมด) — เลือกได้หลายอันพร้อมกัน
 var activeAgent = 'all';
+var geoOrigin   = null;    // { lat, lng, label } เมื่อค้นหาตามตำแหน่ง
 
 // ═══════════════════════════════════════════════════════════
 //  STAFF AUTH
@@ -873,34 +1125,53 @@ function loadData(manual) {
 //  FILTER & SORT
 // ═══════════════════════════════════════════════════════════
 function clearAllFilters() {
-  activeType = 'all';
-  var row2 = document.querySelector('.header-row2');
-  row2.querySelectorAll('.filter-btn').forEach(function(b) {
-    if (!b.id) b.classList.remove('active');
-  });
-  var firstTypeBtn = Array.from(row2.querySelectorAll('.filter-btn')).find(function(b){ return !b.id; });
-  if (firstTypeBtn) firstTypeBtn.classList.add('active');
+  activeTypes = [];
+  refreshTypeButtons();
 
   activeAgent = 'all';
   var btnD = document.getElementById('btnAgentDirect');
   var btnC = document.getElementById('btnAgentCo');
   if (btnD) btnD.classList.remove('active');
   if (btnC) btnC.classList.remove('active');
+  var btnS = document.getElementById('btnAgentSurvey');
+  if (btnS) btnS.classList.remove('active');
 
-  document.getElementById('selMin').value = '0';
-  document.getElementById('selMax').value = '999999999';
+  document.getElementById('selMin').value = '';
+  document.getElementById('selMax').value = '';
   document.getElementById('selBed').value = 'all';
+  document.getElementById('selBath').value = 'all';
   document.getElementById('selNeg').value = 'all';
   document.getElementById('searchInput').value = '';
+  // ล้างการค้นหาตามตำแหน่งด้วย
+  geoOrigin = null;
+  var geoPill = document.getElementById('geoActivePill');
+  if (geoPill) geoPill.classList.remove('visible');
+  var geoSortSel = document.getElementById('selSort');
+  if (geoSortSel) geoSortSel.disabled = false;
+  var geoInputEl = document.getElementById('geoInput');
+  if (geoInputEl) geoInputEl.value = '';
   applyFilters();
 }
 
-function setType(val, btn) {
-  activeType = val;
-  var typeBtns = btn.parentElement.querySelectorAll('.filter-btn');
-  typeBtns.forEach(function(b) { if (!b.id) b.classList.remove('active'); });
-  btn.classList.add('active');
+// ปุ่มประเภท — เลือกพร้อมกันได้หลายอัน; "ทั้งหมด" = ล้างการเลือก
+function setType(val) {
+  if (val === 'all') {
+    activeTypes = [];
+  } else {
+    var i = activeTypes.indexOf(val);
+    if (i === -1) activeTypes.push(val);   // ยังไม่เลือก → เพิ่ม
+    else           activeTypes.splice(i, 1); // เลือกอยู่แล้ว → เอาออก
+  }
+  refreshTypeButtons();
   applyFilters();
+}
+// อัปเดตไฮไลต์ปุ่มประเภทให้ตรงกับ activeTypes
+function refreshTypeButtons() {
+  document.querySelectorAll('.type-btn').forEach(function(b) {
+    var t = b.getAttribute('data-type');
+    var on = (t === 'all') ? (activeTypes.length === 0) : (activeTypes.indexOf(t) !== -1);
+    b.classList.toggle('active', on);
+  });
 }
 
 function setAgent(val, btn) {
@@ -911,6 +1182,7 @@ function setAgent(val, btn) {
     activeAgent = val;
     document.getElementById('btnAgentDirect').classList.remove('active');
     document.getElementById('btnAgentCo').classList.remove('active');
+    var bSurv = document.getElementById('btnAgentSurvey'); if (bSurv) bSurv.classList.remove('active');
     btn.classList.add('active');
   }
   applyFilters();
@@ -918,47 +1190,71 @@ function setAgent(val, btn) {
 
 function applyFilters() {
   var search   = document.getElementById('searchInput').value.toLowerCase().trim();
-  var priceMin = parseInt(document.getElementById('selMin').value);
-  var priceMax = parseInt(document.getElementById('selMax').value);
+  var priceMin = parseFloat(document.getElementById('selMin').value) || 0;
+  var priceMax = parseFloat(document.getElementById('selMax').value);
+  if (isNaN(priceMax)) priceMax = Infinity;
   var bed      = document.getElementById('selBed').value;
+  var bath     = document.getElementById('selBath').value;
   var neg      = document.getElementById('selNeg').value;
   var sort     = document.getElementById('selSort').value;
 
   var filtered = allData.filter(function(p) {
-    if (activeType !== 'all' && p.type !== activeType) return false;
+    if (activeTypes.length && activeTypes.indexOf(p.type) === -1) return false;
     if (p.price > 0 && (p.price < priceMin || p.price > priceMax)) return false;
     if (bed !== 'all') {
       var br = parseInt(p.bedroom) || 0;
-      if (bed === '4' && br < 4) return false;
-      if (bed !== '4' && br !== parseInt(bed)) return false;
+      if (bed === '9' && br < 9) return false;
+      if (bed !== '9' && br !== parseInt(bed)) return false;
+    }
+    if (bath !== 'all') {
+      var ba = parseInt(p.bathroom) || 0;
+      if (bath === '9' && ba < 9) return false;
+      if (bath !== '9' && ba !== parseInt(bath)) return false;
     }
     if (neg === 'yes' && p.negotiate !== 'ได้') return false;
     if (activeAgent === 'co'     && !p.coAgent) return false;
     if (activeAgent === 'direct' &&  p.coAgent) return false;
+    if (activeAgent === 'survey' && !isSurvey(p)) return false;
     if (search) {
-      var hay = ((p.code||'') + ' ' + (p.project||'') + ' ' + (p.location||'') + ' ' + (p.type||'')).toLowerCase();
-      if (hay.indexOf(search) === -1) return false;
+      var hay = (p.code||'') + ' ' + (p.project||'') + ' ' + (p.location||'') + ' ' + (p.type||'');
+      if (!searchMatch(hay, search)) return false;
     }
     return true;
   });
 
-  filtered.sort(function(a, b) {
-    if (sort === 'price_asc')  return (a.price||0) - (b.price||0);
-    if (sort === 'price_desc') return (b.price||0) - (a.price||0);
-    if (sort === 'name_asc')   return (a.project||'').localeCompare(b.project||'');
-    if (sort === 'area_desc')  return (parseFloat(b.land)||parseFloat(b.usable)||0) - (parseFloat(a.land)||parseFloat(a.usable)||0);
-    if (sort === 'bed_asc')    return (parseInt(a.bedroom)||0) - (parseInt(b.bedroom)||0);
-    return 0;
-  });
+  // ★ GEO: เมื่อค้นหาตามตำแหน่ง → คำนวณระยะทางแล้วเรียงตามระยะใกล้-ไกล (ไม่มีพิกัด = ท้ายสุด)
+  if (geoOrigin) {
+    filtered.forEach(function(p) {
+      var la = parseFloat(p.lat), ln = parseFloat(p.lng);
+      p._dist = (!isNaN(la) && !isNaN(ln)) ? haversineKm(geoOrigin.lat, geoOrigin.lng, la, ln) : null;
+    });
+    filtered.sort(function(a, b) {
+      if (a._dist == null && b._dist == null) return 0;
+      if (a._dist == null) return 1;
+      if (b._dist == null) return -1;
+      return a._dist - b._dist;
+    });
+  } else {
+    filtered.forEach(function(p) { p._dist = undefined; });
+    filtered.sort(function(a, b) {
+      if (sort === 'price_asc')  return (a.price||0) - (b.price||0);
+      if (sort === 'price_desc') return (b.price||0) - (a.price||0);
+      if (sort === 'name_asc')   return (a.project||'').localeCompare(b.project||'');
+      if (sort === 'area_desc')  return (parseFloat(b.land)||parseFloat(b.usable)||0) - (parseFloat(a.land)||parseFloat(a.usable)||0);
+      if (sort === 'bed_asc')    return (parseInt(a.bedroom)||0) - (parseInt(b.bedroom)||0);
+      return 0;
+    });
+  }
 
   showGrid(filtered);
   document.getElementById('countDisplay').textContent = filtered.length;
 
-  var hasFilter = activeType !== 'all'
+  var hasFilter = activeTypes.length > 0
     || activeAgent !== 'all'
-    || document.getElementById('selMin').value !== '0'
-    || document.getElementById('selMax').value !== '999999999'
+    || document.getElementById('selMin').value.trim() !== ''
+    || document.getElementById('selMax').value.trim() !== ''
     || document.getElementById('selBed').value !== 'all'
+    || document.getElementById('selBath').value !== 'all'
     || document.getElementById('selNeg').value !== 'all'
     || document.getElementById('searchInput').value.trim() !== '';
   document.getElementById('btnClearFilters').classList.toggle('visible', hasFilter);
@@ -1019,9 +1315,10 @@ function showGrid(data) {
     var topRight  = p.coAgent
       ? '<span class="co-badge-sale">Co</span>'
       : (p.negotiate === 'ได้' ? '<span class="negotiable-badge">💬 ต่อรองได้</span>' : '');
+    var surveyBadge = isSurvey(p) ? '<span class="survey-badge' + (topRight ? ' below' : '') + '">Survey</span>' : '';
     var photoBlock = p.thumb
-      ? '<div class="card-photo"><img src="' + photoUrl(p.thumb, 500) + '" loading="lazy" alt="' + escapeHtml(p.project||'') + '" onerror="onPhotoError(this,\'' + p.thumb + '\')">' + saleBadge + topRight + '</div>'
-      : '<div class="card-photo"><div class="card-photo-placeholder"><span class="ph-icon">🏠</span><span>ยังไม่มีรูป</span></div>' + saleBadge + topRight + '</div>';
+      ? '<div class="card-photo"><img src="' + photoUrl(p.thumb, 500) + '" loading="lazy" alt="' + escapeHtml(p.project||'') + '" onerror="onPhotoError(this,\'' + p.thumb + '\')">' + saleBadge + topRight + surveyBadge + '</div>'
+      : '<div class="card-photo"><div class="card-photo-placeholder"><span class="ph-icon">🏠</span><span>ยังไม่มีรูป</span></div>' + saleBadge + topRight + surveyBadge + '</div>';
 
     // staff: code link to folder
     var codeContent = (isStaffLoggedIn() && p.folderUrl)
@@ -1043,6 +1340,17 @@ function showGrid(data) {
 
     var pj = JSON.stringify(p).replace(/"/g, '&quot;');
 
+    // ★ GEO: badge ระยะทางเมื่อกำลังค้นหาตามตำแหน่ง
+    var distBlock = '';
+    if (geoOrigin) {
+      if (typeof p._dist === 'number') {
+        var dCls = p._dist > 5 ? 'dist-badge far' : 'dist-badge';
+        distBlock = '<div class="card-distance-row"><span class="' + dCls + '">📍 ' + fmtDist(p._dist) + '</span></div>';
+      } else {
+        distBlock = '<div class="card-distance-row"><span class="dist-badge unknown">📍 ไม่ระบุพิกัด</span></div>';
+      }
+    }
+
     return '<div class="card" onclick=\'openDetail(' + pj + ')\'>' +
       photoBlock +
       '<div class="card-header">' +
@@ -1052,6 +1360,7 @@ function showGrid(data) {
         '<span class="card-type-badge ' + badgeClass(p.type) + '">' + escapeHtml(p.type||'') + '</span>' +
       '</div>' +
       '<div class="card-body">' +
+        distBlock +
         '<div class="price-main">฿' + fmtPriceShort(p.price) + '<span class="unit">บาท</span></div>' +
         pricePer +
         '<div class="card-tags">' +
@@ -1148,29 +1457,48 @@ function openDetail(p) {
 
   // staff section
   var staffSec = document.getElementById('dStaffSection');
-  if (isStaffLoggedIn() && (p.ownerName || p.ownerTel)) {
+  if (isStaffLoggedIn() && (p.ownerName || p.ownerTel || p.facebook)) {
     document.getElementById('dOwnerName').textContent = p.ownerName || '–';
     var tel = (p.ownerTel || '').replace(/\s+/g, '');
     document.getElementById('dOwnerTel').textContent = p.ownerTel || '–';
     document.getElementById('dCallOwner').href = tel ? ('tel:' + tel) : '#';
     document.getElementById('dCallOwner').style.opacity = tel ? '1' : '0.4';
-    var contactRow = document.getElementById('dContactRow');
-    if (p.contact) {
-      document.getElementById('dContact').textContent = p.contact;
-      contactRow.style.display = '';
+    // โพส Facebook (staff) — ถ้าเป็น URL ทำเป็นลิงก์, ถ้าเป็นข้อความ (เช่น "Survey") แสดงเป็นข้อความ
+    var fbRow = document.getElementById('dFacebookRow');
+    var fbVal = document.getElementById('dFacebookVal');
+    var fb = (p.facebook || '').trim();
+    if (fb) {
+      if (/^https?:\/\//i.test(fb)) {
+        var fa = document.createElement('a');
+        fa.href = fb; fa.target = '_blank'; fa.rel = 'noopener'; fa.textContent = 'เปิดโพสต์ ↗';
+        fbVal.textContent = ''; fbVal.appendChild(fa);
+      } else {
+        fbVal.textContent = fb;
+      }
+      fbRow.style.display = '';
     } else {
-      contactRow.style.display = 'none';
+      fbRow.style.display = 'none';
     }
     var latNum = parseFloat(p.lat), lngNum = parseFloat(p.lng);
     var mapsLink = document.getElementById('dMapsLink');
+    var coordsEl = document.getElementById('dCoords');
+    var coordsCopy = document.getElementById('dCoordsCopy');
     if (!isNaN(latNum) && !isNaN(lngNum)) {
-      document.getElementById('dCoords').textContent = latNum.toFixed(6) + ', ' + lngNum.toFixed(6);
-      mapsLink.href = 'https://www.google.com/maps?q=' + latNum + ',' + lngNum;
+      var mapsHref = 'https://www.google.com/maps?q=' + latNum + ',' + lngNum;
+      _coordsHref = mapsHref;
+      coordsEl.innerHTML = '<a href="' + mapsHref + '" target="_blank" rel="noopener">' +
+        latNum.toFixed(6) + ', ' + lngNum.toFixed(6) + ' 🗺</a>';
+      mapsLink.href = mapsHref;
       mapsLink.style.opacity = '1'; mapsLink.style.pointerEvents = '';
+      if (coordsCopy) coordsCopy.style.display = '';
     } else {
-      document.getElementById('dCoords').textContent = '— ไม่ระบุพิกัด';
+      _coordsHref = '';
+      coordsEl.textContent = '— ไม่ระบุพิกัด';
       mapsLink.href = '#'; mapsLink.style.opacity = '0.4'; mapsLink.style.pointerEvents = 'none';
+      if (coordsCopy) coordsCopy.style.display = 'none';
     }
+    // ดึง caption {รหัส}-1.txt (ฝั่งขาย → type=sale)
+    loadCaption(p.code, true);
     staffSec.style.display = '';
   } else {
     staffSec.style.display = 'none';
@@ -1212,6 +1540,466 @@ document.addEventListener('keydown', function(e) {
 });
 
 // ═══════════════════════════════════════════════════════════
+//  GEO SEARCH — ค้นหาตามตำแหน่งใกล้เคียง (เหมือนฝั่งเช่า)
+// ═══════════════════════════════════════════════════════════
+var GEO_ALIASES = {
+  // ── โรงเรียนนานาชาติ เพิ่มเติม (มิ.ย. 2026) ──
+  'lanna international': 'lanna international school', 'ลานนาอินเตอร์': 'lanna international school', 'โรงเรียนนานาชาติลานนา': 'lanna international school', 'รร.นานาชาติลานนา': 'lanna international school',
+  'british concordance': 'british concordance international school', 'bcis': 'british concordance international school', 'concordance': 'british concordance international school', 'บริติช คอนคอร์แดนซ์': 'british concordance international school', 'คอนคอร์แดนซ์': 'british concordance international school',
+  // มหาวิทยาลัย
+  'มช':                 'มหาวิทยาลัยเชียงใหม่',
+  'ม.ช':                'มหาวิทยาลัยเชียงใหม่',
+  'ม.ช.':               'มหาวิทยาลัยเชียงใหม่',
+  'มอชอ':               'มหาวิทยาลัยเชียงใหม่',
+  'cmu':                'มหาวิทยาลัยเชียงใหม่',
+  'แม่โจ้':              'มหาวิทยาลัยแม่โจ้',
+  'ม.แม่โจ้':            'มหาวิทยาลัยแม่โจ้',
+  'พายัพ':              'มหาวิทยาลัยพายัพ เชียงใหม่',
+  'ม.พายัพ':            'มหาวิทยาลัยพายัพ เชียงใหม่',
+  'ราชภัฏ':             'มหาวิทยาลัยราชภัฏเชียงใหม่',
+  'มร.ชม':              'มหาวิทยาลัยราชภัฏเชียงใหม่',
+  'ฟาร์อีส':            'มหาวิทยาลัยฟาร์อีสเทอร์น เชียงใหม่',
+  'ฟาร์อีสเทอร์น':       'มหาวิทยาลัยฟาร์อีสเทอร์น เชียงใหม่',
+  // ห้างสรรพสินค้า
+  'เซ็นเฟส':            'เซ็นทรัล เฟสติวัล เชียงใหม่',
+  'เซน':                'เซ็นทรัล เฟสติวัล เชียงใหม่',
+  'เซ็นทรัลเฟส':         'เซ็นทรัล เฟสติวัล เชียงใหม่',
+  'เซ็นทรัลเฟสติวัล':    'เซ็นทรัล เฟสติวัล เชียงใหม่',
+  'central festival':   'เซ็นทรัล เฟสติวัล เชียงใหม่',
+  'เซ็นแอร์':           'เซ็นทรัล แอร์พอร์ต เชียงใหม่',
+  'เซ็นทรัลแอร์':        'เซ็นทรัล แอร์พอร์ต เชียงใหม่',
+  'แอร์พอร์ตพลาซ่า':     'เซ็นทรัล แอร์พอร์ต เชียงใหม่',
+  'central airport':    'เซ็นทรัล แอร์พอร์ต เชียงใหม่',
+  'เมญ่า':              'เมญ่า ไลฟ์สไตล์ ช็อปปิ้ง เซ็นเตอร์ เชียงใหม่',
+  'maya':               'เมญ่า ไลฟ์สไตล์ ช็อปปิ้ง เซ็นเตอร์ เชียงใหม่',
+  'พรอมเมนาดา':         'พรอมเมนาดา รีสอร์ท มอลล์ เชียงใหม่',
+  'promenada':          'พรอมเมนาดา รีสอร์ท มอลล์ เชียงใหม่',
+  'one nimman':         'One Nimman เชียงใหม่',
+  'วันนิมมาน':           'One Nimman เชียงใหม่',
+  'think park':         'Think Park เชียงใหม่',
+  'thinkpark':          'Think Park เชียงใหม่',
+  // โรงพยาบาล
+  'รพ.มหาราช':          'โรงพยาบาลมหาราชนครเชียงใหม่',
+  'มหาราช':             'โรงพยาบาลมหาราชนครเชียงใหม่',
+  'สวนดอก':             'โรงพยาบาลมหาราชนครเชียงใหม่',
+  'รพ.แมคคอ':           'โรงพยาบาลแมคคอร์มิค เชียงใหม่',
+  'แมคคอ':              'โรงพยาบาลแมคคอร์มิค เชียงใหม่',
+  'แมคคอร์มิค':          'โรงพยาบาลแมคคอร์มิค เชียงใหม่',
+  'รพ.ลานนา':           'โรงพยาบาลลานนา เชียงใหม่',
+  'ลานนา':              'โรงพยาบาลลานนา เชียงใหม่',
+  'รพ.กรุงเทพ':          'โรงพยาบาลกรุงเทพ เชียงใหม่',
+  'รพ.ราม':             'โรงพยาบาลเชียงใหม่ราม',
+  'เชียงใหม่ราม':        'โรงพยาบาลเชียงใหม่ราม',
+  'รพ.เซ็นทรัล':         'โรงพยาบาลเซ็นทรัลเชียงใหม่เมโมเรียล',
+  'เทพปัญญา':           'โรงพยาบาลเทพปัญญา เชียงใหม่',
+  'รพ.เทพปัญญา':         'โรงพยาบาลเทพปัญญา เชียงใหม่',
+  'theppanya':          'โรงพยาบาลเทพปัญญา เชียงใหม่',
+  // โรงเรียน
+  'วารี':              'โรงเรียนนานาชาติวารี เชียงใหม่',
+  'นานาชาติวารี':       'โรงเรียนนานาชาติวารี เชียงใหม่',
+  'รร.วารี':            'โรงเรียนนานาชาติวารี เชียงใหม่',
+  'ปรินส์รอยัล':         'โรงเรียนปรินส์รอยัลส์วิทยาลัย เชียงใหม่',
+  'รร.ปรินส์รอยัล':      'โรงเรียนปรินส์รอยัลส์วิทยาลัย เชียงใหม่',
+  'มงฟอร์ต':           'โรงเรียนมงฟอร์ตวิทยาลัย เชียงใหม่',
+  'รร.มงฟอร์ต':         'โรงเรียนมงฟอร์ตวิทยาลัย เชียงใหม่',
+  'ดารา':              'โรงเรียนดาราวิทยาลัย เชียงใหม่',
+  'ยุพราช':            'โรงเรียนยุพราชวิทยาลัย เชียงใหม่',
+  'รร.ยุพราช':          'โรงเรียนยุพราชวิทยาลัย เชียงใหม่',
+  // ถนน / ทำเล
+  'นิมมาน':             'ถนนนิมมานเหมินท์ เชียงใหม่',
+  'ซ.นิมมาน':           'ถนนนิมมานเหมินท์ เชียงใหม่',
+  'ถ.นิมมาน':           'ถนนนิมมานเหมินท์ เชียงใหม่',
+  'ห้วยแก้ว':           'ถนนห้วยแก้ว เชียงใหม่',
+  'ถ.ห้วยแก้ว':          'ถนนห้วยแก้ว เชียงใหม่',
+  'มหิดล':              'ถนนมหิดล เชียงใหม่',
+  'ถ.มหิดล':            'ถนนมหิดล เชียงใหม่',
+  'ช้างคลาน':           'ถนนช้างคลาน เชียงใหม่',
+  'ท่าแพ':              'ถนนท่าแพ เชียงใหม่',
+  'สันติธรรม':           'ถนนสันติธรรม เชียงใหม่',
+  'เจริญประเทศ':        'ถนนเจริญประเทศ เชียงใหม่',
+  // สนามบิน + ตลาด
+  'สนามบิน':            'ท่าอากาศยานเชียงใหม่',
+  'เชียงใหม่แอร์พอร์ต':   'ท่าอากาศยานเชียงใหม่',
+  'cnx':                'ท่าอากาศยานเชียงใหม่',
+  'ตลาดวโรรส':         'ตลาดวโรรส เชียงใหม่',
+  'กาดหลวง':           'ตลาดวโรรส เชียงใหม่',
+  'ไนท์บาซาร์':         'ไนท์บาซาร์ เชียงใหม่',
+  'ตลาดไนท์':           'ไนท์บาซาร์ เชียงใหม่',
+  'กาดสวนแก้ว':         'กาดสวนแก้ว เชียงใหม่',
+  'ตลาดต้นพยอม':       'ตลาดต้นพยอม เชียงใหม่',
+  // ━━ โรงเรียนนานาชาติ + มหาวิทยาลัย เพิ่มเติม ━━
+  'cmis':                          'chiang mai montessori international school',
+  'montessori':                    'chiang mai montessori international school',
+  'มอนเตสซอรี':                    'chiang mai montessori international school',
+  'มอนเตสซอรี่':                    'chiang mai montessori international school',
+  'apis':                          'american pacific international school',
+  'american pacific':              'american pacific international school',
+  'แอมเอริกัน แปซิฟิก':              'american pacific international school',
+  'grace':                         'grace international school chiang mai',
+  'grace international':           'grace international school chiang mai',
+  'เกรซ':                          'grace international school chiang mai',
+  'นอร์ท':                          'มหาวิทยาลัยนอร์ท-เชียงใหม่',
+  'ม.นอร์ท':                        'มหาวิทยาลัยนอร์ท-เชียงใหม่',
+  'north chiang mai':              'มหาวิทยาลัยนอร์ท-เชียงใหม่',
+  'ปัญญาเด่น':                      'โรงเรียนนานาชาติปัญญาเด่น',
+  'รร.ปัญญาเด่น':                   'โรงเรียนนานาชาติปัญญาเด่น',
+  'panyaden':                      'โรงเรียนนานาชาติปัญญาเด่น',
+  'cdsc':                          'christliche deutsche schule chiang mai',
+  'เยอรมัน':                        'christliche deutsche schule chiang mai',
+  'รร.เยอรมัน':                     'christliche deutsche schule chiang mai',
+  'deutsche schule':               'christliche deutsche schule chiang mai',
+  'ช่องฟ้า':                        'โรงเรียนช่องฟ้าซินเซิงวาณิชบำรุง',
+  'ซินเซิง':                        'โรงเรียนช่องฟ้าซินเซิงวาณิชบำรุง',
+  'รร.ช่องฟ้า':                     'โรงเรียนช่องฟ้าซินเซิงวาณิชบำรุง',
+  'aba':                           'ambassador bilingual academy เชียงใหม่',
+  'ambassador bilingual academy':  'ambassador bilingual academy เชียงใหม่',
+  'แอมบาสซาเดอร์':                  'ambassador bilingual academy เชียงใหม่',
+  'เปรม':                          'โรงเรียนนานาชาติเปรมติณสูลานนท์',
+  'เปรมติณ':                       'โรงเรียนนานาชาติเปรมติณสูลานนท์',
+  'เปรมติณสูลานนท์':                'โรงเรียนนานาชาติเปรมติณสูลานนท์',
+  'ปตส':                           'โรงเรียนนานาชาติเปรมติณสูลานนท์',
+  'prem':                          'โรงเรียนนานาชาติเปรมติณสูลานนท์',
+  'prem tinsulanonda':             'โรงเรียนนานาชาติเปรมติณสูลานนท์',
+  'nis':                           'โรงเรียนนานาชาตินครพายัพ',
+  'นครพายัพ':                       'โรงเรียนนานาชาตินครพายัพ',
+  'รร.นานาชาติเชียงใหม่':           'โรงเรียนนานาชาติเชียงใหม่',
+  'cm international school':       'โรงเรียนนานาชาติเชียงใหม่',
+  'cmis chiang mai':               'โรงเรียนนานาชาติเชียงใหม่',
+  'sisb':                          'โรงเรียนนานาชาติสิงคโปร์เชียงใหม่',
+  'สิงคโปร์':                       'โรงเรียนนานาชาติสิงคโปร์เชียงใหม่',
+  'singapore international':       'โรงเรียนนานาชาติสิงคโปร์เชียงใหม่',
+  'รร.สิงคโปร์':                    'โรงเรียนนานาชาติสิงคโปร์เชียงใหม่',
+  'bright seeds':                  'bright seeds international kindergarten',
+  'ไบรท์ซีดส์':                     'bright seeds international kindergarten',
+  'เอสบีเอส':                       'โรงเรียนนานาชาติเอสบีเอส เชียงใหม่',
+  'sbs':                           'โรงเรียนนานาชาติเอสบีเอส เชียงใหม่',
+  'mbis':                          'meritton british international school',
+  'meritton':                      'meritton british international school',
+  'เมอริตัน':                       'meritton british international school',
+  'meritton british':              'meritton british international school',
+  'กสิณธร':                        'โรงเรียนกสิณธร เซนต์เจมส์ เชียงใหม่',
+  'เซนต์เจมส์':                     'โรงเรียนกสิณธร เซนต์เจมส์ เชียงใหม่',
+  'st james':                      'โรงเรียนกสิณธร เซนต์เจมส์ เชียงใหม่',
+  'unity':                         'โรงเรียนนานาชาติยูนิตี้คอนคอร์ด',
+  'unity concord':                 'โรงเรียนนานาชาติยูนิตี้คอนคอร์ด',
+  'ยูนิตี้':                         'โรงเรียนนานาชาติยูนิตี้คอนคอร์ด',
+  'acis':                          'โรงเรียนนานาชาติอเมริกาน่าไชนีส',
+  'อเมริกาน่า':                     'โรงเรียนนานาชาติอเมริกาน่าไชนีส',
+  'อเมริกาน่าไชนีส':                 'โรงเรียนนานาชาติอเมริกาน่าไชนีส',
+  'abs':                           'ambassador bilingual school เชียงใหม่',
+  'ambassador bilingual school':   'ambassador bilingual school เชียงใหม่',
+  // ━━ ห้าง/ตลาด/ทำเล เพิ่มเติม ━━
+  'กาดฝรั่งหางดง':       'กาดฝรั่ง หางดง เชียงใหม่',
+  'กาดฝรั่ง หางดง':      'กาดฝรั่ง หางดง เชียงใหม่',
+  'kad farang':         'กาดฝรั่ง หางดง เชียงใหม่',
+  'kad farang village': 'กาดฝรั่ง หางดง เชียงใหม่',
+  'กาดฝรั่งแม่ริม':       'กาดฝรั่ง แม่ริม เชียงใหม่',
+  'กาดฝรั่ง แม่ริม':      'กาดฝรั่ง แม่ริม เชียงใหม่',
+  'the kad farang':     'กาดฝรั่ง แม่ริม เชียงใหม่',
+  'เมต้า':              'เมต้า มอลล์ เชียงใหม่',
+  'เมต้ามอลล์':          'เมต้า มอลล์ เชียงใหม่',
+  'เมต้ามอล':           'เมต้า มอลล์ เชียงใหม่',
+  'meta mall':          'เมต้า มอลล์ เชียงใหม่',
+  'meta':               'เมต้า มอลล์ เชียงใหม่',
+  'สามแยก':            'ตลาดสามแยก เชียงใหม่',
+  'ตลาดสามแยก':        'ตลาดสามแยก เชียงใหม่',
+  'รวมโชค':            'ตลาดรวมโชค เชียงใหม่',
+  'ตลาดรวมโชค':         'ตลาดรวมโชค เชียงใหม่',
+  'ศาลากลาง':           'ศาลากลางจังหวัดเชียงใหม่',
+  'ศาลากลางจังหวัด':     'ศาลากลางจังหวัดเชียงใหม่',
+  'คันคลอง':            'คันคลอง เชียงใหม่',
+  'แม่เหียะ':            'ตำบลแม่เหียะ เชียงใหม่',
+  'ต.แม่เหียะ':          'ตำบลแม่เหียะ เชียงใหม่'
+};
+// ขยายคำย่อ → ชื่อเต็ม
+function expandAlias(q) {
+  if (!q) return q;
+  var key = q.trim().toLowerCase();
+  if (GEO_ALIASES[key]) return GEO_ALIASES[key];
+  var compact = key.replace(/\s+/g, '');
+  for (var k in GEO_ALIASES) {
+    if (k.replace(/\s+/g, '') === compact) return GEO_ALIASES[k];
+  }
+  return q;
+}
+// ─── KNOWN PLACES: พิกัดสถานที่ยอดฮิตในเชียงใหม่ ─────────
+var GEO_KNOWN_PLACES = {
+  // ━━ มหาวิทยาลัย ━━
+  'มหาวิทยาลัยเชียงใหม่':           { lat: 18.8019, lng: 98.9525, label: 'มหาวิทยาลัยเชียงใหม่ (มช.)' },
+  'มหาวิทยาลัยแม่โจ้':              { lat: 18.8967, lng: 99.0093, label: 'มหาวิทยาลัยแม่โจ้' },
+  'มหาวิทยาลัยพายัพ เชียงใหม่':      { lat: 18.794959, lng: 99.032297, label: 'มหาวิทยาลัยพายัพ' },
+  'มหาวิทยาลัยราชภัฏเชียงใหม่':      { lat: 18.8069793, lng: 98.9862105, label: 'มหาวิทยาลัยราชภัฏเชียงใหม่' },
+  'มหาวิทยาลัยฟาร์อีสเทอร์น เชียงใหม่': { lat: 18.7713674, lng: 98.9752719, label: 'มหาวิทยาลัยฟาร์อีสเทอร์น' },
+  // ━━ ห้าง ━━
+  'เซ็นทรัล เฟสติวัล เชียงใหม่':     { lat: 18.8064231, lng: 99.0178958, label: 'เซ็นทรัล เฟสติวัล' },
+  'เซ็นทรัล แอร์พอร์ต เชียงใหม่':    { lat: 18.7720, lng: 98.9706, label: 'เซ็นทรัล แอร์พอร์ต' },
+  'เมญ่า ไลฟ์สไตล์ ช็อปปิ้ง เซ็นเตอร์ เชียงใหม่': { lat: 18.8020204, lng: 98.9676745, label: 'เมญ่า' },
+  'พรอมเมนาดา รีสอร์ท มอลล์ เชียงใหม่': { lat: 18.7593, lng: 99.0426, label: 'พรอมเมนาดา' },
+  'one nimman เชียงใหม่':           { lat: 18.8002, lng: 98.9667, label: 'One Nimman' },
+  'think park เชียงใหม่':           { lat: 18.8001, lng: 98.9669, label: 'Think Park' },
+  // ━━ โรงพยาบาล ━━
+  'โรงพยาบาลมหาราชนครเชียงใหม่':    { lat: 18.7891, lng: 98.9709, label: 'รพ.มหาราช (สวนดอก)' },
+  'โรงพยาบาลแมคคอร์มิค เชียงใหม่':   { lat: 18.7888, lng: 98.9988, label: 'รพ.แมคคอร์มิค' },
+  'โรงพยาบาลลานนา เชียงใหม่':       { lat: 18.8126417, lng: 98.9909685, label: 'รพ.ลานนา' },
+  'โรงพยาบาลกรุงเทพ เชียงใหม่':     { lat: 18.7889867, lng: 99.0262899, label: 'รพ.กรุงเทพ เชียงใหม่' },
+  'โรงพยาบาลเชียงใหม่ราม':         { lat: 18.7950919, lng: 98.9779618, label: 'รพ.เชียงใหม่ราม' },
+  'โรงพยาบาลเซ็นทรัลเชียงใหม่เมโมเรียล': { lat: 18.7960, lng: 98.9728, label: 'รพ.เซ็นทรัลเชียงใหม่' },
+  'โรงพยาบาลเทพปัญญา เชียงใหม่':    { lat: 18.8104198, lng: 99.0113788, label: 'รพ.เทพปัญญา' },
+  // ━━ โรงเรียน ━━
+  'โรงเรียนนานาชาติวารี เชียงใหม่':  { lat: 18.7517, lng: 99.0258, label: 'โรงเรียนนานาชาติวารี' },
+  'โรงเรียนปรินส์รอยัลส์วิทยาลัย เชียงใหม่': { lat: 18.7833, lng: 98.9942, label: 'โรงเรียนปรินส์รอยัล' },
+  'โรงเรียนมงฟอร์ตวิทยาลัย เชียงใหม่': { lat: 18.7975, lng: 99.0084, label: 'โรงเรียนมงฟอร์ต' },
+  'โรงเรียนดาราวิทยาลัย เชียงใหม่':   { lat: 18.7831, lng: 98.9961, label: 'โรงเรียนดาราวิทยาลัย' },
+  'โรงเรียนยุพราชวิทยาลัย เชียงใหม่': { lat: 18.7903, lng: 98.9856, label: 'โรงเรียนยุพราช' },
+  // ━━ ถนน / ทำเล ━━
+  'ถนนนิมมานเหมินท์ เชียงใหม่':     { lat: 18.7975, lng: 98.9686, label: 'ถนนนิมมานเหมินท์' },
+  'ถนนห้วยแก้ว เชียงใหม่':         { lat: 18.8003, lng: 98.9636, label: 'ถนนห้วยแก้ว' },
+  'ถนนมหิดล เชียงใหม่':            { lat: 18.7625, lng: 98.9889, label: 'ถนนมหิดล' },
+  'ถนนช้างคลาน เชียงใหม่':         { lat: 18.7858, lng: 98.9947, label: 'ถนนช้างคลาน' },
+  'ถนนท่าแพ เชียงใหม่':            { lat: 18.7878, lng: 98.9959, label: 'ถนนท่าแพ' },
+  'ถนนสันติธรรม เชียงใหม่':         { lat: 18.7964, lng: 98.9836, label: 'ถนนสันติธรรม' },
+  'ถนนเจริญประเทศ เชียงใหม่':       { lat: 18.7825, lng: 98.9947, label: 'ถนนเจริญประเทศ' },
+  // ━━ สนามบิน + ตลาด ━━
+  'ท่าอากาศยานเชียงใหม่':           { lat: 18.7713131, lng: 98.9684214, label: 'ท่าอากาศยานเชียงใหม่ (CNX)' },
+  'ตลาดวโรรส เชียงใหม่':           { lat: 18.7901, lng: 98.9963, label: 'ตลาดวโรรส (กาดหลวง)' },
+  'ไนท์บาซาร์ เชียงใหม่':           { lat: 18.7866, lng: 98.9954, label: 'ไนท์บาซาร์เชียงใหม่' },
+  'กาดสวนแก้ว เชียงใหม่':          { lat: 18.8010, lng: 98.9665, label: 'กาดสวนแก้ว' },
+  'ตลาดต้นพยอม เชียงใหม่':         { lat: 18.7948, lng: 98.9614, label: 'ตลาดต้นพยอม' },
+  // ━━ โรงเรียนนานาชาติ + มหาวิทยาลัย เพิ่มเติม ━━
+  'chiang mai montessori international school': { lat: 18.7218284, lng: 98.9316742, label: 'CMIS (Montessori)' },
+  'american pacific international school':      { lat: 18.7923925, lng: 98.8414574, label: 'APIS (American Pacific)' },
+  'grace international school chiang mai':      { lat: 18.6542596, lng: 98.9137356, label: 'Grace International School' },
+  'มหาวิทยาลัยนอร์ท-เชียงใหม่':                  { lat: 18.6659696, lng: 98.9194005, label: 'ม.นอร์ท-เชียงใหม่' },
+  'โรงเรียนนานาชาติปัญญาเด่น':                   { lat: 18.7066191, lng: 98.9173866, label: 'รร.นานาชาติปัญญาเด่น' },
+  'christliche deutsche schule chiang mai':     { lat: 18.7152335, lng: 99.0001546, label: 'CDSC (Deutsche Schule)' },
+  'โรงเรียนช่องฟ้าซินเซิงวาณิชบำรุง':              { lat: 18.7423829, lng: 99.0341435, label: 'รร.ช่องฟ้าซินเซิง' },
+  'ambassador bilingual academy เชียงใหม่':     { lat: 18.7549202, lng: 98.9427139, label: 'ABA (Ambassador Bilingual Academy)' },
+  'โรงเรียนนานาชาติเปรมติณสูลานนท์':             { lat: 18.9656591, lng: 98.9149734, label: 'รร.นานาชาติเปรมติณสูลานนท์' },
+  'โรงเรียนนานาชาตินครพายัพ':                   { lat: 18.849871, lng: 98.9907207, label: 'NIS (นครพายัพ)' },
+  'โรงเรียนนานาชาติเชียงใหม่':                   { lat: 18.8014525, lng: 99.0039387, label: 'CMIS (นานาชาติเชียงใหม่)' },
+  'โรงเรียนนานาชาติสิงคโปร์เชียงใหม่':            { lat: 18.797524, lng: 98.980293, label: 'SISB (สิงคโปร์เชียงใหม่)' },
+  'bright seeds international kindergarten':    { lat: 18.8040525, lng: 98.9682331, label: 'Bright Seeds' },
+  'โรงเรียนนานาชาติเอสบีเอส เชียงใหม่':           { lat: 18.7002503, lng: 98.9432889, label: 'เอสบีเอส (SBS)' },
+  'meritton british international school':      { lat: 18.7345553, lng: 98.9410573, label: 'MBIS (Meritton British)' },
+  'โรงเรียนกสิณธร เซนต์เจมส์ เชียงใหม่':          { lat: 18.7485168, lng: 98.9785831, label: 'กสิณธร เซนต์เจมส์' },
+  'โรงเรียนนานาชาติยูนิตี้คอนคอร์ด':              { lat: 18.751208, lng: 99.0344297, label: 'UNITY Concord' },
+  'โรงเรียนนานาชาติอเมริกาน่าไชนีส':              { lat: 18.749948, lng: 99.032777, label: 'ACIS (อเมริกาน่าไชนีส)' },
+  'ambassador bilingual school เชียงใหม่':      { lat: 18.7536462, lng: 99.0323697, label: 'ABS (Ambassador Bilingual School)' },
+  // ━━ ห้าง/ตลาดเพิ่มเติม + ทำเลย่าน ━━
+  'กาดฝรั่ง หางดง เชียงใหม่':       { lat: 18.7047568, lng: 98.9309876, label: 'กาดฝรั่งวิลเลจ (หางดง)' },
+  'กาดฝรั่ง แม่ริม เชียงใหม่':       { lat: 18.902150, lng: 98.949809, label: 'กาดฝรั่ง (แม่ริม)' },
+  'เมต้า มอลล์ เชียงใหม่':          { lat: 18.8229282, lng: 99.0421885, label: 'Meta Mall' },
+  'ตลาดสามแยก เชียงใหม่':         { lat: 18.8112199, lng: 99.0278487, label: 'ตลาดสามแยก' },
+  'ตลาดรวมโชค เชียงใหม่':         { lat: 18.823377, lng: 99.011946, label: 'รวมโชค' },
+  'ศาลากลางจังหวัดเชียงใหม่':       { lat: 18.839561, lng: 98.973641, label: 'ศาลากลางจังหวัด' },
+  'คันคลอง เชียงใหม่':             { lat: 18.768165, lng: 98.949583, label: 'คันคลอง' },
+  'ตำบลแม่เหียะ เชียงใหม่':         { lat: 18.743216, lng: 98.959447, label: 'แม่เหียะ' },
+  // ── เพิ่มเติม (อัปเดต มิ.ย. 2026) ──
+  'มหาวิทยาลัยเทคโนโลยีราชมงคลล้านนา เชียงใหม่': { lat: 18.8106967, lng: 98.9527882, label: 'มทร.ล้านนา' },
+  'northern international montessori school': { lat: 18.7904020, lng: 98.9637699, label: 'Northern Montessori' },
+  'โรงเรียนต้นกล้า เชียงใหม่': { lat: 18.8530006, lng: 99.0113586, label: 'รร.ต้นกล้า (Tonkla)' },
+  'โรงเรียนอนุบาลร่มเย็น เชียงใหม่': { lat: 18.7839977, lng: 99.0442115, label: 'รร.อนุบาลร่มเย็น' },
+  'ambassador education group เชียงใหม่': { lat: 18.7516956, lng: 99.0337430, label: 'Ambassador Education Group' },
+  'อิเกีย เชียงใหม่': { lat: 18.7411845, lng: 98.9584178, label: 'IKEA เชียงใหม่' },
+  'แม็คโคร แม่เหียะ เชียงใหม่': { lat: 18.7416779, lng: 98.9593351, label: 'แม็คโคร แม่เหียะ' },
+  'บิ๊กซี แม่เหียะ เชียงใหม่': { lat: 18.7436758, lng: 98.9611683, label: 'บิ๊กซี แม่เหียะ' },
+  'แม็คโคร เชียงใหม่ หนองประทีบ': { lat: 18.7855164, lng: 99.0288900, label: 'แม็คโคร หนองประทีบ' },
+  'บิ๊กซี ดอนจั่น เชียงใหม่': { lat: 18.7691494, lng: 99.0325883, label: 'บิ๊กซี ดอนจั่น' },
+  'ประตูท่าแพ เชียงใหม่': { lat: 18.7879778, lng: 98.9932529, label: 'ประตูท่าแพ' },
+  'สวนสาธารณะรถไฟ เชียงใหม่': { lat: 18.7884390, lng: 99.0157103, label: 'สวนสาธารณะรถไฟ' },
+  'สวนเฉลิมพระเกียรติ อบจ.เชียงใหม่': { lat: 18.8390910, lng: 98.9646198, label: 'สวนเฉลิมพระเกียรติฯ อบจ.' },
+  'สนามกีฬาสมโภชเชียงใหม่ 700 ปี': { lat: 18.8423403, lng: 98.9596416, label: 'สนามกีฬา 700 ปี' },
+  'แยกแม่กวง เชียงใหม่': { lat: 18.8269961, lng: 99.0476252, label: 'แยกแม่กวง' },
+  'แยกหนองจ๊อม เชียงใหม่': { lat: 18.8477919, lng: 99.0137256, label: 'แยกหนองจ๊อม (ลิขิตชีวัน)' },
+  // ── โรงเรียนนานาชาติ เพิ่มเติม (มิ.ย. 2026) ──
+  'lanna international school': { lat: 18.6972916, lng: 98.9651003, label: 'Lanna International School' },
+  'british concordance international school': { lat: 18.7358159, lng: 98.9310956, label: 'British Concordance (BCIS)' }
+};
+// ตัดคำที่แทบทุกที่มี ("เชียงใหม่") ออก เพื่อให้เทียบเฉพาะส่วนที่แยกแยะได้
+function geoNorm_(s) {
+  return normSearch(s).replace(/เชียงใหม่|เชียง ใหม่|chiang ?mai|cnx/g, ' ').replace(/\s+/g, ' ').trim();
+}
+// หาพิกัดในตาราง KNOWN_PLACES — รองรับพิมพ์ "ใกล้เคียง" (บางส่วน/พิมพ์ผิด) ไม่ต้องตรงเป๊ะ
+function lookupKnownPlace(q) {
+  if (!q) return null;
+  var raw = q.trim().toLowerCase();
+  for (var key in GEO_KNOWN_PLACES) {
+    if (key.toLowerCase() === raw) return GEO_KNOWN_PLACES[key];
+  }
+  var nq = geoNorm_(q);
+  if (nq.length < 2) return null;
+  var maxErr = nq.length <= 4 ? 1 : Math.floor(nq.length * 0.3);
+  var best = null, bestErr = Infinity, bestLen = Infinity;
+  for (var k2 in GEO_KNOWN_PLACES) {
+    var pl  = GEO_KNOWN_PLACES[k2];
+    var hay = geoNorm_(k2 + ' ' + (pl.label || ''));
+    if (!hay) continue;
+    var err = fuzzySubErr(hay, nq);
+    if (err < bestErr || (err === bestErr && hay.length < bestLen)) {
+      bestErr = err; bestLen = hay.length; best = pl;
+    }
+  }
+  return (best && bestErr <= maxErr) ? best : null;
+}
+// ─── localStorage CACHE สำหรับผลค้นหา ─────────────────────
+var GEO_CACHE_KEY  = 'geo_search_cache_sale_v1';
+var GEO_CACHE_TTL  = 7 * 24 * 60 * 60 * 1000; // 7 วัน
+var GEO_CACHE_MAX  = 80;
+function geoCacheGet(key) {
+  try {
+    var c = JSON.parse(localStorage.getItem(GEO_CACHE_KEY) || '{}');
+    var e = c[key];
+    if (!e) return null;
+    if (Date.now() - e.ts > GEO_CACHE_TTL) return null;
+    return e.results;
+  } catch(err) { return null; }
+}
+function geoCacheSet(key, results) {
+  try {
+    var c = JSON.parse(localStorage.getItem(GEO_CACHE_KEY) || '{}');
+    c[key] = { ts: Date.now(), results: results };
+    var keys = Object.keys(c);
+    if (keys.length > GEO_CACHE_MAX) {
+      keys.sort(function(a, b) { return c[a].ts - c[b].ts; });
+      var remove = keys.length - GEO_CACHE_MAX;
+      for (var i = 0; i < remove; i++) delete c[keys[i]];
+    }
+    localStorage.setItem(GEO_CACHE_KEY, JSON.stringify(c));
+  } catch(err) {}
+}
+function haversineKm(lat1, lng1, lat2, lng2) {
+  var R = 6371;
+  var toRad = function(d) { return d * Math.PI / 180; };
+  var dLat = toRad(lat2 - lat1);
+  var dLng = toRad(lng2 - lng1);
+  var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+          Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+          Math.sin(dLng/2) * Math.sin(dLng/2);
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+function fmtDist(km) {
+  if (km == null || isNaN(km)) return '–';
+  if (km < 1)  return Math.round(km * 1000) + ' ม.';
+  if (km < 10) return km.toFixed(1) + ' กม.';
+  return Math.round(km) + ' กม.';
+}
+function quickGeo(q) {
+  document.getElementById('geoInput').value = q;
+  searchByLocation();
+}
+function searchByLocation() {
+  var rawQ = document.getElementById('geoInput').value.trim();
+  if (!rawQ) { showToast('กรุณาพิมพ์สถานที่ที่ต้องการค้นหา'); return; }
+  var q = expandAlias(rawQ);
+  var aliasUsed = (q !== rawQ);
+  var dd  = document.getElementById('geoDropdown');
+  var btn = document.getElementById('geoBtnSearch');
+  var known = lookupKnownPlace(q);
+  if (known) {
+    dd.classList.remove('open');
+    applyGeoOrigin({
+      lat: known.lat,
+      lon: known.lng,
+      display_name: known.label,
+      _label: known.label
+    });
+    return;
+  }
+  var cached = geoCacheGet(q);
+  if (cached) {
+    btn.disabled = false;
+    _renderGeoResults(cached, q, dd, aliasUsed ? rawQ : null);
+    return;
+  }
+  btn.disabled = true;
+  var loadingLabel = aliasUsed
+    ? 'กำลังค้นหา "' + escapeHtml(rawQ) + '" → ' + escapeHtml(q) + '…'
+    : 'กำลังค้นหา "' + escapeHtml(q) + '"…';
+  dd.innerHTML = '<div class="geo-dropdown-loading">' + loadingLabel + '</div>';
+  dd.classList.add('open');
+  var viewbox = '98.0,17.5,100.0,20.5';
+  var url = 'https://nominatim.openstreetmap.org/search'
+          + '?q=' + encodeURIComponent(q)
+          + '&format=json'
+          + '&addressdetails=1'
+          + '&limit=6'
+          + '&countrycodes=th'
+          + '&viewbox=' + viewbox
+          + '&bounded=0'
+          + '&accept-language=th';
+  fetch(url, { headers: { 'Accept-Language': 'th' } })
+    .then(function(r) { return r.json(); })
+    .then(function(results) {
+      btn.disabled = false;
+      if (Array.isArray(results) && results.length > 0) {
+        geoCacheSet(q, results);
+      }
+      _renderGeoResults(results, q, dd, aliasUsed ? rawQ : null);
+    })
+    .catch(function(err) {
+      btn.disabled = false;
+      dd.innerHTML = '<div class="geo-dropdown-empty">' +
+        '⚠️ เชื่อมต่อบริการค้นหาไม่ได้<br>' +
+        '<small style="color:#aaa;font-size:0.78rem;">' + escapeHtml(err.message || '') + '</small>' +
+      '</div>';
+    });
+}
+function _renderGeoResults(results, q, dd, originalQuery) {
+  if (!Array.isArray(results) || results.length === 0) {
+    dd.innerHTML = '<div class="geo-dropdown-empty">' +
+      '😕 ไม่พบสถานที่ "' + escapeHtml(originalQuery || q) + '"<br>' +
+      '<small style="color:#aaa;font-size:0.78rem;">ลองพิมพ์ชื่อเต็ม หรือกด chip ลัดด้านล่าง</small>' +
+    '</div>';
+    return;
+  }
+  if (results.length === 1) {
+    dd.classList.remove('open');
+    applyGeoOrigin(results[0]);
+    return;
+  }
+  dd.innerHTML = results.map(function(r) {
+    var name = r.display_name || '';
+    var parts = name.split(',');
+    var main = parts[0].trim();
+    var sub  = parts.slice(1, 4).map(function(s){return s.trim();}).join(', ');
+    return '<div class="geo-dropdown-item" onclick=\'applyGeoOrigin(' + JSON.stringify(r).replace(/"/g, "&quot;") + ')\'>' +
+      '<div class="gd-name">' + escapeHtml(main) + '</div>' +
+      (sub ? '<div class="gd-sub">' + escapeHtml(sub) + '</div>' : '') +
+    '</div>';
+  }).join('');
+  dd.classList.add('open');
+}
+// ใช้ผลลัพธ์ → ตั้ง geoOrigin → re-render พร้อมระยะทาง
+function applyGeoOrigin(r) {
+  var lat = parseFloat(r.lat || (r.geometry && r.geometry.coordinates && r.geometry.coordinates[1]));
+  var lng = parseFloat(r.lon || r.lng || (r.geometry && r.geometry.coordinates && r.geometry.coordinates[0]));
+  if (isNaN(lat) || isNaN(lng)) { showToast('⚠️ ไม่พบพิกัด'); return; }
+  var label = r._label || r.display_name || (lat.toFixed(4) + ',' + lng.toFixed(4));
+  geoOrigin = { lat: lat, lng: lng, label: label };
+  var sortSel = document.getElementById('selSort');
+  if (sortSel) sortSel.disabled = true;
+  var pill = document.getElementById('geoActivePill');
+  var pillText = document.getElementById('geoActiveText');
+  if (pillText) pillText.textContent = '📍 ใกล้ ' + label;
+  if (pill) pill.classList.add('visible');
+  var dd = document.getElementById('geoDropdown');
+  if (dd) dd.classList.remove('open');
+  applyFilters();
+  showToast('✅ เรียงตามระยะใกล้ ' + label);
+}
+// ล้าง geo search → กลับไป sort ปกติ
+function clearGeoSearch() {
+  geoOrigin = null;
+  var pill = document.getElementById('geoActivePill');
+  if (pill) pill.classList.remove('visible');
+  var sortSel = document.getElementById('selSort');
+  if (sortSel) sortSel.disabled = false;
+  var geoInput = document.getElementById('geoInput');
+  if (geoInput) geoInput.value = '';
+  applyFilters();
+}
+
+// ═══════════════════════════════════════════════════════════
 //  UTIL
 // ═══════════════════════════════════════════════════════════
 function escapeHtml(s) {
@@ -1220,6 +2008,36 @@ function escapeHtml(s) {
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
+// ─── STAFF: copy helpers + caption loader ───────────────────
+var _coordsHref = '';
+function copyText(t) {
+  t = (t == null) ? '' : String(t).trim();
+  if (!t) { showToast('⚠️ ไม่มีข้อมูลให้คัดลอก'); return; }
+  navigator.clipboard.writeText(t)
+    .then(function(){ showToast('✅ คัดลอกแล้ว'); })
+    .catch(function(){ showToast('⚠️ คัดลอกไม่สำเร็จ'); });
+}
+function copyCoords() { copyText(_coordsHref); }
+var _captionCache = {}, _captionText = '';
+function loadCaption(code, isSale) {
+  var block = document.getElementById('dCaptionBlock');
+  var pre   = document.getElementById('dCaptionText');
+  if (!block || !pre) return;
+  _captionText = ''; block.style.display = 'none';
+  var token = getStaffToken();
+  if (!code || !token) return;
+  function show(t){ _captionText = t; pre.textContent = t; block.style.display = ''; }
+  if (_captionCache[code] != null) { show(_captionCache[code]); return; }
+  pre.textContent = 'กำลังโหลด…'; block.style.display = '';
+  var url = SCRIPT_URL + '?action=caption&code=' + encodeURIComponent(code) +
+            '&token=' + encodeURIComponent(token) + (isSale ? '&type=sale' : '');
+  fetch(url).then(function(r){ return r.json(); }).then(function(j){
+    if (j && j.ok && j.caption) { _captionCache[code] = j.caption; show(j.caption); }
+    else { pre.textContent = '— ยังไม่มีไฟล์ประกาศ (รหัส-1)'; }
+  }).catch(function(){ pre.textContent = '— โหลดไม่สำเร็จ'; });
+}
+function copyCaption() { copyText(_captionText); }
+
 function showToast(msg) {
   var t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
