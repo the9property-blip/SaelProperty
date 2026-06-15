@@ -709,11 +709,6 @@ body { font-family: 'Segoe UI', 'Noto Sans Thai', sans-serif; background: #f5f6f
 <!-- CONTACT BAR -->
 <div class="contact-bar">
   <div class="contact-bar-text">ติดต่อ <strong>The 9 Property</strong> · 080-994-5497</div>
-  <div class="contact-bar-btns">
-    <a class="btn-bar btn-bar-call" href="tel:0809945497">📞 โทร</a>
-    <a class="btn-bar btn-bar-line" href="#" onclick="openLine();return false;">💬 LINE</a>
-    <a class="btn-bar btn-bar-wa"   href="#" onclick="openWA();return false;">🟢 WA</a>
-  </div>
 </div>
 
 <!-- DETAIL MODAL -->
@@ -778,12 +773,6 @@ body { font-family: 'Segoe UI', 'Noto Sans Thai', sans-serif; background: #f5f6f
           <button type="button" class="btn-caption-copy" onclick="copyCaption()">📋 คัดลอกทั้งหมด</button></div>
         <pre class="caption-text" id="dCaptionText"></pre>
       </div>
-    </div>
-
-    <div class="modal-actions">
-      <a class="btn-call" href="tel:0809945497">📞 โทร</a>
-      <a class="btn-line" href="#" onclick="openLine();return false;">💬 LINE</a>
-      <a class="btn-wa"   href="#" onclick="openWA();return false;">🟢 WhatsApp</a>
     </div>
   </div>
 </div>
@@ -1317,7 +1306,7 @@ function showGrid(data) {
       : (p.negotiate === 'ได้' ? '<span class="negotiable-badge">💬 ต่อรองได้</span>' : '');
     var surveyBadge = isSurvey(p) ? '<span class="survey-badge' + (topRight ? ' below' : '') + '">Survey</span>' : '';
     var photoBlock = p.thumb
-      ? '<div class="card-photo"><img src="' + photoUrl(p.thumb, 500) + '" loading="lazy" alt="' + escapeHtml(p.project||'') + '" onerror="onPhotoError(this,\'' + p.thumb + '\')">' + saleBadge + topRight + surveyBadge + '</div>'
+      ? '<div class="card-photo"><img src="' + photoUrl(p.thumb, 500) + '" alt="' + escapeHtml(p.project||'') + '" onerror="onPhotoError(this,\'' + p.thumb + '\')">' + saleBadge + topRight + surveyBadge + '</div>'
       : '<div class="card-photo"><div class="card-photo-placeholder"><span class="ph-icon">🏠</span><span>ยังไม่มีรูป</span></div>' + saleBadge + topRight + surveyBadge + '</div>';
 
     // staff: code link to folder

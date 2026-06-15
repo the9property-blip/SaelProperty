@@ -683,11 +683,6 @@ body {
         <pre class="caption-text" id="dCaptionText"></pre>
       </div>
     </div>
-    <div class="modal-actions">
-      <button class="btn-call" onclick="window.location.href='tel:0809945497'">📞 โทรสอบถาม</button>
-      <button class="btn-line" onclick="alert('Line ID: @the9property หรือโทร 0809945497')">💬 Line</button>
-      <a class="btn-maps" id="dMapsLink" href="#" target="_blank" rel="noopener" title="ดูใน Google Maps">🗺️</a>
-    </div>
   </div>
 </div>
 <!-- STAFF LOGIN MODAL -->
@@ -1013,21 +1008,31 @@ function onImgError(img, fallbackId) {
   var parent = img.parentElement;
   if (parent) parent.innerHTML = '<div class="ph"><span class="ph-icon">🏠</span></div>';
 }
-// แท็ก: นอน/น้ำ/ที่ดิน (ถ้าไม่มีที่ดินใช้พื้นที่ใช้สอย) — ฝั่งขายไม่มีสัตว์เลี้ยง
+// แท็ก: นอน/น้ำ/ที่จอด/ที่ดิน/พื้นที่ใช้สอย — ข้อมูลตรงกับการ์ดฝั่ง catalog (ฝั่งขายไม่มีสัตว์เลี้ยง)
 function tagsHtml(p, cls) {
   var t = cls + '-tag';
   var h = '';
   if (p.bedroom)  h += '<span class="' + t + '">🛏 ' + escapeHtml(p.bedroom) + '</span>';
   if (p.bathroom) h += '<span class="' + t + '">🚿 ' + escapeHtml(p.bathroom) + '</span>';
-  if (p.land)      h += '<span class="' + t + '">📐 ' + escapeHtml(p.land) + ' ตรว.</span>';
-  else if (p.usable) h += '<span class="' + t + '">🏠 ' + escapeHtml(p.usable) + ' ตรม.</span>';
+  if (p.parking)  h += '<span class="' + t + '">🚘 ' + escapeHtml(p.parking) + '</span>';
+  if (p.land)     h += '<span class="' + t + '">📐 ' + escapeHtml(p.land) + ' ตรว.</span>';
+  if (p.usable)   h += '<span class="' + t + '">📏 ' + escapeHtml(p.usable) + ' ตรม.</span>';
   return h;
+}
+// ราคา/ตร.ว. + /ตร.ม. — ให้ตรงกับการ์ดฝั่ง catalog
+function pricePerHtml(p, cls) {
+  var bits = [];
+  var psw = calcPricePerSqw(p.price, p.land);
+  var psm = calcPricePerSqm(p.price, p.usable);
+  if (psw) bits.push(fmtPrice(psw) + ' /ตร.ว.');
+  if (psm) bits.push(fmtPrice(psm) + ' /ตร.ม.');
+  if (!bits.length) return '';
+  return '<div class="' + cls + '-per" style="font-size:.7rem;color:#c0392b;font-weight:600;margin:1px 0 3px;line-height:1.3;">' + bits.join(' · ') + '</div>';
 }
 function buildPopup(p) {
   var negBadge = (p.negotiate === 'ได้') ? '<span class="pp-negbadge">💬 ต่อรองได้</span>' : '';
   var coBadge = p.coAgent ? '<span class="pp-cobadge">Co</span>' : '';
   var surveyBadge = isSurvey(p) ? '<span class="pp-surveybadge">Survey</span>' : '';
-  var mapsHref = 'https://www.google.com/maps?q=' + p.lat + ',' + p.lng;
   return '' +
     '<div class="pp-photo" onclick="openDetailByCode(\'' + p.code + '\')">' +
       photoBlockHtml(p, 'pp', true) +
@@ -1039,18 +1044,18 @@ function buildPopup(p) {
     '</div>' +
     '<div class="pp-body">' +
       '<div class="pp-price">฿' + fmtPrice(p.price) + ' <small>บาท</small></div>' +
+      pricePerHtml(p, 'pp') +
       '<div class="pp-name">' + escapeHtml(p.project || 'ไม่ระบุโครงการ') + '</div>' +
       '<div class="pp-loc">📍 ' + escapeHtml(p.location || 'ไม่ระบุทำเล') + '</div>' +
       '<div class="pp-tags">' + tagsHtml(p, 'pp') + '</div>' +
       '<div class="pp-actions">' +
         '<button class="pp-btn detail" onclick="openDetailByCode(\'' + p.code + '\')">📋 รายละเอียด</button>' +
-        '<a class="pp-btn maps" href="' + mapsHref + '" target="_blank" rel="noopener" title="Google Maps">🗺️</a>' +
       '</div>' +
     '</div>';
 }
 function miniCardHtml(p) {
   var photo = p.thumb
-    ? '<img src="' + photoUrl(p.thumb, 200) + '" alt="" loading="lazy" onerror="onImgError(this,\'' + p.thumb + '\')">'
+    ? '<img src="' + photoUrl(p.thumb, 200) + '" alt="" onerror="onImgError(this,\'' + p.thumb + '\')">'
     : '<div class="ph">🏠</div>';
   var topRight = p.coAgent
     ? '<span class="mc-cobadge">Co</span>'
@@ -1064,6 +1069,7 @@ function miniCardHtml(p) {
     '<div class="mc-info">' +
       dist +
       '<div class="mc-price">฿' + fmtPriceShort(p.price) + ' <small>บ.</small></div>' +
+      pricePerHtml(p, 'mc') +
       '<div class="mc-name">' + escapeHtml(p.project || 'ไม่ระบุโครงการ') + '</div>' +
       '<div class="mc-loc">📍 ' + escapeHtml(p.location || '–') + '</div>' +
       '<div class="mc-tags">' + tagsHtml(p, 'mc') + '</div>' +
@@ -1383,14 +1389,6 @@ function openDetail(p) {
     infoBlock.style.display = '';
   } else { infoBlock.style.display = 'none'; }
 
-  // bottom maps button
-  var mapsLink = document.getElementById('dMapsLink');
-  if (validCoord(p)) {
-    mapsLink.href = 'https://www.google.com/maps?q=' + p.lat + ',' + p.lng;
-    mapsLink.style.display = '';
-  } else {
-    mapsLink.style.display = 'none';
-  }
   // STAFF SECTION
   var staffSec = document.getElementById('dStaffSection');
   if (isStaffLoggedIn() && (p.ownerName || p.ownerTel || p.contact || p.facebook || p.folderUrl || validCoord(p))) {
