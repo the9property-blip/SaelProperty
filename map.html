@@ -589,7 +589,7 @@ body {
   <div class="geo-row">
     <div class="geo-search-container">
       <div class="geo-input-wrap">
-        <input type="text" id="geoInput" placeholder="📍 ค้นหาสถานที่... เช่น วารี, มช., เซ็นทรัล, รพ."
+        <input type="text" id="geoInput" placeholder="📍 ค้นหาสถานที่ หรือพิกัด (เช่น มช. / 18.80,99.01)"
                onkeydown="if(event.key==='Enter') searchByLocation()">
         <button class="geo-btn-search" id="geoBtnSearch" onclick="searchByLocation()" title="ค้นหา">🔍</button>
       </div>
@@ -807,7 +807,10 @@ var GEO_KNOWN_PLACES = {
   'แยกหนองจ๊อม เชียงใหม่': { lat: 18.8477919, lng: 99.0137256, label: 'แยกหนองจ๊อม (ลิขิตชีวัน)' },
   // ── โรงเรียนนานาชาติ เพิ่มเติม (มิ.ย. 2026) ──
   'lanna international school': { lat: 18.6972916, lng: 98.9651003, label: 'Lanna International School' },
-  'british concordance international school': { lat: 18.7358159, lng: 98.9310956, label: 'British Concordance (BCIS)' }
+  'british concordance international school': { lat: 18.7358159, lng: 98.9310956, label: 'British Concordance (BCIS)' },
+  // ── เพิ่มเติม: แยก/ขนส่ง (มิ.ย. 2026) ──
+  'อาเขต เชียงใหม่': { lat: 18.8007718, lng: 99.0173407, label: 'อาเขต (ขนส่ง/บขส)' },
+  'แยกกองทราย เชียงใหม่': { lat: 18.7293513, lng: 99.0233537, label: 'แยกกองทราย' }
 };
 function landmarkCategory(key) {
   var k = key.toLowerCase();
@@ -1582,9 +1585,25 @@ function fmtDist(km) {
   return Math.round(km) + ' กม.';
 }
 function quickGeo(q) { document.getElementById('geoInput').value = q; searchByLocation(); }
+// ★ พิกัด: รับ "lat, lng" หรือ "lat lng" (สลับลำดับอัตโนมัติถ้าค่าแรกเกินช่วง lat)
+function parseLatLng(s) {
+  var m = s.match(/^\s*(-?\d{1,3}(?:\.\d+)?)\s*[,\s]\s*(-?\d{1,3}(?:\.\d+)?)\s*$/);
+  if (!m) return null;
+  var lat = parseFloat(m[1]), lng = parseFloat(m[2]);
+  if (isNaN(lat) || isNaN(lng)) return null;
+  if (Math.abs(lat) > 90 && Math.abs(lng) <= 90) { var t = lat; lat = lng; lng = t; }
+  if (lat < -90 || lat > 90 || lng < -180 || lng > 180) return null;
+  return { lat: lat, lng: lng };
+}
 function searchByLocation() {
   var rawQ = document.getElementById('geoInput').value.trim();
   if (!rawQ) { showToast('กรุณาพิมพ์สถานที่ที่ต้องการค้นหา'); return; }
+  var coord = parseLatLng(rawQ);
+  if (coord) {
+    var ddc = document.getElementById('geoDropdown'); if (ddc) ddc.classList.remove('open');
+    applyGeoOrigin({ lat: coord.lat, lon: coord.lng, _label: 'พิกัด ' + coord.lat.toFixed(5) + ' / ' + coord.lng.toFixed(5) });
+    return;
+  }
   var q = expandAlias(rawQ), aliasUsed = (q !== rawQ);
   var dd = document.getElementById('geoDropdown'), btn = document.getElementById('geoBtnSearch');
   var known = lookupKnownPlace(q);
