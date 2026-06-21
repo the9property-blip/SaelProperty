@@ -919,6 +919,7 @@ function loadData() {
   var token = getStaffToken();
   var params = ['type=' + API_TYPE];
   if (token) params.push('token=' + encodeURIComponent(token));
+  params.push('_t=' + Date.now());  // cache-buster: กัน Google dispatch-cache คืนการ์ดค้าง
   var url = SCRIPT_URL + '?' + params.join('&');
   fetch(url)
     .then(function(r) { return r.json(); })

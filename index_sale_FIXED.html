@@ -1093,6 +1093,7 @@ function loadData(manual) {
   if (manual) params.push('refresh=1');
   var token = getStaffToken();
   if (token) params.push('token=' + encodeURIComponent(token));
+  params.push('_t=' + Date.now());  // cache-buster: กัน Google dispatch-cache คืนการ์ดค้าง
   var url = SCRIPT_URL + '?' + params.join('&');
 
   fetch(url)
@@ -1802,7 +1803,10 @@ var GEO_KNOWN_PLACES = {
   'แยกหนองจ๊อม เชียงใหม่': { lat: 18.8477919, lng: 99.0137256, label: 'แยกหนองจ๊อม (ลิขิตชีวัน)' },
   // ── โรงเรียนนานาชาติ เพิ่มเติม (มิ.ย. 2026) ──
   'lanna international school': { lat: 18.6972916, lng: 98.9651003, label: 'Lanna International School' },
-  'british concordance international school': { lat: 18.7358159, lng: 98.9310956, label: 'British Concordance (BCIS)' }
+  'british concordance international school': { lat: 18.7358159, lng: 98.9310956, label: 'British Concordance (BCIS)' },
+  // ── เพิ่มเติม: แยก/ขนส่ง (มิ.ย. 2026) ──
+  'อาเขต เชียงใหม่': { lat: 18.8007718, lng: 99.0173407, label: 'อาเขต (ขนส่ง/บขส)' },
+  'แยกกองทราย เชียงใหม่': { lat: 18.7293513, lng: 99.0233537, label: 'แยกกองทราย' }
 };
 // ตัดคำที่แทบทุกที่มี ("เชียงใหม่") ออก เพื่อให้เทียบเฉพาะส่วนที่แยกแยะได้
 function geoNorm_(s) {
