@@ -451,6 +451,12 @@ body {
 }
 .staff-btn:hover { background: rgba(246,194,68,0.32); }
 .staff-btn.logged-in { background: #f6c244; color: #1a1a2e; border-color: #f6c244; font-weight: 700; }
+.nav-link-btn { flex-shrink: 0; padding: 4px 11px; border-radius: 50px; border: 1.5px solid rgba(255,255,255,0.35); background: linear-gradient(135deg, #2c7a4b, #1e8449); color: white; font-size: 0.73rem; cursor: pointer; font-family: inherit; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; font-weight: 600; }
+.nav-link-btn:hover { filter: brightness(1.18); }
+.nav-link-btn.sched { background: linear-gradient(135deg, #2c7a4b, #1a365d); display: none; }
+.nav-link-btn.sched.visible { display: inline-flex; }
+.nav-link-btn.cust { background: linear-gradient(135deg, #6b3fa0, #3d2266); display: none; }
+.nav-link-btn.cust.visible { display: inline-flex; }
 .staff-modal-overlay {
   display: none; position: fixed; inset: 0;
   background: rgba(0,0,0,0.65); z-index: 3500;
@@ -584,6 +590,10 @@ body {
     </select>
     <div class="filter-sep"></div>
     <button class="filter-clear-btn" id="btnClearFilters" onclick="clearAllFilters()">✕ ล้างตัวกรอง</button>
+    <div class="filter-sep"></div>
+    <a class="nav-link-btn" href="https://the9property-blip.github.io/rental-house/" target="_blank" rel="noopener" title="ไปยังเว็บทรัพย์เช่า">🏠 ทรัพย์เช่า</a>
+    <a class="nav-link-btn sched" id="scheduleBtn" href="https://the9property-blip.github.io/property-posting-schedule/" target="_blank" rel="noopener">📋 ตารางโพสทรัพย์</a>
+    <a class="nav-link-btn cust" id="customerBtn" href="https://the9property-blip.github.io/costumer-rent/" target="_blank" rel="noopener">👥 ลูกค้าหาเช่า</a>
   </div>
   <!-- GEO ROW -->
   <div class="geo-row">
@@ -1749,13 +1759,19 @@ function getStaffToken() {
 function isStaffLoggedIn() { return !!getStaffToken(); }
 function updateStaffBtn() {
   var btn = document.getElementById('staffBtn');
+  var sch = document.getElementById('scheduleBtn');
+  var cust = document.getElementById('customerBtn');
   if (!btn) return;
   if (isStaffLoggedIn()) {
     btn.textContent = '⭐ Staff (ออก)';
     btn.classList.add('logged-in');
+    if (sch) sch.classList.add('visible');
+    if (cust) cust.classList.add('visible');
   } else {
     btn.textContent = '🔐 Staff';
     btn.classList.remove('logged-in');
+    if (sch) sch.classList.remove('visible');
+    if (cust) cust.classList.remove('visible');
   }
 }
 function staffBtnClick() {
