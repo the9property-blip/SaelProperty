@@ -1220,7 +1220,7 @@ function applyFilters() {
     if (activeAgent === 'direct' &&  p.coAgent) return false;
     if (activeAgent === 'survey' && !isSurvey(p)) return false;
     if (search) {
-      var hay = (p.code||'') + ' ' + (p.project||'') + ' ' + (p.location||'') + ' ' + (p.type||'');
+      var hay = (p.code||'') + ' ' + (p.project||'') + ' ' + (p.location||'') + ' ' + (p.type||'') + ' ' + (p.ownerName||'') + ' ' + (p.contact||'') + ' ' + (p.ownerTel||'') + ' ' + (p.ownerTelRaw||'') + ' ' + String(p.ownerTel||'').replace(/[^0-9]/g,'');
       if (!searchMatch(hay, search)) return false;
     }
     return true;
