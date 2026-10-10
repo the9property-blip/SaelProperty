@@ -107,7 +107,37 @@
   // Keep archive routing and staff token rules consistent for loading and login.
   var originalFetch=window.fetch.bind(window);
   window.fetch=function(input,options){var catalogRequest=typeof input==='string'&&input.indexOf(SCRIPT_URL+'?')===0&&input.indexOf('type=sale')!==-1;var requestedToken=getStaffToken();if(sold&&catalogRequest&&input.indexOf('dataset=sold')===-1){input+='&dataset=sold';}var result=originalFetch(input,options);if(!catalogRequest)return result;return result.then(function(response){var originalJson=response.json.bind(response);response.json=function(){return originalJson().then(function(data){if(getStaffToken()!==requestedToken)return {ok:false,error:'session_changed'};if(requestedToken&&data.staff===false){try{StaffSession.clear();}catch(e){}updateStaffBtn();}return data;});};return response;});};
-  window.loadCaption=function(code){var seq=++captionGeneration,token=getStaffToken(),block=el('dCaptionBlock'),pre=el('dCaptionText');_captionText='';block.style.display='none';if(!token)return;block.style.display='';pre.textContent='กำลังโหลด…';fetch(SCRIPT_URL+'?type=sale&action=caption&code='+encodeURIComponent(code)+'&token='+encodeURIComponent(token)+(sold?'&dataset=sold':'')).then(function(r){return r.json();}).then(function(j){if(seq!==captionGeneration||getStaffToken()!==token)return;_captionText=j.ok?j.caption||'':'';pre.textContent=_captionText||'— ยังไม่มีไฟล์ประกาศ';}).catch(function(){if(seq===captionGeneration)pre.textContent='— โหลดไม่สำเร็จ';});};
+  window.loadCaption=function(code,refresh){
+    var seq=++captionGeneration,token=getStaffToken(),block=el('dCaptionBlock'),pre=el('dCaptionText'),retry=el('dCaptionRetry');
+    if(retry)retry.remove();
+    _captionText='';block.style.display='none';if(!token)return;block.style.display='';pre.textContent='กำลังโหลดข้อความประกาศ…';
+    function failed(message){
+      pre.textContent=message;
+      var button=document.createElement('button');button.id='dCaptionRetry';button.type='button';button.className='sale-action-button';button.textContent='โหลดประกาศใหม่';
+      button.onclick=function(){loadCaption(code,true);};block.appendChild(button);
+    }
+    var messages={
+      unauthorized:'สิทธิ์ Staff หมดอายุ กรุณาเข้าสู่ระบบใหม่',
+      no_sale_folder:'ไม่พบโฟลเดอร์ของทรัพย์นี้ กรุณาตรวจลิงก์ Drive',
+      caption_missing:'ไม่พบไฟล์ประกาศของทรัพย์นี้ใน Drive',
+      caption_empty:'ไฟล์ประกาศไม่มีข้อความ',
+      duplicate_caption:'พบไฟล์ประกาศชื่อเดียวกันซ้ำ กรุณาตรวจไฟล์ใน Drive',
+      caption_failed:'อ่านไฟล์ประกาศไม่สำเร็จ กรุณาตรวจสิทธิ์ Drive ของ Apps Script แล้วลองใหม่'
+    };
+    var url=SCRIPT_URL+'?type=sale&action=caption&dataset='+(sold?'sold':'active')+'&code='+encodeURIComponent(code)+'&token='+encodeURIComponent(token)+'&_t='+Date.now()+(refresh?'&refresh=1':'');
+    fetch(url,{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('network');return r.json();}).then(function(j){
+      if(seq!==captionGeneration||getStaffToken()!==token)return;
+      if(!j.ok){
+        if(j.error==='unauthorized'){unauthorized();return;}
+        var error=j.error||(j.msg==='no caption'?'caption_missing':j.msg==='no folder'?'no_sale_folder':'');
+        failed(messages[error]||'ระบบออนไลน์ยังไม่พร้อมอ่านประกาศ กรุณาให้ผู้ดูแลอัปเดตระบบ');return;
+      }
+      if(typeof j.caption!=='string'){failed('ระบบออนไลน์ยังไม่ส่งข้อความประกาศ กรุณาให้ผู้ดูแลอัปเดตระบบ');return;}
+      _captionText=j.caption.trim();
+      if(!_captionText){failed('ยังไม่ได้รับข้อความประกาศ กรุณาโหลดประกาศใหม่หรือตรวจไฟล์ใน Drive');return;}
+      pre.textContent=_captionText;
+    }).catch(function(){if(seq===captionGeneration&&getStaffToken()===token)failed('เชื่อมต่อเพื่อโหลดประกาศไม่สำเร็จ กรุณาลองใหม่');});
+  };
   if (sold) { el('cardStrip').textContent='🔒 กรุณาเข้าสู่ระบบทีมงานเพื่อดูทรัพย์ขายแล้ว'; var baseLoad=window.loadData; window.loadData=function(){if(!getStaffToken())return;baseLoad.apply(this,arguments);}; }
   // Deauthentication cancels downloads and pending confirmations immediately.
   var lastStaffToken=getStaffToken();
