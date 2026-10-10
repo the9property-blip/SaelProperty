@@ -2,12 +2,14 @@
 window.PropertySale = (function () {
   'use strict';
   var config, detail = null, active = null, button = null, deleteButton = null, status = null, confirmation = null;
+  var detailGeneration = 0, versionController = null, retryButton = null;
   var messages = {
     busy: 'มีรายการกำลังบันทึกอยู่ กรุณารอสักครู่แล้วลองใหม่',
     confirmation_required: 'กรุณายืนยันว่าทรัพย์ถูกขายแล้วก่อนบันทึก',
     invalid_delete_code: 'รหัสผ่านไม่ถูกต้อง กรุณาตรวจสอบแล้วลองอีกครั้ง',
     invalid_code: 'รหัสทรัพย์ไม่ถูกต้อง',
     invalid_version: 'ข้อมูลทรัพย์ยังไม่พร้อม กรุณาโหลดข้อมูลใหม่แล้วลองอีกครั้ง',
+    backend_update_required: 'ระบบออนไลน์ยังส่งข้อมูลสำหรับขายหรือลบไม่ครบ กรุณาให้ผู้ดูแลอัปเดตระบบแล้วลองโหลดใหม่',
     wrong_archive_sheet: 'แท็บปลายทางไม่ใช่แท็บขายแล้วที่ตั้งไว้ ระบบหยุดก่อนย้ายข้อมูล กรุณาให้ผู้ดูแลตรวจสอบ',
     missing_sheet: 'ไม่พบแท็บรายชื่อบ้านขายหรือขายแล้ว กรุณาติดต่อผู้ดูแล',
     source_missing: 'ไม่พบรหัสนี้ในแถบต้นทาง กรุณาโหลดข้อมูลใหม่',
@@ -36,6 +38,7 @@ window.PropertySale = (function () {
       deleteButton.disabled = !!active || !detail || !config.getToken() || !/^[a-f0-9]{64}$/.test(detail.version);
       deleteButton.textContent = active && active.deleting && active.saving && detail && active.code === detail.code ? 'กำลังลบ…' : 'ลบข้อมูล';
     }
+    if (retryButton) retryButton.disabled = !!versionController || !!active || !config.getToken();
   }
   function report(message, error) {
     if (!status) return;
@@ -43,6 +46,40 @@ window.PropertySale = (function () {
     status.setAttribute('role', error ? 'alert' : 'status');
   }
   function cancelConfirmation() { if (confirmation) confirmation.finish(false); }
+  async function reloadVersion() {
+    if (!detail || active || versionController) return;
+    var token = config.getToken(), generation = detailGeneration, code = detail.code;
+    if (!token) { config.requestLogin(); return; }
+    var controller = new AbortController(); versionController = controller;
+    var timer = setTimeout(function () { controller.abort(); }, 30000);
+    refresh(); report('กำลังโหลดข้อมูล Staff ล่าสุดสำหรับทรัพย์นี้…', false);
+    try {
+      var dataset = returning() ? 'sold' : 'active';
+      var url = config.endpoint + '?type=sale&dataset=' + dataset + (returning() ? '&action=soldMap' : '') + '&token=' + encodeURIComponent(token) + '&_t=' + Date.now();
+      var response = await fetch(url, { cache: 'no-store', signal: controller.signal });
+      if (!response.ok) throw new Error('network');
+      var result = await response.json();
+      if (generation !== detailGeneration || config.getToken() !== token) return;
+      if (result.error === 'unauthorized' || result.staff === false) { config.onUnauthorized(); config.requestLogin(); return; }
+      if (!result.ok) throw new Error(result.error || 'network');
+      if (result.dataset && result.dataset !== dataset) throw new Error('invalid_dataset');
+      if (returning() && result.dataset !== 'sold') throw new Error('backend_update_required');
+      var matches = (result.data || []).filter(function (p) { return String(p.code || '').trim().toUpperCase() === code; });
+      if (matches.length !== 1) throw new Error(matches.length ? 'duplicate_code' : 'source_missing');
+      var property = matches[0];
+      if (result.staff !== true || !/^[a-f0-9]{64}$/.test(String(property.saleVersion || ''))) throw new Error('backend_update_required');
+      detail.version = property.saleVersion;
+      if (retryButton) { retryButton.remove(); retryButton = null; }
+      report('', false);
+      if (config.onDetailReady) config.onDetailReady(property);
+    } catch (err) {
+      if (generation === detailGeneration && config.getToken() === token)
+        report(messages[err.message] || 'โหลดข้อมูลล่าสุดไม่สำเร็จ กรุณากดโหลดข้อมูลใหม่อีกครั้ง', true);
+    } finally {
+      clearTimeout(timer);
+      if (versionController === controller) { versionController = null; refresh(); }
+    }
+  }
   function confirmSale(request) {
     return new Promise(function (resolve) {
       var box = document.createElement('section'); box.className = 'sale-confirmation';
@@ -128,10 +165,12 @@ window.PropertySale = (function () {
     configure: function (options) { config = options; },
     setDetail: function (property) {
       cancelConfirmation();
+      detailGeneration++;
+      if (versionController) { versionController.abort(); versionController = null; }
       detail = property ? { code: String(property.code || '').trim().toUpperCase(), version: String(property.saleVersion || '') } : null;
       var slot = document.getElementById('dSaleAction');
       if (!slot) return;
-      slot.textContent = ''; button = deleteButton = status = null;
+      slot.textContent = ''; button = deleteButton = status = retryButton = null;
       if (!detail || !config.getToken()) return;
       button = document.createElement('button');
       button.type = 'button'; button.className = 'sale-action-button'; button.onclick = markSold;
@@ -141,7 +180,11 @@ window.PropertySale = (function () {
       slot.appendChild(deleteButton);
       status = document.createElement('p'); status.className = 'sale-action-status'; status.setAttribute('role', 'status');
       slot.appendChild(status); refresh();
-      if (!/^[a-f0-9]{64}$/.test(detail.version)) report(messages.invalid_version, true);
+      if (!/^[a-f0-9]{64}$/.test(detail.version)) {
+        retryButton = document.createElement('button'); retryButton.type = 'button';
+        retryButton.className = 'sale-action-button'; retryButton.textContent = 'โหลดข้อมูลใหม่'; retryButton.onclick = reloadVersion;
+        slot.appendChild(retryButton); reloadVersion();
+      }
       else if (active && active.saving && active.code === detail.code) report('กำลังคัดลอกข้อมูลและย้ายโฟลเดอร์ กรุณารอ…', false);
     },
     markSold: markSold,
