@@ -15,16 +15,32 @@
     select.onchange = function() { applyFilters(); }; return select;
   }
   var toolbar = document.querySelector('.header-row2');
-  var other = optionSelect('selOtherType','ประเภททรัพย์อื่น',[['','ประเภทอื่น'],['ที่ดิน','🌳 ที่ดิน'],['อาคารพาณิชย์','🏬 อาคารพาณิชย์'],['หอพัก','🏢 หอพัก'],['สำนักงาน','🏢 สำนักงาน'],['โกดัง','📦 โกดัง'],['ธุรกิจ','🏪 ธุรกิจ']]);
+  var other = optionSelect('selOtherType','ประเภททรัพย์อื่น',[['','ประเภทอื่น'],['ที่ดิน','🌳 ที่ดิน'],['อาคารพาณิชย์','🏬 อาคารพาณิชย์'],['หอพัก','🏢 หอพัก'],['สำนักงาน','🏢 สำนักงาน'],['โกดัง','📦 โกดัง'],['ธุรกิจ','🏪 ธุรกิจ']]); other.classList.add('other-type-select');
   other.onchange = function() { if (this.value) setType(this.value); this.value = ''; }; toolbar.appendChild(other);
   fields.forEach(function(id, i) {
     var input = document.createElement('input'); input.type='number'; input.id=id; input.className='filter-select filter-num'; input.min='0'; input.step='any'; input.inputMode='decimal';
     input.placeholder = ['ชั้นต่ำสุด','ชั้นสูงสุด','ที่ดินต่ำ (ตรว.)','ที่ดินสูง (ตรว.)','ใช้สอยต่ำ (ตรม.)','ใช้สอยสูง (ตรม.)'][i]; input.setAttribute('aria-label',input.placeholder); input.oninput=function(){applyFilters();}; toolbar.appendChild(input);
   });
-  toolbar.appendChild(optionSelect('selMaidRoom','ห้องแม่บ้าน',[['all','ห้องแม่บ้าน: ทั้งหมด'],['yes','มีห้องแม่บ้าน'],['no','ไม่มีห้องแม่บ้าน']]));
-  toolbar.appendChild(optionSelect('selDownstairsBedroom','ห้องนอนชั้นล่าง',[['all','นอนชั้นล่าง: ทั้งหมด'],['yes','มีห้องนอนชั้นล่าง'],['no','ไม่มีห้องนอนชั้นล่าง']]));
+  var maidRoom = optionSelect('selMaidRoom','ห้องแม่บ้าน',[['all','ห้องแม่บ้าน: ทั้งหมด'],['yes','มีห้องแม่บ้าน'],['no','ไม่มีห้องแม่บ้าน']]); maidRoom.classList.add('room-feature-select'); toolbar.appendChild(maidRoom);
+  var downstairsBedroom = optionSelect('selDownstairsBedroom','ห้องนอนชั้นล่าง',[['all','นอนชั้นล่าง: ทั้งหมด'],['yes','มีห้องนอนชั้นล่าง'],['no','ไม่มีห้องนอนชั้นล่าง']]); downstairsBedroom.classList.add('room-feature-select'); toolbar.appendChild(downstairsBedroom);
   toolbar.appendChild(optionSelect('selGrade','เกรดทรัพย์',[['all','⭐ ทุกเกรด'],['A','เกรด A'],['B','เกรด B'],['C','เกรด C'],['D','เกรด D']]));
   toolbar.appendChild(optionSelect('selPet','สัตว์เลี้ยง',[['all','🐾 สัตว์เลี้ยง'],['yes','รับได้'],['no','ไม่รับ']]));
+  var separators = Array.prototype.slice.call(toolbar.querySelectorAll('.filter-sep'));
+  separators.slice(3).forEach(function(separator) { separator.remove(); });
+  var orderedControls = [
+    el('selMin'), el('selMax'),
+    toolbar.querySelector('[data-type="all"]'),
+    toolbar.querySelector('[data-type="บ้านเดี่ยว"]'),
+    toolbar.querySelector('[data-type="ทาวน์เฮ้าส์"]'),
+    toolbar.querySelector('[data-type="คอนโด"]'),
+    toolbar.querySelector('[data-type="พูลวิลล่า"]'), other,
+    separators[0], el('btnAgentDirect'), el('btnAgentCo'), el('btnAgentSurvey'),
+    separators[1], el('selNeg'), separators[2],
+    el('floorMin'), el('floorMax'), el('landMin'), el('landMax'),
+    el('usableMin'), el('usableMax'), el('selBed'), el('selBath'),
+    maidRoom, downstairsBedroom, el('selGrade'), el('selPet')
+  ];
+  orderedControls.forEach(function(control) { if (control) toolbar.appendChild(control); });
   var search = document.querySelector('.search-wrap'), geo = document.querySelector('.geo-search-container');
   var tools = document.createElement('div'); tools.className='search-tools'; search.parentNode.insertBefore(tools,search);
   tools.appendChild(search); tools.appendChild(geo); tools.appendChild(el('btnClearFilters')); el('btnClearFilters').classList.add('search-clear-btn');
@@ -33,7 +49,7 @@
   var staff = document.querySelector('.staff-controls');
   if (!staff) { staff=document.createElement('div'); staff.className='staff-controls'; el('staffBtn').parentNode.insertBefore(staff,el('staffBtn')); staff.appendChild(el('staffBtn')); }
   var nav=document.createElement('div'); nav.className='staff-nav'; staff.appendChild(nav);
-  document.querySelectorAll('.rent-link-btn, #scheduleBtn, #customerBtn').forEach(function(a){nav.appendChild(a);});
+  document.querySelectorAll('.rent-link-btn, a[href*="rental-house"], #scheduleBtn, #customerBtn').forEach(function(a){nav.appendChild(a);});
   var archiveLink=document.createElement('a'); archiveLink.id='soldMapLink'; archiveLink.className='nav-link-btn'; archiveLink.href=sold?'map.html':'map-sold.html'; archiveLink.textContent=sold?'🏷️ ทรัพย์กำลังขาย':'🗺️ ทรัพย์ขายแล้ว'; nav.prepend(archiveLink);
   var staffSection=el('dStaffSection'), photoSlot=document.createElement('div'), actionSlot=document.createElement('div');
   photoSlot.id='dPhotoDownload'; actionSlot.id='dSaleAction'; staffSection.appendChild(photoSlot); staffSection.appendChild(actionSlot);
@@ -90,7 +106,7 @@
   window.updateStaffBtn=function(){baseStaff();archiveLink.style.display=isStaffLoggedIn()?'':'none';PropertyPhotos.refreshButtons();if(!isStaffLoggedIn()){closeDetail();allData=allData.map(function(p){var clean=Object.assign({},p);['ownerName','ownerTel','ownerTelRaw','contact','facebook','folderUrl','saleVersion'].forEach(function(k){delete clean[k];});return clean;});if(sold){allData=[];if(isMap&&map){buildEntries([]);applyFilters();}el('cardStrip').textContent='🔒 กรุณาเข้าสู่ระบบทีมงานเพื่อดูทรัพย์ขายแล้ว';}}};
   // Keep archive routing and staff token rules consistent for loading and login.
   var originalFetch=window.fetch.bind(window);
-  window.fetch=function(input,options){var catalogRequest=typeof input==='string'&&input.indexOf(SCRIPT_URL+'?')===0&&input.indexOf('type=sale')!==-1;var requestedToken=getStaffToken();if(sold&&catalogRequest){input+='&dataset=sold';}var result=originalFetch(input,options);if(!catalogRequest)return result;return result.then(function(response){var originalJson=response.json.bind(response);response.json=function(){return originalJson().then(function(data){if(getStaffToken()!==requestedToken)return {ok:false,error:'session_changed'};if(requestedToken&&data.staff===false){try{sessionStorage.removeItem('staff_token');}catch(e){}updateStaffBtn();}return data;});};return response;});};
+  window.fetch=function(input,options){var catalogRequest=typeof input==='string'&&input.indexOf(SCRIPT_URL+'?')===0&&input.indexOf('type=sale')!==-1;var requestedToken=getStaffToken();if(sold&&catalogRequest&&input.indexOf('dataset=sold')===-1){input+='&dataset=sold';}var result=originalFetch(input,options);if(!catalogRequest)return result;return result.then(function(response){var originalJson=response.json.bind(response);response.json=function(){return originalJson().then(function(data){if(getStaffToken()!==requestedToken)return {ok:false,error:'session_changed'};if(requestedToken&&data.staff===false){try{sessionStorage.removeItem('staff_token');}catch(e){}updateStaffBtn();}return data;});};return response;});};
   window.loadCaption=function(code){var seq=++captionGeneration,token=getStaffToken(),block=el('dCaptionBlock'),pre=el('dCaptionText');_captionText='';block.style.display='none';if(!token)return;block.style.display='';pre.textContent='กำลังโหลด…';fetch(SCRIPT_URL+'?type=sale&action=caption&code='+encodeURIComponent(code)+'&token='+encodeURIComponent(token)+(sold?'&dataset=sold':'')).then(function(r){return r.json();}).then(function(j){if(seq!==captionGeneration||getStaffToken()!==token)return;_captionText=j.ok?j.caption||'':'';pre.textContent=_captionText||'— ยังไม่มีไฟล์ประกาศ';}).catch(function(){if(seq===captionGeneration)pre.textContent='— โหลดไม่สำเร็จ';});};
   if (sold) { el('cardStrip').textContent='🔒 กรุณาเข้าสู่ระบบทีมงานเพื่อดูทรัพย์ขายแล้ว'; var baseLoad=window.loadData; window.loadData=function(){if(!getStaffToken())return;baseLoad.apply(this,arguments);}; }
   // Deauthentication cancels downloads and pending confirmations immediately.

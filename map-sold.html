@@ -609,15 +609,6 @@ body {
       </div>
       <div class="geo-dropdown" id="geoDropdown"></div>
     </div>
-    <span class="geo-chip-label">ลัด:</span>
-    <button class="geo-chip" onclick="quickGeo('มหาวิทยาลัยเชียงใหม่')">มช.</button>
-    <button class="geo-chip" onclick="quickGeo('เซ็นทรัล เฟสติวัล เชียงใหม่')">เซ็นทรัลเฟสติวัล</button>
-    <button class="geo-chip" onclick="quickGeo('เซ็นทรัล แอร์พอร์ต เชียงใหม่')">เซ็นทรัลแอร์พอร์ต</button>
-    <button class="geo-chip" onclick="quickGeo('ท่าอากาศยานเชียงใหม่')">สนามบิน</button>
-    <button class="geo-chip" onclick="quickGeo('ถนนนิมมานเหมินท์ เชียงใหม่')">นิมมาน</button>
-    <button class="geo-chip" onclick="quickGeo('โรงพยาบาลมหาราชนครเชียงใหม่')">รพ.มหาราช</button>
-    <button class="geo-chip" onclick="quickGeo('โรงเรียนนานาชาติวารี เชียงใหม่')">วารีเชียงใหม่</button>
-    <button class="geo-chip" onclick="quickGeo('เมญ่า ไลฟ์สไตล์ ช็อปปิ้ง เซ็นเตอร์ เชียงใหม่')">เมญ่า</button>
   </div>
 </div>
 <!-- MAP -->
@@ -977,7 +968,8 @@ function initMap() {
 // ════════════════════════════════════════════════════════════
 function loadData() {
   var token = getStaffToken();
-  var params = ['type=' + API_TYPE];
+  if (!token) return;
+  var params = ['type=' + API_TYPE, 'action=soldMap', 'dataset=sold'];
   if (token) params.push('token=' + encodeURIComponent(token));
   params.push('_t=' + Date.now());  // cache-buster: กัน Google dispatch-cache คืนการ์ดค้าง
   var url = SCRIPT_URL + '?' + params.join('&');
@@ -985,6 +977,7 @@ function loadData() {
     .then(function(r) { return r.json(); })
     .then(function(json) {
       if (!json.ok) throw new Error(json.msg || 'โหลดข้อมูลไม่สำเร็จ');
+      if (json.dataset !== 'sold') throw new Error('ข้อมูลที่ได้รับไม่ใช่ชุดทรัพย์ขายแล้ว กรุณาแจ้งผู้ดูแลให้อัปเดตระบบ');
       allData = json.data || [];
       buildEntries(allData);
       buildLandmarks();
@@ -1894,10 +1887,11 @@ function doStaffLogin() {
   if (!pw) { document.getElementById('staffLoginErr').textContent = 'กรุณาใส่รหัสผ่าน'; return; }
   document.getElementById('staffLoginErr').textContent = '⏳ กำลังตรวจสอบ...';
   try { sessionStorage.setItem('staff_token', pw); } catch(e) {}
-  fetch(SCRIPT_URL + '?type=' + API_TYPE + '&token=' + encodeURIComponent(pw))
+  fetch(SCRIPT_URL + '?type=' + API_TYPE + '&action=soldMap&dataset=sold&token=' + encodeURIComponent(pw))
     .then(function(r) { return r.json(); })
     .then(function(json) {
       if (json.staff === true) {
+        if (!json.ok || json.dataset !== 'sold') throw new Error(json.msg || 'ข้อมูลที่ได้รับไม่ใช่ชุดทรัพย์ขายแล้ว กรุณาแจ้งผู้ดูแลให้อัปเดตระบบ');
         closeStaffModal();
         updateStaffBtn();
         allData = json.data || [];
