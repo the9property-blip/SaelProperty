@@ -599,6 +599,9 @@ body { font-family: 'Segoe UI', 'Noto Sans Thai', sans-serif; background: #f5f6f
 .btn-caption-copy:active{transform:scale(0.96)}
 .caption-text{max-height:120px;overflow:auto;font-size:11px;line-height:1.5;white-space:pre-wrap;word-break:break-word;background:#fffdf5;border:1px solid #eadba0;border-radius:8px;padding:8px;margin:0;color:#333;font-family:inherit}
 </style>
+<link rel="stylesheet" href="sale-features.css">
+<link rel="stylesheet" href="photo-download.css">
+<link rel="stylesheet" href="property-sale.css">
 </head>
 <body>
 <!-- HEADER -->
@@ -1203,6 +1206,7 @@ function applyFilters() {
   var sort     = document.getElementById('selSort').value;
 
   var filtered = allData.filter(function(p) {
+    if (!saleExtraPass(p)) return false;
     if (activeTypes.length && activeTypes.indexOf(p.type) === -1) return false;
     if (p.price > 0 && (p.price < priceMin || p.price > priceMax)) return false;
     if (bed !== 'all') {
@@ -1321,7 +1325,7 @@ function showGrid(data) {
       : (p.negotiate === 'ได้' ? '<span class="negotiable-badge">💬 ต่อรองได้</span>' : '');
     var surveyBadge = isSurvey(p) ? '<span class="survey-badge' + (topRight ? ' below' : '') + '">Survey</span>' : '';
     var photoBlock = p.thumb
-      ? '<div class="card-photo"><img src="' + photoUrl(p.thumb, 500) + '" alt="' + escapeHtml(p.project||'') + '" onerror="onPhotoError(this,\'' + p.thumb + '\')">' + saleBadge + topRight + surveyBadge + '</div>'
+      ? '<div class="card-photo"><img loading="lazy" src="' + photoUrl(p.thumb, 500) + '" alt="' + escapeHtml(p.project||'') + '" onerror="onPhotoError(this,\'' + p.thumb + '\')">' + saleBadge + topRight + surveyBadge + '</div>'
       : '<div class="card-photo"><div class="card-photo-placeholder"><span class="ph-icon">🏠</span><span>ยังไม่มีรูป</span></div>' + saleBadge + topRight + surveyBadge + '</div>';
 
     // staff: code link to folder
@@ -1342,7 +1346,7 @@ function showGrid(data) {
     if (p.land)   areaTags += '<span class="tag tag-area">📐 ' + escapeHtml(p.land) + ' ตรว.</span>';
     if (p.usable) areaTags += '<span class="tag tag-area">📏 ' + escapeHtml(p.usable) + ' ตรม.</span>';
 
-    var pj = JSON.stringify(p).replace(/"/g, '&quot;');
+    var pj = escapeHtml(JSON.stringify(p));
 
     // ★ GEO: badge ระยะทางเมื่อกำลังค้นหาตามตำแหน่ง
     var distBlock = '';
@@ -1399,7 +1403,7 @@ function openDetail(p) {
   // แสดงรูปแรก (thumb) เท่านั้น
   var wrap = document.getElementById('dPhotoWrap');
   if (p.thumb) {
-    wrap.innerHTML = '<img src="' + photoUrl(p.thumb, 1000) + '" alt="' + escapeHtml(p.project||'') + '" '
+    wrap.innerHTML = '<img loading="lazy" src="' + photoUrl(p.thumb, 1000) + '" alt="' + escapeHtml(p.project||'') + '" '
                    + 'onerror="onModalPhotoError(this,\'' + p.thumb + '\')">'
                    + '<span class="modal-photo-badge ' + badgeClass(p.type) + '">' + escapeHtml(p.type||'') + '</span>';
   } else {
@@ -1461,7 +1465,7 @@ function openDetail(p) {
 
   // staff section
   var staffSec = document.getElementById('dStaffSection');
-  if (isStaffLoggedIn() && (p.ownerName || p.ownerTel || p.facebook)) {
+  if (isStaffLoggedIn()) {
     document.getElementById('dOwnerName').textContent = p.ownerName || '–';
     var tel = (p.ownerTel || '').replace(/\s+/g, '');
     document.getElementById('dOwnerTel').textContent = p.ownerTel || '–';
@@ -1894,13 +1898,42 @@ function quickGeo(q) {
   document.getElementById('geoInput').value = q;
   searchByLocation();
 }
+var geoSearchVersion = 0, geoSearchController = null;
+function cancelGeoRequest() {
+  geoSearchVersion++;
+  if (geoSearchController) geoSearchController.abort();
+  geoSearchController = null;
+  var btn = document.getElementById('geoBtnSearch');
+  if (btn) btn.disabled = false;
+  var dd = document.getElementById('geoDropdown');
+  if (dd) { dd.classList.remove('open'); dd.innerHTML = ''; }
+}
+function onGeoInput() {
+  cancelGeoRequest();
+  updateClearButton();
+}
+function parseLatLng(s) {
+  var m = s.match(/^\s*(-?\d{1,3}(?:\.\d+)?)\s*[,\s]\s*(-?\d{1,3}(?:\.\d+)?)\s*$/);
+  if (!m) return null;
+  var lat = parseFloat(m[1]), lng = parseFloat(m[2]);
+  if (isNaN(lat) || isNaN(lng)) return null;
+  if (Math.abs(lat) > 90 && Math.abs(lng) <= 90) { var t = lat; lat = lng; lng = t; }
+  if (lat < -90 || lat > 90 || lng < -180 || lng > 180) return null;
+  return { lat: lat, lng: lng };
+}
 function searchByLocation() {
+  cancelGeoRequest();
+  var requestVersion = geoSearchVersion;
   var rawQ = document.getElementById('geoInput').value.trim();
   if (!rawQ) { showToast('กรุณาพิมพ์สถานที่ที่ต้องการค้นหา'); return; }
+  var coordinates = parseLatLng(rawQ);
+  if (coordinates) { applyGeoOrigin({lat:coordinates.lat,lon:coordinates.lng,display_name:rawQ,_label:rawQ}); return; }
+  // ★ ขยายคำย่อก่อน เช่น "เซ็นเฟส" → "เซ็นทรัล เฟสติวัล เชียงใหม่"
   var q = expandAlias(rawQ);
   var aliasUsed = (q !== rawQ);
   var dd  = document.getElementById('geoDropdown');
   var btn = document.getElementById('geoBtnSearch');
+  // ★ ลองหาในตารางพิกัดที่รู้จัก (ตอบทันที — ไม่เรียก server)
   var known = lookupKnownPlace(q);
   if (known) {
     dd.classList.remove('open');
@@ -1912,6 +1945,7 @@ function searchByLocation() {
     });
     return;
   }
+  // ★ ลอง cache ก่อน — ถ้าเจอ ใช้ทันทีไม่เรียก server
   var cached = geoCacheGet(q);
   if (cached) {
     btn.disabled = false;
@@ -1934,16 +1968,21 @@ function searchByLocation() {
           + '&viewbox=' + viewbox
           + '&bounded=0'
           + '&accept-language=th';
-  fetch(url, { headers: { 'Accept-Language': 'th' } })
+  geoSearchController = new AbortController();
+  fetch(url, { headers: { 'Accept-Language': 'th' }, signal: geoSearchController.signal })
     .then(function(r) { return r.json(); })
     .then(function(results) {
+      if (requestVersion !== geoSearchVersion) return;
+      geoSearchController = null;
       btn.disabled = false;
       if (Array.isArray(results) && results.length > 0) {
-        geoCacheSet(q, results);
+        geoCacheSet(q, results);  // เก็บ cache
       }
       _renderGeoResults(results, q, dd, aliasUsed ? rawQ : null);
     })
     .catch(function(err) {
+      if (requestVersion !== geoSearchVersion) return;
+      geoSearchController = null;
       btn.disabled = false;
       dd.innerHTML = '<div class="geo-dropdown-empty">' +
         '⚠️ เชื่อมต่อบริการค้นหาไม่ได้<br>' +
@@ -1995,7 +2034,8 @@ function applyGeoOrigin(r) {
   showToast('✅ เรียงตามระยะใกล้ ' + label);
 }
 // ล้าง geo search → กลับไป sort ปกติ
-function clearGeoSearch() {
+function clearGeoSearch(skipApply) {
+  cancelGeoRequest();
   geoOrigin = null;
   var pill = document.getElementById('geoActivePill');
   if (pill) pill.classList.remove('visible');
@@ -2003,7 +2043,8 @@ function clearGeoSearch() {
   if (sortSel) sortSel.disabled = false;
   var geoInput = document.getElementById('geoInput');
   if (geoInput) geoInput.value = '';
-  applyFilters();
+  if (!skipApply) applyFilters();
+  document.getElementById('geoActiveText').textContent = '';
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -2054,8 +2095,10 @@ function showToast(msg) {
 // ═══════════════════════════════════════════════════════════
 //  INIT
 // ═══════════════════════════════════════════════════════════
-updateStaffBtn();
-loadData(false);
 </script>
+<script src="photo-download.js"></script>
+<script src="property-sale.js"></script>
+<script src="sale-features.js"></script>
+<script>updateStaffBtn();loadData(false);</script>
 </body>
 </html>

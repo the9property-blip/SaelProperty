@@ -1,0 +1,24 @@
+#dSaleAction { margin-top: 10px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; }
+#dSaleAction > .sale-action-status, #dSaleAction > .sale-confirmation { grid-column: 1 / -1; }
+.sale-action-button {
+  display: block; width: 100%; box-sizing: border-box; min-height: 36px;
+  padding: 6px 8px; border: 1px solid #177344; border-radius: 8px;
+  background: #16824d; color: #fff; font: inherit; font-size: 11px;
+  font-weight: 600; cursor: pointer; text-align: center;
+}
+.sale-action-button:hover { background: #116b3d; }
+.sale-delete-button { background: #b3261e; border-color: #942018; }
+.sale-delete-button:hover { background: #942018; }
+.sale-action-button:disabled { opacity: .65; cursor: wait; }
+.sale-action-button:focus-visible { outline: 3px solid #4285f4; outline-offset: 2px; }
+.sale-action-status { margin: 8px 0 0; color: #604813; font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; }
+.sale-action-status[role="alert"] { color: #b3261e; }
+.sale-confirmation { padding: 14px; margin-top: 10px; border: 1px solid #c9ad69; border-radius: 12px; background: #fff; color: #282318; }
+.sale-confirmation p { margin: 0 0 12px; font-weight: 600; line-height: 1.6; overflow-wrap: anywhere; }
+.sale-delete-code-label { display: block; margin: 0 0 12px; font-size: 0 !important; font-weight: 600; }
+.sale-delete-code-input { display: block; box-sizing: border-box; width: 100%; max-width: 180px; min-height: 40px; margin-top: 6px; padding: 7px 10px; border: 1px solid #c5a7a5; border-radius: 8px; font: inherit; font-size: 18px; letter-spacing: .2em; }
+.sale-confirmation-actions { display: flex; gap: 8px; }
+.sale-confirmation-actions button { flex: 1; min-height: 44px; padding: 8px 12px; border: 1px solid #ccc; border-radius: 8px; background: #f5f5f5; color: #333; cursor: pointer; font: inherit; }
+.sale-confirmation-actions .sale-confirm-agree { background: #16824d; border-color: #177344; color: #fff; }
+.sale-confirmation-actions .sale-confirm-delete { background: #b3261e; border-color: #942018; }
+.sale-confirmation-actions button:focus-visible { outline: 3px solid #4285f4; outline-offset: 2px; }

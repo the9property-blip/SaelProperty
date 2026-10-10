@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -534,6 +535,9 @@ body {
 .btn-caption-copy:active{transform:scale(0.96)}
 .caption-text{max-height:120px;overflow:auto;font-size:11px;line-height:1.5;white-space:pre-wrap;word-break:break-word;background:#fffdf5;border:1px solid #eadba0;border-radius:8px;padding:8px;margin:0;color:#333;font-family:inherit}
 </style>
+<link rel="stylesheet" href="sale-features.css">
+<link rel="stylesheet" href="photo-download.css">
+<link rel="stylesheet" href="property-sale.css">
 </head>
 <body>
 <!-- HEADER -->
@@ -714,6 +718,7 @@ body {
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 <script>
 const BROKER_PHONE = '0809945497';
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxToJv9BzTiEAoFuqCcWpAFFmfHzO468av1OCYnjwEwlRfw8IJI3XrFWtYS19N7Uy3JPA/exec';
@@ -872,8 +877,8 @@ function escapeHtml(s) {
 }
 function validCoord(p) {
   return typeof p.lat === 'number' && typeof p.lng === 'number' &&
-    p.lat >= BOUNDS.latMin && p.lat <= BOUNDS.latMax &&
-    p.lng >= BOUNDS.lngMin && p.lng <= BOUNDS.lngMax;
+    p.lat >= THAILAND_BOUNDS.latMin && p.lat <= THAILAND_BOUNDS.latMax &&
+    p.lng >= THAILAND_BOUNDS.lngMin && p.lng <= THAILAND_BOUNDS.lngMax;
 }
 function isUrl(s) { return /^https?:\/\//i.test(String(s||'').trim()); }
 function nl2br(s) { return escapeHtml(s).replace(/\r?\n/g, '<br>'); }
@@ -911,15 +916,60 @@ function setAgent(val, btn) {
 // ════════════════════════════════════════════════════════════
 //  INIT MAP
 // ════════════════════════════════════════════════════════════
+const THAILAND_BOUNDS = {latMin:5.5,latMax:20.6,lngMin:97.3,lngMax:105.7};
+const PRICE_ZOOM = 15;
+var priceMarkersShown = false;
+function propertyCountIcon(count) {
+  var size = count >= 100 ? 56 : 46;
+  return L.divIcon({
+    className: 'property-cluster',
+    html: '<div class="pc-inner"><strong>' + count + '</strong><span>ทรัพย์</span></div>',
+    iconSize: [size, size], iconAnchor: [size / 2, size / 2]
+  });
+}
+function updatePriceMarkers() {
+  var showPrices = map.getZoom() >= PRICE_ZOOM;
+  if (showPrices === priceMarkersShown) return;
+  priceMarkersShown = showPrices;
+  if (!showPrices) map.closePopup();
+  entries.forEach(function(e) {
+    e.marker.setIcon(showPrices ? e.priceIcon : e.countIcon);
+  });
+}
+function openEntryPopup(e) {
+  // สร้างรายละเอียดและโหลดรูปเฉพาะทรัพย์ที่ผู้ใช้เปิด
+  map.openPopup(buildPopup(e.p), e.marker.getLatLng(), {
+    maxWidth: 240, minWidth: 222, closeButton: true, className: 'prop-popup',
+    autoPanPadding: [24, 90], offset: [0, -8]
+  });
+}
 function initMap() {
-  map = L.map('map', { zoomControl: true, attributionControl: true, tap: true }).setView(CM_CENTER, 12);
+  var thailand = L.latLngBounds(
+    [THAILAND_BOUNDS.latMin, THAILAND_BOUNDS.lngMin],
+    [THAILAND_BOUNDS.latMax, THAILAND_BOUNDS.lngMax]
+  );
+  map = L.map('map', {
+    zoomControl: true, attributionControl: true,
+    minZoom: 6, maxZoom: 19, maxBounds: thailand, maxBoundsViscosity: 1,
+    bounceAtZoomLimits: false
+  }).setView(CM_CENTER, 12);
+  // โหลดเฉพาะ tile ในกรอบประเทศไทย และรอให้เลื่อน/ซูมเสร็จก่อนโหลด
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  maxZoom: 19,
-  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    minZoom: 6, maxZoom: 19, bounds: thailand, noWrap: true,
+    updateWhenIdle: true, updateWhenZooming: false, keepBuffer: 1,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   }).addTo(map);
   map.zoomControl.setPosition('topright');
-  propLayer = L.layerGroup().addTo(map);
+  propLayer = L.markerClusterGroup({
+    disableClusteringAtZoom: PRICE_ZOOM, maxClusterRadius: 80,
+    showCoverageOnHover: false, spiderfyOnMaxZoom: false,
+    removeOutsideVisibleBounds: true, animate: false,
+    iconCreateFunction: function(cluster) { return propertyCountIcon(cluster.getChildCount()); }
+  }).addTo(map);
   lmLayer = L.layerGroup().addTo(map);
+  map.on('zoomend', updatePriceMarkers);
+  // ปิด popup → ล้าง selection ของการ์ด
+  map.on('popupclose', function() { /* คงการไฮไลต์การ์ดไว้ */ });
 }
 
 // ════════════════════════════════════════════════════════════
@@ -950,6 +1000,9 @@ function loadData() {
 
 // สร้าง entries + กระจาย marker ที่พิกัดซ้ำกัน (spiral) ให้กดได้ทุกอัน
 function buildEntries(list) {
+  map.closePopup();
+  propLayer.clearLayers();
+  priceMarkersShown = map.getZoom() >= PRICE_ZOOM;
   var groups = {};
   noCoordCount = 0;
   list.forEach(function(p) {
@@ -974,24 +1027,32 @@ function buildEntries(list) {
       byCode[p.code] = e;
     });
   });
-  // สร้าง marker ราคาทั้งหมด — สีแดง (ขาย) / เขียว (ต่อรองได้)
+  // สร้าง marker ราคาทั้งหมด
   entries.forEach(function(e) {
     var p = e.p;
-    var cls = (p.negotiate === 'ได้') ? 'pm-neg' : 'pm-sale';
     var icon = L.divIcon({
       className: 'pm-icon',
-      html: '<div class="pm-inner ' + cls + '"><span>' + priceLabel(p) + '</span></div>',
+      html: '<div class="pm-inner ' + (p.negotiate === 'ได้' ? 'pm-neg' : 'pm-sale') + '"><span>' + priceLabel(p) + '</span></div>',
       iconSize: [0, 0], iconAnchor: [0, 0]
     });
-    var m = L.marker([e.latShown, e.lngShown], { icon: icon, riseOnHover: true });
-    m.bindPopup(buildPopup(p), { maxWidth: 240, minWidth: 222, closeButton: true, className: 'prop-popup', autoPanPadding: [24, 90], offset: [0, -8] });
-    m.on('click', function() { onMarkerClick(p.code); });
+    e.priceIcon = icon;
+    e.countIcon = propertyCountIcon(1);
+    var m = L.marker([e.latShown, e.lngShown], {
+      icon: priceMarkersShown ? icon : e.countIcon, riseOnHover: true,
+      title: (p.project || p.code || 'ทรัพย์') + ' — แตะเพื่อดูราคา'
+    });
+    m.on('click', function() {
+      if (map.getZoom() < PRICE_ZOOM) { focusMarker(p.code); return; }
+      openEntryPopup(e);
+      onMarkerClick(p.code);
+    });
     e.marker = m;
   });
 }
 
 // สถานที่สำคัญ
 function buildLandmarks() {
+  lmLayer.clearLayers();
   Object.keys(GEO_KNOWN_PLACES).forEach(function(key) {
     var pl = GEO_KNOWN_PLACES[key];
     if (pl.lat < BOUNDS.latMin || pl.lat > BOUNDS.latMax || pl.lng < BOUNDS.lngMin || pl.lng > BOUNDS.lngMax) return;
@@ -1012,7 +1073,7 @@ function buildLandmarks() {
 // ════════════════════════════════════════════════════════════
 function photoBlockHtml(p, cls, big) {
   if (p.thumb) {
-    return '<img src="' + photoUrl(p.thumb, big ? 600 : 400) + '" alt="' + escapeHtml(p.project || '') + '" ' +
+    return '<img loading="lazy" src="' + photoUrl(p.thumb, big ? 600 : 400) + '" alt="' + escapeHtml(p.project || '') + '" ' +
       'onerror="onImgError(this,\'' + p.thumb + '\')">';
   }
   return '<div class="ph"><span class="ph-icon">🏠</span>' + (cls === 'pp' ? '<span>ยังไม่มีรูป</span>' : '') + '</div>';
@@ -1069,7 +1130,7 @@ function buildPopup(p) {
 }
 function miniCardHtml(p) {
   var photo = p.thumb
-    ? '<img src="' + photoUrl(p.thumb, 200) + '" alt="" onerror="onImgError(this,\'' + p.thumb + '\')">'
+    ? '<img loading="lazy" src="' + photoUrl(p.thumb, 200) + '" alt="" onerror="onImgError(this,\'' + p.thumb + '\')">'
     : '<div class="ph">🏠</div>';
   var topRight = p.coAgent
     ? '<span class="mc-cobadge">Co</span>'
@@ -1199,6 +1260,7 @@ function searchMatch(hay, query) {
   return true;
 }
 function passFilter(p) {
+  if (!saleExtraPass(p)) return false;
   var search = document.getElementById('searchInput').value.toLowerCase().trim();
   var pMin   = parseFloat(document.getElementById('selMin').value) || 0;
   var pMax   = parseFloat(document.getElementById('selMax').value);
@@ -1230,12 +1292,15 @@ function passFilter(p) {
 }
 function applyFilters() {
   var shown = [];
+  var add = [], remove = [];
   entries.forEach(function(e) {
     var ok = passFilter(e.p);
-    if (ok && !e.visible) { propLayer.addLayer(e.marker); e.visible = true; }
-    else if (!ok && e.visible) { propLayer.removeLayer(e.marker); e.visible = false; }
+    if (ok && !e.visible) { add.push(e.marker); e.visible = true; }
+    else if (!ok && e.visible) { remove.push(e.marker); e.visible = false; }
     if (ok) shown.push(e);
   });
+  if (remove.length) propLayer.removeLayers(remove);
+  if (add.length) propLayer.addLayers(add);
   if (geoPlace) {
     shown.forEach(function(e) { e.p._dist = haversineKm(geoPlace.lat, geoPlace.lng, e.p.lat, e.p.lng); });
     shown.sort(function(a, b) { return a.p._dist - b.p._dist; });
@@ -1290,10 +1355,13 @@ function focusMarker(code) {
   var targetZoom = Math.max(map.getZoom(), 16);
   var needMove = !map.getCenter().equals(target, 1e-5) || map.getZoom() !== targetZoom;
   if (needMove) {
-    map.once('moveend', function() { e.marker.openPopup(); bounceMarker(code); });
+    // เปิด popup หลังกล้องเคลื่อนจบ เพื่อให้ autoPan วาง popup ในจอถูกต้อง
+    map.once('moveend', function() {
+      propLayer.zoomToShowLayer(e.marker, function() { openEntryPopup(e); bounceMarker(code); });
+    });
     map.flyTo(target, targetZoom, { duration: 0.6 });
   } else {
-    e.marker.openPopup();
+    openEntryPopup(e);
     bounceMarker(code);
   }
 }
@@ -1351,7 +1419,7 @@ function openDetail(p) {
   var photoEl = document.getElementById('dPhoto');
   var saleTag = '<span class="modal-photo-sale">ขาย</span>';
   if (p.thumb) {
-    photoEl.innerHTML = '<img src="' + photoUrl(p.thumb, 1000) + '" alt="' + escapeHtml(p.project || '') + '" onerror="onModalPhotoError(this,\'' + p.thumb + '\')">' +
+    photoEl.innerHTML = '<img loading="lazy" src="' + photoUrl(p.thumb, 1000) + '" alt="' + escapeHtml(p.project || '') + '" onerror="onModalPhotoError(this,\'' + p.thumb + '\')">' +
       '<span class="modal-photo-badge">' + escapeHtml(p.type || '') + '</span>' + saleTag;
   } else {
     photoEl.innerHTML = '<div class="modal-photo-placeholder"><span class="ph-icon">🏠</span><span>ยังไม่มีรูปภาพ</span></div>' +
@@ -1405,7 +1473,7 @@ function openDetail(p) {
 
   // STAFF SECTION
   var staffSec = document.getElementById('dStaffSection');
-  if (isStaffLoggedIn() && (p.ownerName || p.ownerTel || p.contact || p.facebook || p.folderUrl || validCoord(p))) {
+  if (isStaffLoggedIn()) {
     document.getElementById('dOwnerName').textContent = p.ownerName || '–';
     var tel = (p.ownerTel || '').toString().replace(/[^0-9+]/g, '');
     document.getElementById('dOwnerTel').textContent = p.ownerTel || '–';
@@ -1606,7 +1674,23 @@ function parseLatLng(s) {
   if (lat < -90 || lat > 90 || lng < -180 || lng > 180) return null;
   return { lat: lat, lng: lng };
 }
+var geoSearchVersion = 0, geoSearchController = null;
+function cancelGeoRequest() {
+  geoSearchVersion++;
+  if (geoSearchController) geoSearchController.abort();
+  geoSearchController = null;
+  var btn = document.getElementById('geoBtnSearch');
+  if (btn) btn.disabled = false;
+  var dd = document.getElementById('geoDropdown');
+  if (dd) { dd.classList.remove('open'); dd.innerHTML = ''; }
+}
+function onGeoInput() {
+  cancelGeoRequest();
+  updateClearButton();
+}
 function searchByLocation() {
+  cancelGeoRequest();
+  var requestVersion = geoSearchVersion;
   var rawQ = document.getElementById('geoInput').value.trim();
   if (!rawQ) { showToast('กรุณาพิมพ์สถานที่ที่ต้องการค้นหา'); return; }
   var coord = parseLatLng(rawQ);
@@ -1617,27 +1701,35 @@ function searchByLocation() {
   }
   var q = expandAlias(rawQ), aliasUsed = (q !== rawQ);
   var dd = document.getElementById('geoDropdown'), btn = document.getElementById('geoBtnSearch');
+  // 1) ตารางพิกัดที่รู้จัก — ตอบทันที
   var known = lookupKnownPlace(q);
   if (known) {
     dd.classList.remove('open');
     applyGeoOrigin({ lat: known.lat, lon: known.lng, display_name: known.label, _label: known.label });
     return;
   }
+  // 2) cache
   var cached = geoCacheGet(q);
   if (cached) { btn.disabled = false; _renderGeoResults(cached, q, dd, aliasUsed ? rawQ : null); return; }
+  // 3) Nominatim
   btn.disabled = true;
   dd.innerHTML = '<div class="geo-dropdown-loading">กำลังค้นหา "' + escapeHtml(rawQ) + '"…</div>';
   dd.classList.add('open');
   var url = 'https://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(q) +
             '&format=json&addressdetails=1&limit=6&countrycodes=th&viewbox=98.0,17.5,100.0,20.5&bounded=0&accept-language=th';
-  fetch(url, { headers: { 'Accept-Language': 'th' } })
+  geoSearchController = new AbortController();
+  fetch(url, { headers: { 'Accept-Language': 'th' }, signal: geoSearchController.signal })
     .then(function(r) { return r.json(); })
     .then(function(results) {
+      if (requestVersion !== geoSearchVersion) return;
+      geoSearchController = null;
       btn.disabled = false;
       if (Array.isArray(results) && results.length > 0) geoCacheSet(q, results);
       _renderGeoResults(results, q, dd, aliasUsed ? rawQ : null);
     })
     .catch(function(err) {
+      if (requestVersion !== geoSearchVersion) return;
+      geoSearchController = null;
       btn.disabled = false;
       dd.innerHTML = '<div class="geo-dropdown-empty">⚠️ เชื่อมต่อบริการค้นหาไม่ได้<br><small style="color:#aaa;">' + escapeHtml(err.message || '') + '</small></div>';
     });
@@ -1679,13 +1771,15 @@ function applyGeoOrigin(r) {
   map.flyTo([lat, lng], 14, { duration: 0.7 });
   showToast('✅ เรียงบ้านตามระยะใกล้ ' + label);
 }
-function clearGeoSearch() {
+function clearGeoSearch(skipApply) {
+  cancelGeoRequest();
   geoPlace = null;
   if (placeMarker) { map.removeLayer(placeMarker); placeMarker = null; }
   document.getElementById('nearPill').classList.remove('visible');
   var gi = document.getElementById('geoInput'); if (gi) gi.value = '';
   var dd = document.getElementById('geoDropdown'); if (dd) dd.classList.remove('open');
-  applyFilters();
+  if (!skipApply) applyFilters();
+  document.getElementById('nearPillText').textContent = '';
 }
 
 // ════════════════════════════════════════════════════════════
@@ -1848,5 +1942,8 @@ window.addEventListener('load', function() {
 });
 window.addEventListener('resize', function() { if (map) map.invalidateSize(); });
 </script>
+<script src="photo-download.js"></script>
+<script src="property-sale.js"></script>
+<script src="sale-features.js"></script>
 </body>
 </html>

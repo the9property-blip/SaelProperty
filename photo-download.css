@@ -1,0 +1,28 @@
+.photo-download-button {
+  display: block; width: 100%; flex: 1 0 100%; padding: 10px 12px;
+  border: 1px solid #c9ad69; border-radius: 9px; background: #fff8e7;
+  color: #604813; font: inherit; font-size: 13px; font-weight: 600;
+  cursor: pointer; min-height: 44px; text-align: center;
+}
+.photo-download-button:hover { background: #ffedc1; }
+.photo-download-button:disabled { opacity: .65; cursor: wait; }
+.photo-download-button:focus-visible, .photo-download-save:focus-visible,
+.photo-download-close:focus-visible { outline: 3px solid #4285f4; outline-offset: 2px; }
+#dPhotoDownload { padding-top: 10px; }
+.photo-download-panel {
+  position: relative; margin-top: 12px;
+  width: 100%; box-sizing: border-box;
+  padding: 18px; border: 1px solid #dccca5; border-radius: 14px;
+  background: #fff; color: #252525; box-shadow: 0 6px 32px #0003;
+  font: 14px/1.6 sans-serif;
+}
+.photo-download-panel p { margin: 0 28px 12px 0; overflow-wrap: anywhere; }
+.photo-download-close {
+  position: absolute; top: 3px; right: 3px; width: 44px; height: 44px;
+  background: transparent; border: 0; font-size: 26px; cursor: pointer; color: #555;
+}
+.photo-download-save {
+  display: inline-block; box-sizing: border-box; min-height: 44px;
+  padding: 10px 14px; margin: 4px 8px 0 0; border: 0; border-radius: 8px;
+  background: #604813; color: #fff; text-decoration: none; cursor: pointer; font: inherit;
+}
