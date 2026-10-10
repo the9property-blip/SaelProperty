@@ -1,37 +1,37 @@
-# 🏠 The 9 Property — บ้านขาย เชียงใหม่
+# เว็บขาย The 9 Property — ชุดอัปเดตหลัก
 
-แคทตาล็อกบ้านขาย/คอนโด/พูลวิลล่า ในจังหวัดเชียงใหม่ ดึงข้อมูลสดจาก Google Sheets ผ่าน Apps Script Web App
+ไฟล์ที่ใช้งานล่าสุดอยู่ในโฟลเดอร์ WebForSael เพียงชุดเดียว ให้แก้ไขไฟล์เดิมทุกครั้ง ไม่สร้างไฟล์ใหม่ สำเนา หรือโฟลเดอร์เวอร์ชันเพิ่ม ตามคำสั่งผู้ใช้
 
-**ดูเว็บ:** `https://the9property-blip.github.io/SaelProperty/`
+## ไฟล์สำหรับ GitHub Pages
 
-## โครงสร้างไฟล์
+อัปโหลดไฟล์เหล่านี้ทับชื่อเดิมที่รากของ repository เว็บขาย:
 
-```
-github-pages/
-├── index.html          ← หน้าเว็บหลัก (ไฟล์เดียว รวม CSS + JS)
-├── .nojekyll           ← บอก GitHub ไม่ต้องใช้ Jekyll
-└── README.md           ← ไฟล์นี้
-```
+- index.html — หน้าเว็บขายหลัก
+- map.html — แผนที่ทรัพย์กำลังขาย
+- map-sold.html — แผนที่ทรัพย์ขายแล้วสำหรับ Staff
+- sale-features.js และ sale-features.css
+- property-sale.js และ property-sale.css
+- photo-download.js และ photo-download.css
+- staff-session.js — สิทธิ์ Staff ร่วมกันระหว่างหน้าในเซสชันเบราว์เซอร์
+- .nojekyll
 
-## ตั้งค่าก่อน deploy
+ห้ามอัปโหลดทั้งโฟลเดอร์รวม เพราะมีไฟล์ Apps Script และค่าตั้งค่าภายในอยู่ด้วย อัปโหลดเฉพาะไฟล์เว็บในรายการข้างต้น
 
-เปิด `index.html` หา section `CONFIG` (ราวบรรทัด 660) แล้วแก้ 3 ค่านี้:
+## ไฟล์สำหรับ Apps Script
 
-```js
-const LINE_ID    = '@the9property';                                  // Line ID จริง
-const WA_PHONE   = '66809945497';                                    // WhatsApp (66 + เบอร์ตัด 0)
-const SCRIPT_URL = 'https://script.google.com/macros/s/.../exec';    // Apps Script Web App URL
-```
+อัปเดตเนื้อหาในไฟล์ชื่อเดิมทั้ง 4 ตัวของโปรเจกต์ออนไลน์:
 
-ถ้า `SCRIPT_URL` ว่าง → เว็บจะใช้ mock-data เพื่อ preview UI
+- PropertyAllScript.gs
+- SaleCatalogScript.gs
+- SaleActions.gs
+- SaleFeatures.gs
 
-## Deploy บน GitHub Pages
+จากนั้นเผยแพร่ New version ผ่าน Deployment เดิม เพื่อรักษา URL ที่หน้าเว็บใช้อยู่ ดูรายละเอียดการรวมโค้ดและค่าตั้งค่าใน SETUP_SALE.md
 
-1. สร้าง repo ใหม่บน GitHub (เช่น `the9-sale`)
-2. Upload ไฟล์ทั้งหมดในโฟลเดอร์นี้ (index.html, .nojekyll, README.md) ไปไว้ที่ root ของ repo
-3. ไปที่ repo → Settings → Pages → Source: `Deploy from a branch` → Branch: `main` / folder: `/ (root)` → Save
-4. รอ 1-2 นาที จะได้ URL: `https://<username>.github.io/the9-sale/`
+## การจัดไฟล์
 
-## Backend (Apps Script)
+ลบสำเนาซ้ำใน github-pages และเปลี่ยนชื่อ index_sale_FIXED.html เป็น index.html แล้ว ลิงก์กลับจากหน้าแผนที่ใช้ index.html เหมือนเว็บออนไลน์
 
-โปรเจกต์ Apps Script เดียวกับเว็บเช่า — ต้องเพิ่มไฟล์ `SaleCatalogScript.gs` (อยู่ในโฟลเดอร์ WebForSael) และ patch `doGet()` ใน `PropertyAllScript.gs` ดูคำสั่งในไฟล์ `SaleCatalogScript.gs` ท้ายไฟล์
+โฟลเดอร์ tests ใช้ตรวจการทำงาน ส่วน backups เก็บเฉพาะประวัติที่มีเนื้อหาต่างจากชุดปัจจุบัน ทั้งสองโฟลเดอร์ไม่ใช่ไฟล์สำหรับอัปโหลด เว็บจริงไม่ได้เปลี่ยนจากการจัดไฟล์ครั้งนี้
+
+ZIP ก่อนจัดระเบียบอยู่ในโฟลเดอร์แม่ เก็บไว้เพื่อกู้คืนเท่านั้น ไม่ใช่ชุดใช้งาน และไม่ต้องสร้าง ZIP ใหม่เวลาแก้ไขครั้งต่อไป
