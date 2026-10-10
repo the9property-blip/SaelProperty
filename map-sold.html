@@ -538,6 +538,7 @@ body {
 <link rel="stylesheet" href="sale-features.css">
 <link rel="stylesheet" href="photo-download.css">
 <link rel="stylesheet" href="property-sale.css">
+<script src="staff-session.js"></script>
 </head>
 <body data-sale-dataset="sold">
 <!-- HEADER -->
@@ -1841,7 +1842,7 @@ function showToast(msg) {
 //  STAFF AUTH
 // ════════════════════════════════════════════════════════════
 function getStaffToken() {
-  try { return sessionStorage.getItem('staff_token') || ''; } catch(e) { return ''; }
+  try { return StaffSession.get(); } catch(e) { return ''; }
 }
 function isStaffLoggedIn() { return !!getStaffToken(); }
 function updateStaffBtn() {
@@ -1864,7 +1865,7 @@ function updateStaffBtn() {
 function staffBtnClick() {
   if (isStaffLoggedIn()) {
     if (confirm('ออกจากระบบทีมงาน?')) {
-      try { sessionStorage.removeItem('staff_token'); } catch(e) {}
+      try { StaffSession.clear(); } catch(e) {}
       updateStaffBtn();
       loadData();
       showToast('👋 ออกจากระบบแล้ว');
@@ -1886,7 +1887,7 @@ function doStaffLogin() {
   var pw = document.getElementById('staffPasswordInput').value;
   if (!pw) { document.getElementById('staffLoginErr').textContent = 'กรุณาใส่รหัสผ่าน'; return; }
   document.getElementById('staffLoginErr').textContent = '⏳ กำลังตรวจสอบ...';
-  try { sessionStorage.setItem('staff_token', pw); } catch(e) {}
+  try { StaffSession.set(pw); } catch(e) {}
   fetch(SCRIPT_URL + '?type=' + API_TYPE + '&action=soldMap&dataset=sold&token=' + encodeURIComponent(pw))
     .then(function(r) { return r.json(); })
     .then(function(json) {
@@ -1899,12 +1900,12 @@ function doStaffLogin() {
         applyFilters();
         showToast('✅ เข้าสู่ระบบสำเร็จ');
       } else {
-        try { sessionStorage.removeItem('staff_token'); } catch(e) {}
+        try { StaffSession.clear(); } catch(e) {}
         document.getElementById('staffLoginErr').textContent = '❌ รหัสผ่านไม่ถูกต้อง';
       }
     })
     .catch(function(err) {
-      try { sessionStorage.removeItem('staff_token'); } catch(e) {}
+      try { StaffSession.clear(); } catch(e) {}
       document.getElementById('staffLoginErr').textContent = '⚠️ เชื่อมต่อไม่ได้: ' + err.message;
     });
 }

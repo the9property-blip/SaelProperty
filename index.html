@@ -602,6 +602,7 @@ body { font-family: 'Segoe UI', 'Noto Sans Thai', sans-serif; background: #f5f6f
 <link rel="stylesheet" href="sale-features.css">
 <link rel="stylesheet" href="photo-download.css">
 <link rel="stylesheet" href="property-sale.css">
+<script src="staff-session.js"></script>
 </head>
 <body>
 <!-- HEADER -->
@@ -993,7 +994,7 @@ var geoOrigin   = null;    // { lat, lng, label } เมื่อค้นหา
 //  STAFF AUTH
 // ═══════════════════════════════════════════════════════════
 function getStaffToken() {
-  try { return sessionStorage.getItem('staff_token') || ''; } catch(e) { return ''; }
+  try { return StaffSession.get(); } catch(e) { return ''; }
 }
 function isStaffLoggedIn() { return !!getStaffToken(); }
 function updateStaffBtn() {
@@ -1016,7 +1017,7 @@ function updateStaffBtn() {
 function staffBtnClick() {
   if (isStaffLoggedIn()) {
     if (confirm('ออกจากระบบทีมงาน?')) {
-      try { sessionStorage.removeItem('staff_token'); } catch(e) {}
+      try { StaffSession.clear(); } catch(e) {}
       updateStaffBtn();
       loadData(false);
       showToast('👋 ออกจากระบบแล้ว');
@@ -1040,7 +1041,7 @@ function doStaffLogin() {
   if (USE_MOCK_DATA) {
     // mock: รหัส 456258
     if (pw === '456258') {
-      try { sessionStorage.setItem('staff_token', pw); } catch(e) {}
+      try { StaffSession.set(pw); } catch(e) {}
       closeStaffModal();
       updateStaffBtn();
       // เติม mock owner ให้ดูภาพรวม
@@ -1057,7 +1058,7 @@ function doStaffLogin() {
     return;
   }
   document.getElementById('staffLoginErr').textContent = '⏳ กำลังตรวจสอบ...';
-  try { sessionStorage.setItem('staff_token', pw); } catch(e) {}
+  try { StaffSession.set(pw); } catch(e) {}
   var url = SCRIPT_URL + '?type=' + API_TYPE + '&token=' + encodeURIComponent(pw);
   fetch(url)
     .then(function(r) { return r.json(); })
@@ -1069,12 +1070,12 @@ function doStaffLogin() {
         applyFilters();
         showToast('✅ เข้าสู่ระบบสำเร็จ');
       } else {
-        try { sessionStorage.removeItem('staff_token'); } catch(e) {}
+        try { StaffSession.clear(); } catch(e) {}
         document.getElementById('staffLoginErr').textContent = '❌ รหัสผ่านไม่ถูกต้อง';
       }
     })
     .catch(function(err) {
-      try { sessionStorage.removeItem('staff_token'); } catch(e) {}
+      try { StaffSession.clear(); } catch(e) {}
       document.getElementById('staffLoginErr').textContent = '⚠️ เชื่อมต่อไม่ได้: ' + err.message;
     });
 }
