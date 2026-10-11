@@ -50,16 +50,16 @@
   if (!staff) { staff=document.createElement('div'); staff.className='staff-controls'; el('staffBtn').parentNode.insertBefore(staff,el('staffBtn')); staff.appendChild(el('staffBtn')); }
   var nav=document.createElement('div'); nav.className='staff-nav'; staff.appendChild(nav);
   document.querySelectorAll('.rent-link-btn, a[href*="rental-house"], #scheduleBtn, #customerBtn').forEach(function(a){nav.appendChild(a);});
-  var archiveLink=document.createElement('a'); archiveLink.id='soldMapLink'; archiveLink.className='nav-link-btn'; archiveLink.href=sold?'map.html':'map-sold.html'; archiveLink.textContent=sold?'🏷️ ทรัพย์กำลังขาย':'🗺️ ทรัพย์ขายแล้ว'; nav.prepend(archiveLink);
   var staffSection=el('dStaffSection'), photoSlot=document.createElement('div'), actionSlot=document.createElement('div');
   photoSlot.id='dPhotoDownload'; actionSlot.id='dSaleAction'; staffSection.appendChild(photoSlot); staffSection.appendChild(actionSlot);
   var close= document.querySelector('.modal-close');
   if (close) { var bar=document.createElement('div'); bar.className='modal-closebar'; bar.textContent='รายละเอียดทรัพย์'; document.querySelector('#detailOverlay .modal').prepend(bar); bar.appendChild(close); close.type='button'; close.setAttribute('aria-label','ปิดรายละเอียด'); }
   var pageNav=document.createElement('nav');pageNav.className='sale-page-nav';pageNav.setAttribute('aria-label','หน้าเว็บขาย');
   [['index.html','รายการขาย'],['map.html','แผนที่ขาย'],['map-sold.html','ขายแล้ว']].forEach(function(item){var a=document.createElement('a');a.href=item[0];a.textContent=item[1];if(item[0]===(sold?'map-sold.html':isMap?'map.html':'index.html'))a.setAttribute('aria-current','page');pageNav.appendChild(a);});
-  document.querySelector('.header').prepend(pageNav);
-  var advanced=document.createElement('details');advanced.className='sale-advanced';
-  var summary=document.createElement('summary');summary.textContent='ตัวกรองเพิ่มเติม';advanced.appendChild(summary);
+  staff.prepend(pageNav);staff.appendChild(el('staffBtn'));
+  toolbar.prepend(tools);
+  document.querySelectorAll('.geo-map-btn').forEach(function(link){link.remove();});
+  var advanced=document.createElement('div');advanced.className='sale-advanced';advanced.setAttribute('role','group');advanced.setAttribute('aria-label','ตัวกรองทรัพย์');
   var advancedGrid=document.createElement('div');advancedGrid.className='sale-filter-grid';advanced.appendChild(advancedGrid);
   toolbar.after(advanced);
   var labels={selMin:'ราคาต่ำสุด (บาท)',selMax:'ราคาสูงสุด (บาท)',floorMin:'ชั้นต่ำสุด',floorMax:'ชั้นสูงสุด',landMin:'ที่ดินต่ำสุด (ตร.ว.)',landMax:'ที่ดินสูงสุด (ตร.ว.)',usableMin:'ใช้สอยต่ำสุด (ตร.ม.)',usableMax:'ใช้สอยสูงสุด (ตร.ม.)',selBed:'ห้องนอน',selBath:'ห้องน้ำ',selNeg:'การต่อรอง',selMaidRoom:'ห้องแม่บ้าน',selDownstairsBedroom:'ห้องนอนชั้นล่าง',selGrade:'เกรดทรัพย์',selPet:'สัตว์เลี้ยง'};
@@ -116,7 +116,7 @@
   var baseClose=window.closeDetail;
   window.closeDetail=function(){currentDetail=null;captionGeneration++;PropertySale.setDetail(null);PropertyPhotos.reset();baseClose();};
   var baseStaff=window.updateStaffBtn;
-  window.updateStaffBtn=function(){baseStaff();archiveLink.style.display=isStaffLoggedIn()?'':'none';PropertyPhotos.refreshButtons();if(!isStaffLoggedIn()){closeDetail();allData=allData.map(function(p){var clean=Object.assign({},p);['ownerName','ownerTel','ownerTelRaw','contact','facebook','folderUrl','saleVersion'].forEach(function(k){delete clean[k];});return clean;});if(sold){allData=[];if(isMap&&map){buildEntries([]);applyFilters();}el('cardStrip').textContent='🔒 กรุณาเข้าสู่ระบบทีมงานเพื่อดูทรัพย์ขายแล้ว';}}};
+  window.updateStaffBtn=function(){baseStaff();PropertyPhotos.refreshButtons();if(!isStaffLoggedIn()){closeDetail();allData=allData.map(function(p){var clean=Object.assign({},p);['ownerName','ownerTel','ownerTelRaw','contact','facebook','folderUrl','saleVersion'].forEach(function(k){delete clean[k];});return clean;});if(sold){allData=[];if(isMap&&map){buildEntries([]);applyFilters();}el('cardStrip').textContent='🔒 กรุณาเข้าสู่ระบบทีมงานเพื่อดูทรัพย์ขายแล้ว';}}};
   // One lifecycle for catalog, map, sold map and login; requests never patch global fetch.
   var api=SaleApi.create(SCRIPT_URL,sold?'sold':'active');
   var statusBar=document.createElement('div');statusBar.className='sale-status';
