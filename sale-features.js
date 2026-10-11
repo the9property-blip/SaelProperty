@@ -57,7 +57,7 @@
   var pageNav=document.createElement('nav');pageNav.className='sale-page-nav';pageNav.setAttribute('aria-label','หน้าเว็บขาย');
   [['index.html','รายการขาย'],['map.html','แผนที่ขาย'],['map-sold.html','ขายแล้ว']].forEach(function(item){var a=document.createElement('a');a.href=item[0];a.textContent=item[1];if(item[0]===(sold?'map-sold.html':isMap?'map.html':'index.html'))a.setAttribute('aria-current','page');pageNav.appendChild(a);});
   staff.prepend(pageNav);staff.appendChild(el('staffBtn'));
-  toolbar.prepend(tools);
+  document.querySelector('.header-row1').after(tools);
   document.querySelectorAll('.geo-map-btn').forEach(function(link){link.remove();});
   var advanced=document.createElement('div');advanced.className='sale-advanced';advanced.setAttribute('role','group');advanced.setAttribute('aria-label','ตัวกรองทรัพย์');
   var advancedGrid=document.createElement('div');advancedGrid.className='sale-filter-grid';advanced.appendChild(advancedGrid);
