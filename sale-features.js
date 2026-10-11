@@ -2,6 +2,7 @@
 (function () {
   'use strict';
   var isMap = !!document.getElementById('map');
+  if(isMap)document.body.classList.add('sale-map');
   var sold = document.body.dataset.saleDataset === 'sold';
   var fields = ['floorMin','floorMax','landMin','landMax','usableMin','usableMax'];
   var selections = ['selMaidRoom','selDownstairsBedroom','selGrade','selPet'];
@@ -66,6 +67,7 @@
   fields.concat(['selBed','selBath','selNeg']).concat(selections).forEach(function(id){var label=document.createElement('label');label.className='sale-filter-field';var text=document.createElement('span');text.textContent=labels[id];label.appendChild(text);label.appendChild(el(id));advancedGrid.appendChild(label);});
   ['btnAgentDirect','btnAgentCo','btnAgentSurvey'].forEach(function(id){advancedGrid.appendChild(el(id));});
   ['selMin','selMax'].forEach(function(id){var label=document.createElement('label');label.className='sale-price-field';var text=document.createElement('span');text.textContent=labels[id];var input=el(id);input.before(label);label.appendChild(text);label.appendChild(input);});
+  if(isMap){toolbar.prepend(tools);Array.from(advancedGrid.children).forEach(function(control){toolbar.appendChild(control);});advanced.remove();}
   ['detailOverlay','staffLoginModal'].forEach(function(id){var dialog=el(id);dialog.setAttribute('role','dialog');dialog.setAttribute('aria-modal','true');dialog.setAttribute('aria-label',id==='detailOverlay'?'รายละเอียดทรัพย์':'เข้าสู่ระบบ Staff');});
   document.addEventListener('keydown',function(event){if(event.key!=='Tab')return;var dialog=el('staffLoginModal').classList.contains('open')?el('staffLoginModal'):el('detailOverlay').classList.contains('open')?el('detailOverlay'):null;if(!dialog)return;var items=Array.from(dialog.querySelectorAll('button:not(:disabled),a[href],input:not(:disabled),select:not(:disabled)')).filter(function(node){return node.getClientRects().length;});if(!items.length)return;var first=items[0],last=items[items.length-1];if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}});
   window.saleExtraPass = function(p) {
