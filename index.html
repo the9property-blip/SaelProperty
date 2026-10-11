@@ -1035,90 +1035,12 @@ function openStaffModal() {
 function closeStaffModal() {
   document.getElementById('staffLoginModal').classList.remove('open');
 }
-function doStaffLogin() {
-  var pw = document.getElementById('staffPasswordInput').value;
-  if (!pw) { document.getElementById('staffLoginErr').textContent = 'กรุณาใส่รหัสผ่าน'; return; }
-  if (USE_MOCK_DATA) {
-    // mock: รหัส 456258
-    if (pw === '456258') {
-      try { StaffSession.set(pw); } catch(e) {}
-      closeStaffModal();
-      updateStaffBtn();
-      // เติม mock owner ให้ดูภาพรวม
-      allData.forEach(function(p) {
-        p.ownerName = 'เจ้าของทรัพย์';
-        p.ownerTel  = '0812345678';
-        p.lat = 18.79; p.lng = 98.99;
-      });
-      applyFilters();
-      showToast('✅ เข้าสู่ระบบสำเร็จ (mock)');
-    } else {
-      document.getElementById('staffLoginErr').textContent = '❌ รหัสผ่านไม่ถูกต้อง (mock: 456258)';
-    }
-    return;
-  }
-  document.getElementById('staffLoginErr').textContent = '⏳ กำลังตรวจสอบ...';
-  try { StaffSession.set(pw); } catch(e) {}
-  var url = SCRIPT_URL + '?type=' + API_TYPE + '&token=' + encodeURIComponent(pw);
-  fetch(url)
-    .then(function(r) { return r.json(); })
-    .then(function(json) {
-      if (json.staff === true) {
-        closeStaffModal();
-        updateStaffBtn();
-        allData = json.data || [];
-        applyFilters();
-        showToast('✅ เข้าสู่ระบบสำเร็จ');
-      } else {
-        try { StaffSession.clear(); } catch(e) {}
-        document.getElementById('staffLoginErr').textContent = '❌ รหัสผ่านไม่ถูกต้อง';
-      }
-    })
-    .catch(function(err) {
-      try { StaffSession.clear(); } catch(e) {}
-      document.getElementById('staffLoginErr').textContent = '⚠️ เชื่อมต่อไม่ได้: ' + err.message;
-    });
-}
+function doStaffLogin() { return SaleApp.login(); }
 
 // ═══════════════════════════════════════════════════════════
 //  LOAD DATA
 // ═══════════════════════════════════════════════════════════
-function loadData(manual) {
-  var btn = document.getElementById('btnRefresh');
-  btn.classList.add('spinning'); btn.disabled = true;
-  showLoading();
-
-  if (USE_MOCK_DATA) {
-    setTimeout(function() {
-      btn.classList.remove('spinning'); btn.disabled = false;
-      allData = MOCK_DATA.slice();
-      applyFilters();
-      if (manual) showToast('✅ โหลด mock-data สำเร็จ ' + allData.length + ' รายการ');
-    }, 400);
-    return;
-  }
-
-  var params = ['type=' + API_TYPE];
-  if (manual) params.push('refresh=1');
-  var token = getStaffToken();
-  if (token) params.push('token=' + encodeURIComponent(token));
-  params.push('_t=' + Date.now());  // cache-buster: กัน Google dispatch-cache คืนการ์ดค้าง
-  var url = SCRIPT_URL + '?' + params.join('&');
-
-  fetch(url)
-    .then(function(r) { return r.json(); })
-    .then(function(json) {
-      btn.classList.remove('spinning'); btn.disabled = false;
-      if (json.error || !json.ok) { showError(json.error || json.msg || 'ไม่ทราบสาเหตุ'); return; }
-      allData = json.data || [];
-      applyFilters();
-      if (manual) showToast('✅ โหลดข้อมูลสำเร็จ ' + allData.length + ' รายการ');
-    })
-    .catch(function(err) {
-      btn.classList.remove('spinning'); btn.disabled = false;
-      showError('เชื่อมต่อไม่ได้: ' + err.message);
-    });
-}
+function loadData(manual) { return SaleApp.load(!!manual); }
 
 // ═══════════════════════════════════════════════════════════
 //  FILTER & SORT
@@ -1200,7 +1122,7 @@ function applyFilters() {
   var filtered = allData.filter(function(p) {
     if (!saleExtraPass(p)) return false;
     if (activeTypes.length && activeTypes.indexOf(p.type) === -1) return false;
-    if (p.price > 0 && (p.price < priceMin || p.price > priceMax)) return false;
+    if ((priceMin > 0 || priceMax !== Infinity) && (!(Number(p.price) > 0) || p.price < priceMin || p.price > priceMax)) return false;
     if (bed !== 'all') {
       var br = parseInt(p.bedroom) || 0;
       if (bed === '9' && br < 9) return false;
@@ -1986,7 +1908,7 @@ function _renderGeoResults(results, q, dd, originalQuery) {
   if (!Array.isArray(results) || results.length === 0) {
     dd.innerHTML = '<div class="geo-dropdown-empty">' +
       '😕 ไม่พบสถานที่ "' + escapeHtml(originalQuery || q) + '"<br>' +
-      '<small style="color:#aaa;font-size:0.78rem;">ลองพิมพ์ชื่อเต็ม หรือกด chip ลัดด้านล่าง</small>' +
+      '<small style="color:#aaa;font-size:0.78rem;">ลองพิมพ์ชื่อเต็ม หรือพิกัดละติจูด ลองจิจูดด้านล่าง</small>' +
     '</div>';
     return;
   }
@@ -2059,23 +1981,7 @@ function copyText(t) {
 }
 function copyCoords() { copyText(_coordsHref); }
 var _captionCache = {}, _captionText = '';
-function loadCaption(code, isSale) {
-  var block = document.getElementById('dCaptionBlock');
-  var pre   = document.getElementById('dCaptionText');
-  if (!block || !pre) return;
-  _captionText = ''; block.style.display = 'none';
-  var token = getStaffToken();
-  if (!code || !token) return;
-  function show(t){ _captionText = t; pre.textContent = t; block.style.display = ''; }
-  if (_captionCache[code] != null) { show(_captionCache[code]); return; }
-  pre.textContent = 'กำลังโหลด…'; block.style.display = '';
-  var url = SCRIPT_URL + '?action=caption&code=' + encodeURIComponent(code) +
-            '&token=' + encodeURIComponent(token) + (isSale ? '&type=sale' : '');
-  fetch(url).then(function(r){ return r.json(); }).then(function(j){
-    if (j && j.ok && j.caption) { _captionCache[code] = j.caption; show(j.caption); }
-    else { pre.textContent = '— ยังไม่มีไฟล์ประกาศ (รหัส-1)'; }
-  }).catch(function(){ pre.textContent = '— โหลดไม่สำเร็จ'; });
-}
+// Caption requests are handled by the shared sale controller.
 function copyCaption() { copyText(_captionText); }
 
 function showToast(msg) {

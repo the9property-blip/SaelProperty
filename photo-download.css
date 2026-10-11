@@ -17,6 +17,7 @@
   font: 14px/1.6 sans-serif;
 }
 .photo-download-panel p { margin: 0 28px 12px 0; overflow-wrap: anywhere; }
+.photo-download-floating { position: fixed; z-index: 4500; bottom: 16px; left: 50%; transform: translateX(-50%); width: min(480px, calc(100% - 24px)); max-height: 70vh; overflow: auto; }
 .photo-download-close {
   position: absolute; top: 3px; right: 3px; width: 44px; height: 44px;
   background: transparent; border: 0; font-size: 26px; cursor: pointer; color: #555;

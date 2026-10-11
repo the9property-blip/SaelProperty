@@ -65,7 +65,10 @@ window.PropertyPhotos = (function () {
     status.textContent = message;
     panel.appendChild(close);
     panel.appendChild(status);
-    document.getElementById('dStaffSection').appendChild(panel);
+    var section = document.getElementById('dStaffSection');
+    var overlay = document.getElementById('detailOverlay');
+    if (overlay && overlay.classList.contains('open') && section) section.appendChild(panel);
+    else { panel.classList.add('photo-download-floating'); document.body.appendChild(panel); }
     if (panel.scrollIntoView) panel.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     return status;
   }

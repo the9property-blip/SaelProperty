@@ -3,7 +3,7 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>แผนที่ทรัพย์ขายแล้ว เชียงใหม่ | The 9 Property</title>
 <meta name="description" content="แผนที่ทรัพย์ขายแล้วในเชียงใหม่ — ดูตำแหน่งบ้านแต่ละหลังพร้อมราคา กดที่หมุดเพื่อดูรูปและรายละเอียด The 9 Property โทร 080-994-5497">
 <meta name="theme-color" content="#1a1a2e">
@@ -967,30 +967,7 @@ function initMap() {
 // ════════════════════════════════════════════════════════════
 //  LOAD DATA
 // ════════════════════════════════════════════════════════════
-function loadData() {
-  var token = getStaffToken();
-  if (!token) return;
-  var params = ['type=' + API_TYPE, 'action=soldMap', 'dataset=sold'];
-  if (token) params.push('token=' + encodeURIComponent(token));
-  params.push('_t=' + Date.now());  // cache-buster: กัน Google dispatch-cache คืนการ์ดค้าง
-  var url = SCRIPT_URL + '?' + params.join('&');
-  fetch(url)
-    .then(function(r) { return r.json(); })
-    .then(function(json) {
-      if (!json.ok) throw new Error(json.msg || 'โหลดข้อมูลไม่สำเร็จ');
-      if (json.dataset !== 'sold') throw new Error('ข้อมูลที่ได้รับไม่ใช่ชุดทรัพย์ขายแล้ว กรุณาแจ้งผู้ดูแลให้อัปเดตระบบ');
-      allData = json.data || [];
-      buildEntries(allData);
-      buildLandmarks();
-      applyFilters();
-      fitAll();
-    })
-    .catch(function(err) {
-      document.getElementById('countPill').innerHTML = '⚠️ โหลดไม่สำเร็จ';
-      document.getElementById('cardStrip').innerHTML =
-        '<div class="strip-empty">⚠️ เชื่อมต่อข้อมูลไม่ได้: ' + escapeHtml(err.message) + '</div>';
-    });
-}
+function loadData(manual) { return SaleApp.load(!!manual); }
 
 // สร้าง entries + กระจาย marker ที่พิกัดซ้ำกัน (spiral) ให้กดได้ทุกอัน
 function buildEntries(list) {
@@ -1263,7 +1240,7 @@ function passFilter(p) {
   var bath   = document.getElementById('selBath').value;
   var neg    = document.getElementById('selNeg').value;
   if (activeTypes.length && activeTypes.indexOf(p.type) === -1) return false;
-  if (p.price > 0 && (p.price < pMin || p.price > pMax)) return false;
+  if ((pMin > 0 || pMax !== Infinity) && (!(Number(p.price) > 0) || p.price < pMin || p.price > pMax)) return false;
   if (bed !== 'all') {
     var br = parseInt(p.bedroom) || 0;
     if (bed === '9' && br < 9) return false;
@@ -1731,7 +1708,7 @@ function searchByLocation() {
 function _renderGeoResults(results, q, dd, originalQuery) {
   if (!Array.isArray(results) || results.length === 0) {
     dd.innerHTML = '<div class="geo-dropdown-empty">😕 ไม่พบสถานที่ "' + escapeHtml(originalQuery || q) +
-      '"<br><small style="color:#aaa;">ลองพิมพ์ชื่อเต็ม หรือกด chip ลัด</small></div>';
+      '"<br><small style="color:#aaa;">ลองพิมพ์ชื่อเต็ม หรือพิกัดละติจูด ลองจิจูด</small></div>';
     dd.classList.add('open');
     return;
   }
@@ -1813,23 +1790,7 @@ function copyText(t) {
 }
 function copyCoords() { copyText(_coordsHref); }
 var _captionCache = {}, _captionText = '';
-function loadCaption(code, isSale) {
-  var block = document.getElementById('dCaptionBlock');
-  var pre   = document.getElementById('dCaptionText');
-  if (!block || !pre) return;
-  _captionText = ''; block.style.display = 'none';
-  var token = getStaffToken();
-  if (!code || !token) return;
-  function show(t){ _captionText = t; pre.textContent = t; block.style.display = ''; }
-  if (_captionCache[code] != null) { show(_captionCache[code]); return; }
-  pre.textContent = 'กำลังโหลด…'; block.style.display = '';
-  var url = SCRIPT_URL + '?action=caption&code=' + encodeURIComponent(code) +
-            '&token=' + encodeURIComponent(token) + (isSale ? '&type=sale' : '');
-  fetch(url).then(function(r){ return r.json(); }).then(function(j){
-    if (j && j.ok && j.caption) { _captionCache[code] = j.caption; show(j.caption); }
-    else { pre.textContent = '— ยังไม่มีไฟล์ประกาศ (รหัส-1)'; }
-  }).catch(function(){ pre.textContent = '— โหลดไม่สำเร็จ'; });
-}
+// Caption requests are handled by the shared sale controller.
 function copyCaption() { copyText(_captionText); }
 
 function showToast(msg) {
@@ -1883,32 +1844,7 @@ function openStaffModal() {
 function closeStaffModal() {
   document.getElementById('staffLoginModal').classList.remove('open');
 }
-function doStaffLogin() {
-  var pw = document.getElementById('staffPasswordInput').value;
-  if (!pw) { document.getElementById('staffLoginErr').textContent = 'กรุณาใส่รหัสผ่าน'; return; }
-  document.getElementById('staffLoginErr').textContent = '⏳ กำลังตรวจสอบ...';
-  try { StaffSession.set(pw); } catch(e) {}
-  fetch(SCRIPT_URL + '?type=' + API_TYPE + '&action=soldMap&dataset=sold&token=' + encodeURIComponent(pw))
-    .then(function(r) { return r.json(); })
-    .then(function(json) {
-      if (json.staff === true) {
-        if (!json.ok || json.dataset !== 'sold') throw new Error(json.msg || 'ข้อมูลที่ได้รับไม่ใช่ชุดทรัพย์ขายแล้ว กรุณาแจ้งผู้ดูแลให้อัปเดตระบบ');
-        closeStaffModal();
-        updateStaffBtn();
-        allData = json.data || [];
-        buildEntries(allData);
-        applyFilters();
-        showToast('✅ เข้าสู่ระบบสำเร็จ');
-      } else {
-        try { StaffSession.clear(); } catch(e) {}
-        document.getElementById('staffLoginErr').textContent = '❌ รหัสผ่านไม่ถูกต้อง';
-      }
-    })
-    .catch(function(err) {
-      try { StaffSession.clear(); } catch(e) {}
-      document.getElementById('staffLoginErr').textContent = '⚠️ เชื่อมต่อไม่ได้: ' + err.message;
-    });
-}
+function doStaffLogin() { return SaleApp.login(); }
 
 // ════════════════════════════════════════════════════════════
 //  BOOT

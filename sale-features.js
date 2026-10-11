@@ -55,6 +55,19 @@
   photoSlot.id='dPhotoDownload'; actionSlot.id='dSaleAction'; staffSection.appendChild(photoSlot); staffSection.appendChild(actionSlot);
   var close= document.querySelector('.modal-close');
   if (close) { var bar=document.createElement('div'); bar.className='modal-closebar'; bar.textContent='รายละเอียดทรัพย์'; document.querySelector('#detailOverlay .modal').prepend(bar); bar.appendChild(close); close.type='button'; close.setAttribute('aria-label','ปิดรายละเอียด'); }
+  var pageNav=document.createElement('nav');pageNav.className='sale-page-nav';pageNav.setAttribute('aria-label','หน้าเว็บขาย');
+  [['index.html','รายการขาย'],['map.html','แผนที่ขาย'],['map-sold.html','ขายแล้ว']].forEach(function(item){var a=document.createElement('a');a.href=item[0];a.textContent=item[1];if(item[0]===(sold?'map-sold.html':isMap?'map.html':'index.html'))a.setAttribute('aria-current','page');pageNav.appendChild(a);});
+  document.querySelector('.header').prepend(pageNav);
+  var advanced=document.createElement('details');advanced.className='sale-advanced';
+  var summary=document.createElement('summary');summary.textContent='ตัวกรองเพิ่มเติม';advanced.appendChild(summary);
+  var advancedGrid=document.createElement('div');advancedGrid.className='sale-filter-grid';advanced.appendChild(advancedGrid);
+  toolbar.after(advanced);
+  var labels={selMin:'ราคาต่ำสุด (บาท)',selMax:'ราคาสูงสุด (บาท)',floorMin:'ชั้นต่ำสุด',floorMax:'ชั้นสูงสุด',landMin:'ที่ดินต่ำสุด (ตร.ว.)',landMax:'ที่ดินสูงสุด (ตร.ว.)',usableMin:'ใช้สอยต่ำสุด (ตร.ม.)',usableMax:'ใช้สอยสูงสุด (ตร.ม.)',selBed:'ห้องนอน',selBath:'ห้องน้ำ',selNeg:'การต่อรอง',selMaidRoom:'ห้องแม่บ้าน',selDownstairsBedroom:'ห้องนอนชั้นล่าง',selGrade:'เกรดทรัพย์',selPet:'สัตว์เลี้ยง'};
+  fields.concat(['selBed','selBath','selNeg']).concat(selections).forEach(function(id){var label=document.createElement('label');label.className='sale-filter-field';var text=document.createElement('span');text.textContent=labels[id];label.appendChild(text);label.appendChild(el(id));advancedGrid.appendChild(label);});
+  ['btnAgentDirect','btnAgentCo','btnAgentSurvey'].forEach(function(id){advancedGrid.appendChild(el(id));});
+  ['selMin','selMax'].forEach(function(id){var label=document.createElement('label');label.className='sale-price-field';var text=document.createElement('span');text.textContent=labels[id];var input=el(id);input.before(label);label.appendChild(text);label.appendChild(input);});
+  ['detailOverlay','staffLoginModal'].forEach(function(id){var dialog=el(id);dialog.setAttribute('role','dialog');dialog.setAttribute('aria-modal','true');dialog.setAttribute('aria-label',id==='detailOverlay'?'รายละเอียดทรัพย์':'เข้าสู่ระบบ Staff');});
+  document.addEventListener('keydown',function(event){if(event.key!=='Tab')return;var dialog=el('staffLoginModal').classList.contains('open')?el('staffLoginModal'):el('detailOverlay').classList.contains('open')?el('detailOverlay'):null;if(!dialog)return;var items=Array.from(dialog.querySelectorAll('button:not(:disabled),a[href],input:not(:disabled),select:not(:disabled)')).filter(function(node){return node.getClientRects().length;});if(!items.length)return;var first=items[0],last=items[items.length-1];if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}});
   window.saleExtraPass = function(p) {
     for (var i=0;i<fields.length;i+=2) {
       var lo=value(fields[i]), hi=value(fields[i+1]);
@@ -76,7 +89,7 @@
     el('btnClearFilters').classList.toggle('visible',on);
   };
   var baseApply=window.applyFilters;
-  window.applyFilters=function(){baseApply();updateClearButton();};
+  window.applyFilters=function(){baseApply();updateClearButton();var selected=activeTypes.filter(function(type){return ['บ้านเดี่ยว','ทาวน์เฮ้าส์','คอนโด','พูลวิลล่า'].indexOf(type)===-1;});other.options[0].textContent=selected.length?'ประเภทอื่น: '+selected.join(', '):'ประเภทอื่น';document.querySelectorAll('.type-btn').forEach(function(button){button.setAttribute('aria-pressed',button.classList.contains('active')?'true':'false');});};
   var baseClear=window.clearAllFilters;
   window.clearAllFilters=function(){fields.forEach(function(id){el(id).value='';});selections.forEach(function(id){el(id).value='all';});if(el('selSort'))el('selSort').value='price_asc';clearGeoSearch(true);baseClear();updateClearButton();};
   function featureHtml(p) {
@@ -99,14 +112,64 @@
   PropertySale.configure({endpoint:SCRIPT_URL,action:sold?'restoreSale':'markSold',getToken:getStaffToken,requestLogin:openStaffModal,notify:showToast,onUnauthorized:unauthorized,onDetailReady:function(p){if(!currentDetail||String(currentDetail.code).toUpperCase()!==String(p.code).toUpperCase())return;allData=allData.map(function(item){return String(item.code).toUpperCase()===String(p.code).toUpperCase()?p:item;});openDetail(p);},onComplete:function(code){PropertyPhotos.reset();allData=allData.filter(function(p){return p.code.toUpperCase()!==code.toUpperCase();});closeDetail();if(isMap)buildEntries(allData);applyFilters();loadData(false);}});
   function unauthorized(){try{StaffSession.clear();}catch(e){}updateStaffBtn();closeDetail();loadData(false);}
   var baseDetail=window.openDetail;
-  window.openDetail=function(p){p=allData.find(function(item){return String(item.code).toUpperCase()===String(p.code).toUpperCase();})||p;currentDetail=p;baseDetail(p);staffSection.style.display=isStaffLoggedIn()?'':'none';PropertyPhotos.setDetail(p.code);PropertySale.setDetail(p);var old=el('dSaleFeatures');if(old)old.remove();var extra=document.createElement('div');extra.id='dSaleFeatures';extra.className='sale-detail-features';extra.innerHTML=featureHtml(p);(el('dPricePer')||document.querySelector('#detailOverlay .modal-price')).insertAdjacentElement('afterend',extra);};
+  window.openDetail=function(p){p=allData.find(function(item){return String(item.code).toUpperCase()===String(p.code).toUpperCase();})||p;currentDetail=p;baseDetail(p);staffSection.style.display=isStaffLoggedIn()?'':'none';PropertyPhotos.setDetail(p.code);PropertySale.setDetail(p);var old=el('dSaleFeatures');if(old)old.remove();var extra=document.createElement('div');extra.id='dSaleFeatures';extra.className='sale-detail-features';extra.innerHTML=featureHtml(p);(el('dPricePer')||document.querySelector('#detailOverlay .modal-price')).insertAdjacentElement('afterend',extra);if(close)close.focus({preventScroll:true});};
   var baseClose=window.closeDetail;
   window.closeDetail=function(){currentDetail=null;captionGeneration++;PropertySale.setDetail(null);PropertyPhotos.reset();baseClose();};
   var baseStaff=window.updateStaffBtn;
   window.updateStaffBtn=function(){baseStaff();archiveLink.style.display=isStaffLoggedIn()?'':'none';PropertyPhotos.refreshButtons();if(!isStaffLoggedIn()){closeDetail();allData=allData.map(function(p){var clean=Object.assign({},p);['ownerName','ownerTel','ownerTelRaw','contact','facebook','folderUrl','saleVersion'].forEach(function(k){delete clean[k];});return clean;});if(sold){allData=[];if(isMap&&map){buildEntries([]);applyFilters();}el('cardStrip').textContent='🔒 กรุณาเข้าสู่ระบบทีมงานเพื่อดูทรัพย์ขายแล้ว';}}};
-  // Keep archive routing and staff token rules consistent for loading and login.
-  var originalFetch=window.fetch.bind(window);
-  window.fetch=function(input,options){var catalogRequest=typeof input==='string'&&input.indexOf(SCRIPT_URL+'?')===0&&input.indexOf('type=sale')!==-1;var requestedToken=getStaffToken();if(sold&&catalogRequest&&input.indexOf('dataset=sold')===-1){input+='&dataset=sold';}var result=originalFetch(input,options);if(!catalogRequest)return result;return result.then(function(response){var originalJson=response.json.bind(response);response.json=function(){return originalJson().then(function(data){if(getStaffToken()!==requestedToken)return {ok:false,error:'session_changed'};if(requestedToken&&data.staff===false){try{StaffSession.clear();}catch(e){}updateStaffBtn();}return data;});};return response;});};
+  // One lifecycle for catalog, map, sold map and login; requests never patch global fetch.
+  var api=SaleApi.create(SCRIPT_URL,sold?'sold':'active');
+  var statusBar=document.createElement('div');statusBar.className='sale-status';
+  var statusText=document.createElement('span');statusText.id='saleStatusText';statusText.setAttribute('role','status');statusText.setAttribute('aria-live','polite');
+  var reload=document.createElement('button');reload.type='button';reload.id='saleReload';reload.textContent='โหลดข้อมูลใหม่';reload.onclick=function(){loadData(true);};
+  statusBar.appendChild(statusText);statusBar.appendChild(reload);document.querySelector('.header').after(statusBar);
+  function status(message,kind){statusText.textContent=message;statusBar.dataset.state=kind||'ready';}
+  function errorText(error){return ({unauthorized:'รหัส Staff ไม่ถูกต้องหรือสิทธิ์หมดอายุ',backend_update_required:'ระบบออนไลน์ยังไม่รองรับหน้านี้ กรุณาอัปเดตระบบก่อนใช้งาน',wrong_dataset:'ระบบส่งข้อมูลผิดชุด กรุณาติดต่อผู้ดูแล',invalid_response:'ระบบตอบข้อมูลไม่ถูกต้อง กรุณาตรวจการเผยแพร่ระบบ',server_error:'ระบบอ่านข้อมูลไม่สำเร็จ กรุณาลองใหม่',AbortError:'การเชื่อมต่อใช้เวลานานเกินไป กรุณาลองใหม่'})[error.message||error.name]||'เชื่อมต่อข้อมูลไม่สำเร็จ กรุณาลองใหม่';}
+  window.SaleApp=(function(){
+    var sequence=0,controller=null,loginSequence=0,firstLoad=true;
+    function cancel(){sequence++;if(controller)controller.abort();controller=null;reload.disabled=false;var refresh=el('btnRefresh');if(refresh){refresh.disabled=false;refresh.classList.remove('spinning');}}
+    function render(result,fit){
+      allData=result.data;
+      if(isMap){buildEntries(allData);buildLandmarks();}
+      applyFilters();
+      if(isMap&&(firstLoad||fit))fitAll();firstLoad=false;
+      var unsupported=getStaffToken()&&allData.some(function(p){return !/^[a-f0-9]{64}$/.test(String(p.saleVersion||''));});
+      status(unsupported?'ดูข้อมูลได้ แต่ระบบออนไลน์ยังไม่พร้อมขาย/ลบ กรุณาอัปเดต Apps Script':(sold?'ทรัพย์ขายแล้ว':'ทรัพย์กำลังขาย')+' · '+allData.length+' รายการ · '+(getStaffToken()?'Staff':'ผู้เข้าชม'),unsupported?'warning':'ready');
+    }
+    function clear(){allData=[];closeDetail();if(isMap&&map)buildEntries([]);applyFilters();}
+    async function load(refresh){
+      cancel();var seq=sequence,token=getStaffToken();
+      if(sold&&!token){clear();status('เข้าสู่ระบบ Staff เพื่อดูทรัพย์ขายแล้ว','locked');el('cardStrip').textContent='กรุณากด Staff เพื่อเข้าสู่ระบบ';return false;}
+      controller=new AbortController();reload.disabled=true;status('กำลังโหลดข้อมูล…','loading');
+      var oldRefresh=el('btnRefresh');if(oldRefresh)oldRefresh.disabled=true;
+      try{
+        var result=await api.catalog(token,refresh,controller.signal);
+        if(seq!==sequence||token!==getStaffToken())return false;
+        render(result,refresh);return true;
+      }catch(error){
+        if(seq!==sequence||token!==getStaffToken())return false;
+        if(error.message==='unauthorized'){StaffSession.clear();lastStaffToken='';clear();updateStaffBtn();}
+        status(errorText(error),'error');
+        if(!allData.length){if(isMap){el('cardStrip').textContent=errorText(error);el('countPill').textContent='ยังไม่ได้โหลดข้อมูล';}else showError(errorText(error));}
+        return false;
+      }finally{if(seq===sequence){controller=null;reload.disabled=false;if(oldRefresh){oldRefresh.disabled=false;oldRefresh.classList.remove('spinning');}}}
+    }
+    async function login(){
+      var input=el('staffPasswordInput'),password=input.value,err=el('staffLoginErr'),seq=++loginSequence;
+      if(!password){err.textContent='กรุณาใส่รหัสผ่าน';return false;}
+      cancel();var initialToken=getStaffToken(),submit=document.querySelector('.btn-login-go');if(submit)submit.disabled=true;
+      err.textContent='กำลังตรวจสอบสิทธิ์…';
+      try{
+        var result=await api.catalog(password,false);
+        if(seq!==loginSequence||getStaffToken()!==initialToken)return false;
+        StaffSession.set(password);
+        if(getStaffToken()!==password)throw new Error('cookies_blocked');
+        lastStaffToken=password;input.value='';updateStaffBtn();render(result,true);closeStaffModal();showToast('เข้าสู่ระบบ Staff แล้ว');return true;
+      }catch(error){if(seq===loginSequence)err.textContent=error.message==='cookies_blocked'?'กรุณาอนุญาตคุกกี้ของเว็บไซต์เพื่อเข้าสู่ระบบ':errorText(error);return false;}
+      finally{if(seq===loginSequence&&submit)submit.disabled=false;reload.disabled=false;}
+    }
+    return {load:load,login:login,cancelLogin:function(){loginSequence++;var submit=document.querySelector('.btn-login-go');if(submit)submit.disabled=false;},sync:function(){cancel();clear();updateStaffBtn();return load(false);}};
+  })();
   window.loadCaption=function(code,refresh){
     var seq=++captionGeneration,token=getStaffToken(),block=el('dCaptionBlock'),pre=el('dCaptionText'),retry=el('dCaptionRetry');
     if(retry)retry.remove();
@@ -138,12 +201,11 @@
       pre.textContent=_captionText;
     }).catch(function(){if(seq===captionGeneration&&getStaffToken()===token)failed('เชื่อมต่อเพื่อโหลดประกาศไม่สำเร็จ กรุณาลองใหม่');});
   };
-  if (sold) { el('cardStrip').textContent='🔒 กรุณาเข้าสู่ระบบทีมงานเพื่อดูทรัพย์ขายแล้ว'; var baseLoad=window.loadData; window.loadData=function(){if(!getStaffToken())return;baseLoad.apply(this,arguments);}; }
   // Deauthentication cancels downloads and pending confirmations immediately.
   var lastStaffToken=getStaffToken();
-  window.addEventListener('focus',function(){var token=getStaffToken();if(token!==lastStaffToken){lastStaffToken=token;updateStaffBtn();loadData(false);}});
+  window.addEventListener('focus',function(){var token=getStaffToken();if(token!==lastStaffToken){lastStaffToken=token;SaleApp.sync();}});
   var baseStaffClick=window.staffBtnClick;
   window.staffBtnClick=function(){baseStaffClick();if(!getStaffToken()){PropertyPhotos.reset();PropertySale.setDetail(null);}};
   var baseStaffClose=window.closeStaffModal;
-  window.closeStaffModal=function(){baseStaffClose();if(getStaffToken()){PropertyPhotos.onLogin();}else{PropertyPhotos.cancelLogin();}};
+  window.closeStaffModal=function(){SaleApp.cancelLogin();baseStaffClose();if(getStaffToken()){PropertyPhotos.onLogin();}else{PropertyPhotos.cancelLogin();}};
 })();
