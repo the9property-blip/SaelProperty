@@ -45,7 +45,17 @@
   var search = document.querySelector('.search-wrap'), geo = document.querySelector('.geo-search-container');
   var tools = document.createElement('div'); tools.className='search-tools'; search.parentNode.insertBefore(tools,search);
   tools.appendChild(search); tools.appendChild(geo); tools.appendChild(el('btnClearFilters')); el('btnClearFilters').classList.add('search-clear-btn');
-  el('searchInput').placeholder='หมู่บ้าน / รหัส'; el('searchInput').setAttribute('aria-label','ค้นหาหมู่บ้าน โครงการ ทำเล หรือรหัสทรัพย์');
+  function updateSearchHint(){var hint=isStaffLoggedIn()?'รหัส / โครงการ / เจ้าของ / เบอร์โทร':'รหัส / โครงการ / ทำเล';el('searchInput').placeholder=hint;el('searchInput').setAttribute('aria-label','ค้นหา '+hint);el('searchInput').title=hint;}
+  updateSearchHint();
+  window.saleSearchMatch=function(p,query){
+    var publicFields=[p.code,p.project,p.location,p.type];
+    if(searchMatch(publicFields.join(' '),query))return true;
+    if(!isStaffLoggedIn())return false;
+    var staffFields=[p.ownerName,p.contact,p.ownerTel,p.ownerTelRaw];
+    if(searchMatch(publicFields.concat(staffFields).join(' '),query))return true;
+    var digits=String(query).replace(/\D/g,'');
+    return !!digits&&/^[\d\s()+.\-]+$/.test(query)&&[p.ownerTel,p.ownerTelRaw].some(function(phone){return String(phone||'').replace(/\D/g,'').includes(digits);});
+  };
   el('geoInput').placeholder='📍 สถานที่ / พิกัด'; el('geoInput').setAttribute('aria-label','ค้นหาสถานที่หรือพิกัด'); el('geoInput').oninput=onGeoInput;
   var staff = document.querySelector('.staff-controls');
   if (!staff) { staff=document.createElement('div'); staff.className='staff-controls'; el('staffBtn').parentNode.insertBefore(staff,el('staffBtn')); staff.appendChild(el('staffBtn')); }
@@ -118,7 +128,7 @@
   var baseClose=window.closeDetail;
   window.closeDetail=function(){currentDetail=null;captionGeneration++;PropertySale.setDetail(null);PropertyPhotos.reset();baseClose();};
   var baseStaff=window.updateStaffBtn;
-  window.updateStaffBtn=function(){baseStaff();PropertyPhotos.refreshButtons();if(!isStaffLoggedIn()){closeDetail();allData=allData.map(function(p){var clean=Object.assign({},p);['ownerName','ownerTel','ownerTelRaw','contact','facebook','folderUrl','saleVersion'].forEach(function(k){delete clean[k];});return clean;});if(sold){allData=[];if(isMap&&map){buildEntries([]);applyFilters();}el('cardStrip').textContent='🔒 กรุณาเข้าสู่ระบบทีมงานเพื่อดูทรัพย์ขายแล้ว';}}};
+  window.updateStaffBtn=function(){baseStaff();updateSearchHint();PropertyPhotos.refreshButtons();if(!isStaffLoggedIn()){closeDetail();allData=allData.map(function(p){var clean=Object.assign({},p);['ownerName','ownerTel','ownerTelRaw','contact','facebook','folderUrl','saleVersion'].forEach(function(k){delete clean[k];});return clean;});if(sold){allData=[];if(isMap&&map){buildEntries([]);applyFilters();}el('cardStrip').textContent='🔒 กรุณาเข้าสู่ระบบทีมงานเพื่อดูทรัพย์ขายแล้ว';}}};
   // One lifecycle for catalog, map, sold map and login; requests never patch global fetch.
   var api=SaleApi.create(SCRIPT_URL,sold?'sold':'active');
   var statusBar=document.createElement('div');statusBar.className='sale-status';

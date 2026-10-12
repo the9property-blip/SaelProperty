@@ -765,8 +765,8 @@ body { font-family: 'Segoe UI', 'Noto Sans Thai', sans-serif; background: #f5f6f
       <div class="modal-row"><span class="lbl">เบอร์โทร</span>
         <span class="val-copy"><span class="val" id="dOwnerTel">–</span><button type="button" class="btn-copy" title="คัดลอกเบอร์โทร" onclick="copyText(document.getElementById('dOwnerTel').textContent)">📋</button></span></div>
       <div class="modal-row" id="dFacebookRow" style="display:none;"><span class="lbl">โพส FB</span> <span class="val" id="dFacebookVal">–</span></div>
-      <div class="modal-row"><span class="lbl">พิกัด</span>
-        <span class="val-copy"><span class="val" id="dCoords">–</span><button type="button" class="btn-copy" id="dCoordsCopy" title="คัดลอกลิงก์ Google Maps" onclick="copyCoords()">📋</button></span></div>
+      <div class="modal-row"><span class="lbl">Google Maps</span>
+        <span class="val-copy"><span class="val" id="dCoords">–</span><button type="button" class="btn-copy" id="dCoordsCopy" title="คัดลอกลิงก์ Google Maps" aria-label="คัดลอกลิงก์ Google Maps" onclick="copyCoords()">คัดลอก</button></span></div>
       <div class="staff-actions">
         <a id="dCallOwner" href="#">📞 โทรเจ้าของ</a>
         <a id="dMapsLink" class="maps" href="#" target="_blank" rel="noopener">🗺 ดูใน Maps</a>
@@ -1137,10 +1137,7 @@ function applyFilters() {
     if (activeAgent === 'co'     && !p.coAgent) return false;
     if (activeAgent === 'direct' &&  p.coAgent) return false;
     if (activeAgent === 'survey' && !isSurvey(p)) return false;
-    if (search) {
-      var hay = (p.code||'') + ' ' + (p.project||'') + ' ' + (p.location||'') + ' ' + (p.type||'') + ' ' + (p.ownerName||'') + ' ' + (p.contact||'') + ' ' + (p.ownerTel||'') + ' ' + (p.ownerTelRaw||'') + ' ' + String(p.ownerTel||'').replace(/[^0-9]/g,'');
-      if (!searchMatch(hay, search)) return false;
-    }
+  if (search && !saleSearchMatch(p, search)) return false;
     return true;
   });
 
@@ -1409,7 +1406,7 @@ function openDetail(p) {
       var mapsHref = 'https://www.google.com/maps?q=' + latNum + ',' + lngNum;
       _coordsHref = mapsHref;
       coordsEl.innerHTML = '<a href="' + mapsHref + '" target="_blank" rel="noopener">' +
-        latNum.toFixed(6) + ', ' + lngNum.toFixed(6) + ' 🗺</a>';
+        mapsHref + '</a>';
       mapsLink.href = mapsHref;
       mapsLink.style.opacity = '1'; mapsLink.style.pointerEvents = '';
       if (coordsCopy) coordsCopy.style.display = '';

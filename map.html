@@ -676,8 +676,8 @@ body {
       <div class="modal-row"><span class="lbl">เบอร์โทร</span>
         <span class="val-copy"><span class="val" id="dOwnerTel">–</span><button type="button" class="btn-copy" title="คัดลอกเบอร์โทร" onclick="copyText(document.getElementById('dOwnerTel').textContent)">📋</button></span></div>
       <div class="modal-row" id="dFacebookRow" style="display:none;"><span class="lbl">โพส FB</span> <span class="val" id="dFacebookVal">–</span></div>
-      <div class="modal-row"><span class="lbl">พิกัด</span>
-        <span class="val-copy"><span class="val" id="dCoords">–</span><button type="button" class="btn-copy" id="dCoordsCopy" title="คัดลอกลิงก์ Google Maps" onclick="copyCoords()">📋</button></span></div>
+      <div class="modal-row"><span class="lbl">Google Maps</span>
+        <span class="val-copy"><span class="val" id="dCoords">–</span><button type="button" class="btn-copy" id="dCoordsCopy" title="คัดลอกลิงก์ Google Maps" aria-label="คัดลอกลิงก์ Google Maps" onclick="copyCoords()">คัดลอก</button></span></div>
       <div class="staff-actions">
         <a id="dCallOwner" href="#">📞 โทรเจ้าของ</a>
         <a id="dStaffMaps" class="maps" href="#" target="_blank" rel="noopener">🗺 Maps</a>
@@ -1255,10 +1255,7 @@ function passFilter(p) {
   if (activeAgent === 'co'     && !p.coAgent) return false;
   if (activeAgent === 'direct' &&  p.coAgent) return false;
   if (activeAgent === 'survey' && !isSurvey(p)) return false;
-  if (search) {
-    var hay = (p.code || '') + ' ' + (p.project || '') + ' ' + (p.location || '') + ' ' + (p.type || '') + ' ' + (p.ownerName || '') + ' ' + (p.contact || '') + ' ' + (p.ownerTel || '') + ' ' + (p.ownerTelRaw || '') + ' ' + String(p.ownerTel || '').replace(/[^0-9]/g,'');
-    if (!searchMatch(hay, search)) return false;
-  }
+  if (search && !saleSearchMatch(p, search)) return false;
   return true;
 }
 function applyFilters() {
@@ -1473,7 +1470,7 @@ function openDetail(p) {
       var mapsHref = 'https://www.google.com/maps?q=' + p.lat + ',' + p.lng;
       _coordsHref = mapsHref;
       coordsEl.innerHTML = '<a href="' + mapsHref + '" target="_blank" rel="noopener">' +
-        p.lat.toFixed(6) + ', ' + p.lng.toFixed(6) + ' 🗺</a>';
+        mapsHref + '</a>';
       staffMaps.href = mapsHref;
       staffMaps.style.display = '';
       if (coordsCopy) coordsCopy.style.display = '';
