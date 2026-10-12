@@ -1402,17 +1402,17 @@ function openDetail(p) {
     var mapsLink = document.getElementById('dMapsLink');
     var coordsEl = document.getElementById('dCoords');
     var coordsCopy = document.getElementById('dCoordsCopy');
-    if (!isNaN(latNum) && !isNaN(lngNum)) {
-      var mapsHref = 'https://www.google.com/maps?q=' + latNum + ',' + lngNum;
+    var mapsHref = saleMapsHref(p);
+    if (mapsHref) {
       _coordsHref = mapsHref;
-      coordsEl.innerHTML = '<a href="' + mapsHref + '" target="_blank" rel="noopener">' +
-        mapsHref + '</a>';
+      coordsEl.innerHTML = '<a href="' + escapeHtml(mapsHref) + '" target="_blank" rel="noopener">' +
+        escapeHtml(mapsHref) + '</a>';
       mapsLink.href = mapsHref;
       mapsLink.style.opacity = '1'; mapsLink.style.pointerEvents = '';
       if (coordsCopy) coordsCopy.style.display = '';
     } else {
       _coordsHref = '';
-      coordsEl.textContent = '— ไม่ระบุพิกัด';
+      coordsEl.textContent = '— ไม่มีลิงก์ Google Maps ในคอลัมน์ AC';
       mapsLink.href = '#'; mapsLink.style.opacity = '0.4'; mapsLink.style.pointerEvents = 'none';
       if (coordsCopy) coordsCopy.style.display = 'none';
     }

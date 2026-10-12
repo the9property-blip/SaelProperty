@@ -47,6 +47,7 @@
   tools.appendChild(search); tools.appendChild(geo); tools.appendChild(el('btnClearFilters')); el('btnClearFilters').classList.add('search-clear-btn');
   function updateSearchHint(){var hint=isStaffLoggedIn()?'รหัส / โครงการ / เจ้าของ / เบอร์โทร':'รหัส / โครงการ / ทำเล';el('searchInput').placeholder=hint;el('searchInput').setAttribute('aria-label','ค้นหา '+hint);el('searchInput').title=hint;}
   updateSearchHint();
+  window.saleMapsHref=function(p){var link=String(p.mapsUrl||'').trim();try{var url=new URL(link);return /^https?:$/.test(url.protocol)?link:'';}catch(e){return '';}};
   window.saleSearchMatch=function(p,query){
     var publicFields=[p.code,p.project,p.location,p.type];
     if(searchMatch(publicFields.join(' '),query))return true;
