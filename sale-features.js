@@ -125,7 +125,30 @@
   PropertySale.configure({endpoint:SCRIPT_URL,action:sold?'restoreSale':'markSold',getToken:getStaffToken,requestLogin:openStaffModal,notify:showToast,onUnauthorized:unauthorized,onDetailReady:function(p){if(!currentDetail||String(currentDetail.code).toUpperCase()!==String(p.code).toUpperCase())return;allData=allData.map(function(item){return String(item.code).toUpperCase()===String(p.code).toUpperCase()?p:item;});openDetail(p);},onComplete:function(code){PropertyPhotos.reset();allData=allData.filter(function(p){return p.code.toUpperCase()!==code.toUpperCase();});closeDetail();if(isMap)buildEntries(allData);applyFilters();loadData(false);}});
   function unauthorized(){try{StaffSession.clear();}catch(e){}updateStaffBtn();closeDetail();loadData(false);}
   var baseDetail=window.openDetail;
-  window.openDetail=function(p){p=allData.find(function(item){return String(item.code).toUpperCase()===String(p.code).toUpperCase();})||p;currentDetail=p;baseDetail(p);staffSection.style.display=isStaffLoggedIn()?'':'none';PropertyPhotos.setDetail(p.code);PropertySale.setDetail(p);var old=el('dSaleFeatures');if(old)old.remove();var extra=document.createElement('div');extra.id='dSaleFeatures';extra.className='sale-detail-features';extra.innerHTML=featureHtml(p);(el('dPricePer')||document.querySelector('#detailOverlay .modal-price')).insertAdjacentElement('afterend',extra);if(close)close.focus({preventScroll:true});};
+  function publicDetailValue(raw,unit){
+    var text=String(raw==null?'':raw).trim();
+    if(!text||/^[-–—]$|^ไม่ระบุ$|^n\/a$/i.test(text))return 'ไม่ระบุ';
+    if(unit==='คัน'&&/ไม่มี|ไม่รองรับ/.test(text))return text;
+    if(unit==='คัน'?/คัน/.test(text):/ตร\.?\s*[วม]|ตาราง|sq\.?\s*(?:m|w)|sqm/i.test(text))return text;
+    return text+' '+unit;
+  }
+  function transferLabel(raw){
+    var text=String(raw==null?'':raw).trim();
+    if(!text)return null;
+    if(/50\s*[/：:\-]\s*50|คนละครึ่ง/.test(text))return 'คนละครึ่ง';
+    if(/ฟรี\s*(?:ค่า)?โอน|โอน\s*ฟรี/.test(text))return 'ฟรีโอน';
+    if(/(?:ผู้ขาย|เจ้าของ|คนขาย).*(?:ออก|รับผิดชอบ)/.test(text)&&!/ไม่|บางส่วน|เฉพาะ|ร่วม|สมทบ|\d+\s*%/.test(text))return 'ฟรีโอน';
+    return text;
+  }
+  function publicDetails(p){
+    var condo=/คอนโด|condo/i.test(String(p.type||''));
+    setRow('dRowLand','dLand',condo?null:publicDetailValue(p.land,'ตร.ว.'));
+    setRow('dRowUsable','dUsable',publicDetailValue(p.usable,'ตร.ม.'));
+    setRow('dRowParking','dParking',publicDetailValue(p.parking,'คัน'));
+    setRow('dRowTransfer','dTransfer',transferLabel(p.transfer));
+    if(condo){var pills=el('dPricePer')||el('dPills');if(pills)Array.from(pills.children).forEach(function(pill){if(/\/ตร\.?ว/.test(pill.textContent))pill.remove();});}
+  }
+  window.openDetail=function(p){p=allData.find(function(item){return String(item.code).toUpperCase()===String(p.code).toUpperCase();})||p;currentDetail=p;baseDetail(p);publicDetails(p);staffSection.style.display=isStaffLoggedIn()?'':'none';PropertyPhotos.setDetail(p.code);PropertySale.setDetail(p);var old=el('dSaleFeatures');if(old)old.remove();var extra=document.createElement('div');extra.id='dSaleFeatures';extra.className='sale-detail-features';extra.innerHTML=featureHtml(p);(el('dPricePer')||document.querySelector('#detailOverlay .modal-price')).insertAdjacentElement('afterend',extra);if(close)close.focus({preventScroll:true});};
   var baseClose=window.closeDetail;
   window.closeDetail=function(){currentDetail=null;captionGeneration++;PropertySale.setDetail(null);PropertyPhotos.reset();baseClose();};
   var baseStaff=window.updateStaffBtn;
