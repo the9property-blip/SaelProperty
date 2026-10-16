@@ -57,7 +57,7 @@
     var digits=String(query).replace(/\D/g,'');
     return !!digits&&/^[\d\s()+.\-]+$/.test(query)&&[p.ownerTel,p.ownerTelRaw].some(function(phone){return String(phone||'').replace(/\D/g,'').includes(digits);});
   };
-  el('geoInput').placeholder='📍 สถานที่ / พิกัด'; el('geoInput').setAttribute('aria-label','ค้นหาสถานที่หรือพิกัด'); el('geoInput').oninput=onGeoInput;
+  el('geoInput').placeholder='สถานที่ / พิกัด'; el('geoInput').setAttribute('aria-label','ค้นหาสถานที่หรือพิกัด'); el('geoInput').oninput=onGeoInput;
   var staff = document.querySelector('.staff-controls');
   if (!staff) { staff=document.createElement('div'); staff.className='staff-controls'; el('staffBtn').parentNode.insertBefore(staff,el('staffBtn')); staff.appendChild(el('staffBtn')); }
   var nav=document.createElement('div'); nav.className='staff-nav'; staff.appendChild(nav);
@@ -79,6 +79,11 @@
   ['btnAgentDirect','btnAgentCo','btnAgentSurvey'].forEach(function(id){advancedGrid.appendChild(el(id));});
   ['selMin','selMax'].forEach(function(id){var label=document.createElement('label');label.className='sale-price-field';var text=document.createElement('span');text.textContent=labels[id];var input=el(id);input.before(label);label.appendChild(text);label.appendChild(input);});
   if(isMap){toolbar.prepend(tools);Array.from(advancedGrid.children).forEach(function(control){toolbar.appendChild(control);});advanced.remove();}
+  // Keep menu labels quiet; property details and listing text retain their original content.
+  var headerText=document.createTreeWalker(document.querySelector('.header'),NodeFilter.SHOW_TEXT);
+  while(headerText.nextNode()){var node=headerText.currentNode;node.nodeValue=node.nodeValue.replace(/[\p{Extended_Pictographic}\uFE0F\u200D]/gu,'').replace(/^\s+/,' ');}
+  var searchButton=el('geoBtnSearch');searchButton.setAttribute('aria-label','ค้นหาสถานที่');
+  searchButton.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m16 16 4.5 4.5"></path></svg>';
   ['detailOverlay','staffLoginModal'].forEach(function(id){var dialog=el(id);dialog.setAttribute('role','dialog');dialog.setAttribute('aria-modal','true');dialog.setAttribute('aria-label',id==='detailOverlay'?'รายละเอียดทรัพย์':'เข้าสู่ระบบ Staff');});
   document.addEventListener('keydown',function(event){if(event.key!=='Tab')return;var dialog=el('staffLoginModal').classList.contains('open')?el('staffLoginModal'):el('detailOverlay').classList.contains('open')?el('detailOverlay'):null;if(!dialog)return;var items=Array.from(dialog.querySelectorAll('button:not(:disabled),a[href],input:not(:disabled),select:not(:disabled)')).filter(function(node){return node.getClientRects().length;});if(!items.length)return;var first=items[0],last=items[items.length-1];if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}});
   window.saleExtraPass = function(p) {
@@ -152,7 +157,7 @@
   var baseClose=window.closeDetail;
   window.closeDetail=function(){currentDetail=null;captionGeneration++;PropertySale.setDetail(null);PropertyPhotos.reset();baseClose();};
   var baseStaff=window.updateStaffBtn;
-  window.updateStaffBtn=function(){baseStaff();updateSearchHint();PropertyPhotos.refreshButtons();if(!isStaffLoggedIn()){closeDetail();allData=allData.map(function(p){var clean=Object.assign({},p);['ownerName','ownerTel','ownerTelRaw','contact','facebook','folderUrl','saleVersion'].forEach(function(k){delete clean[k];});return clean;});if(sold){allData=[];if(isMap&&map){buildEntries([]);applyFilters();}el('cardStrip').textContent='🔒 กรุณาเข้าสู่ระบบทีมงานเพื่อดูทรัพย์ขายแล้ว';}}};
+  window.updateStaffBtn=function(){baseStaff();el('staffBtn').textContent=isStaffLoggedIn()?'Staff · ออกจากระบบ':'Staff';updateSearchHint();PropertyPhotos.refreshButtons();if(!isStaffLoggedIn()){closeDetail();allData=allData.map(function(p){var clean=Object.assign({},p);['ownerName','ownerTel','ownerTelRaw','contact','facebook','folderUrl','saleVersion'].forEach(function(k){delete clean[k];});return clean;});if(sold){allData=[];if(isMap&&map){buildEntries([]);applyFilters();}el('cardStrip').textContent='🔒 กรุณาเข้าสู่ระบบทีมงานเพื่อดูทรัพย์ขายแล้ว';}}};
   // One lifecycle for catalog, map, sold map and login; requests never patch global fetch.
   var api=SaleApi.create(SCRIPT_URL,sold?'sold':'active');
   var statusBar=document.createElement('div');statusBar.className='sale-status';
