@@ -1016,7 +1016,7 @@ function updateStaffBtn() {
 }
 function staffBtnClick() {
   if (isStaffLoggedIn()) {
-    if (confirm('ออกจากระบบทีมงาน?')) {
+    if (confirm(window.SaleI18n ? SaleI18n.t('ออกจากระบบทีมงาน?') : 'ออกจากระบบทีมงาน?')) {
       try { StaffSession.clear(); } catch(e) {}
       updateStaffBtn();
       loadData(false);
